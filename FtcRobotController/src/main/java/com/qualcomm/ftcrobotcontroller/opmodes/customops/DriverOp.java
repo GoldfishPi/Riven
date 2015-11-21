@@ -121,7 +121,18 @@ public class DriverOp extends OpMode {
 
     public  void controllerTwo(){
 
-
+        if(gamepad2.left_stick_x > 0.0){
+            lWinch.setPower(0.3);
+        }
+        else{
+            lWinch.setPower(0.0);
+        }
+        if (gamepad2.right_stick_x > 0.0){
+            rWinch.setPower(0.3);
+        }
+        else {
+            rWinch.setPower(0.0);
+        }
 
     }
 }
