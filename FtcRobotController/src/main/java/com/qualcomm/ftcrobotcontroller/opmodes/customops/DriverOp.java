@@ -51,7 +51,7 @@ public class DriverOp extends OpMode {
     public void stop(){
 
     }
-
+// you suck
     @Override
     public void init_loop(){
 
