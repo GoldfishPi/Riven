@@ -39,6 +39,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <string name="ok">OK</string>
   <string name="gfp">GoldfishPi</string>
   <string name="c5">C5</string>
+  <string name="cyberarm">Cyberarm</string>
   <integer name="number">158</integer>
 
   <string name="pref_configure_robot_title">Robot Configuration Settings</string>

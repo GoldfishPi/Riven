@@ -32,7 +32,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-
   <item
     android:id="@+id/action_settings"
     android:orderInCategory="99"
@@ -61,17 +60,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       android:orderInCategory="1000"
       android:icon="@android:drawable/ic_menu_info_details"
       android:title="@string/gfp"/>
-    <item
-        android:id="@+id/C5"
-        android:orderInCategory="1000"
-        android:icon="@android:drawable/ic_menu_info_details"
-        android:title="@string/c5"/>
+  <item
+    android:id="@+id/C5"
+    android:orderInCategory="1000"
+    android:icon="@android:drawable/ic_menu_info_details"
+    android:title="@string/c5"/>
+  <item
+    android:id="@+id/Cyberarm"
+    android:orderInCategory="1000"
+    android:icon="@android:drawable/ic_menu_info_details"
+    android:title="@string/cyberarm"/>
 
   <item
     android:id="@+id/action_exit_app"
     android:orderInCategory="1000"
     android:icon="@android:drawable/ic_menu_info_details"
     android:title="@string/action_exit_app"/>
-
-
 </menu>
