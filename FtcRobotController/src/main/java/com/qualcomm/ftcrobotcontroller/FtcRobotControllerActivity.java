@@ -40,6 +40,7 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.hardware.usb.UsbManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -242,6 +243,8 @@ public class FtcRobotControllerActivity extends Activity {
     return true;
   }
 
+
+
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
@@ -381,4 +384,16 @@ public class FtcRobotControllerActivity extends Activity {
       }
     });
   }
+
+  public void OnTcButton(View v) {
+
+      Intent intent = new Intent();
+      intent.setAction(Intent.ACTION_VIEW);
+      intent.addCategory(Intent.CATEGORY_BROWSABLE);
+      intent.setData(Uri.parse("http://timecrafters.ddns.net/"));
+      startActivity(intent);
+  }
+
+
+
 }
