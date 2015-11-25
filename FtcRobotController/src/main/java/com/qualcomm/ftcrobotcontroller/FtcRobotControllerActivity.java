@@ -1,4 +1,4 @@
-/* Copyright (c) 2014, 2015 Qualcomm Technologies Inc
+/* opyright (c) 2014, 2015 Qualcomm Technologies Inc
 
 All rights reserved.
 
@@ -272,6 +272,13 @@ public class FtcRobotControllerActivity extends Activity {
         viewLogsIntent.putExtra(LaunchActivityConstantsList.VIEW_LOGS_ACTIVITY_FILENAME, RobotLog.getLogFilename(this));
         startActivity(viewLogsIntent);
         return true;
+      case R.id.Score:
+          Intent getNameScreenIntent = new Intent(this, ScoreScreen.class);
+          startActivity(getNameScreenIntent);
+          getNameScreenIntent.putExtra("callingActivity", "FtcRobotControllerActivity");
+
+          startActivityForResult(getNameScreenIntent, 1);
+        return true;
       default:
         return super.onOptionsItemSelected(item);
     }
@@ -392,8 +399,13 @@ public class FtcRobotControllerActivity extends Activity {
       intent.addCategory(Intent.CATEGORY_BROWSABLE);
       intent.setData(Uri.parse("http://timecrafters.ddns.net/"));
       startActivity(intent);
+
+
   }
 
+  public void onAboutTimecraftersClicked(View view){
 
+
+  }
 
 }
