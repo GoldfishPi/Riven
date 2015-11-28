@@ -14,7 +14,7 @@ public class ScoreScreen extends Activity {
 
         setContentView(R.layout.scores);
 
-        String url = "http://www.twitch.tv/GoldfishPi";
+        String url = "http://timecrafters.ddns.net";
         WebView view = (WebView) this.findViewById(R.id.webView);
         view.getSettings().setJavaScriptEnabled(true);
         view.loadUrl(url);

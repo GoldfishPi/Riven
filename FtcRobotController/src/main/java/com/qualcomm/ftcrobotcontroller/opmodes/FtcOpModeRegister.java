@@ -31,6 +31,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.Atomonous.siver;
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.DriverOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeRegister;
 
@@ -54,6 +56,10 @@ public class FtcOpModeRegister implements OpModeRegister {
      *
      * If two or more op modes are registered with the same name, the app will display an error.
      */
+
+
+    manager.register("Auto test", siver.class);
+    manager.register("driver test", DriverOp.class);
 
     manager.register("NullOp", NullOp.class);
 

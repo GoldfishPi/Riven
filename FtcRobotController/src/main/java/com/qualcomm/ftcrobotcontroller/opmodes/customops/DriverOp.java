@@ -2,6 +2,7 @@ package com.qualcomm.ftcrobotcontroller.opmodes.customops;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorController;
 
 /**
  * Created by goldfishpi on 11/21/15.
@@ -22,6 +23,14 @@ public class DriverOp extends OpMode {
 
     private DcMotor lArm;
     private DcMotor rArm;
+
+    private double lowSpeed = 0.5;
+    private boolean xPressed = false;
+    private boolean aPressed = false;
+
+    private DcMotor[] motors = {lDrive, rDrive};
+
+
 
 
     public DriverOp() {
@@ -45,6 +54,9 @@ public class DriverOp extends OpMode {
         lArm = hardwareMap.dcMotor.get("lArm");
         rArm = hardwareMap.dcMotor.get("rArm");
 
+        rDrive.setDirection(DcMotor.Direction.REVERSE);
+
+
     }
 
     @Override
@@ -66,25 +78,45 @@ public class DriverOp extends OpMode {
     public void controllerOne(){
 
         //Drive controls
-        if(gamepad1.left_stick_x > 0.0){
-            lDrive.setPower(0.3);
+        if(gamepad1.left_stick_y > 0.0){
+            lDrive.setPower(lowSpeed);
         }
-        else if(gamepad1.left_stick_x < 0.0){
-            lDrive.setPower(-0.3);
+        else if(gamepad1.left_stick_y < 0.0){
+            lDrive.setPower(-lowSpeed);
         }
         else{
             lDrive.setPower(0.0);
         }
 
-        if(gamepad1.right_stick_x > 0.0){
-            rDrive.setPower(0.3);
+        if(gamepad1.right_stick_y > 0.0){
+            rDrive.setPower(lowSpeed);
         }
-        else if(gamepad1.right_stick_x < 0.0){
-            rDrive.setPower(-0.3);
+        else if(gamepad1.right_stick_y < 0.0){
+            rDrive.setPower(-lowSpeed);
         }
         else{
             rDrive.setPower(0.0);
         }
+
+        if(gamepad1.x && lowSpeed < 0.9 && !xPressed){
+            lowSpeed += 0.1;
+            xPressed = true;
+        }
+        else if (!gamepad1.x){
+            xPressed = false;
+        }
+        if(gamepad1.a && lowSpeed > -0.9 && !aPressed){
+            lowSpeed -= 0.1;
+            aPressed = true;
+        }
+        else if(!gamepad1.a){
+            aPressed = false;
+        }
+
+
+        telemetry.addData("Drive Speed", lowSpeed);
+
+
         //Finger controls
         if(gamepad1.left_trigger > 1){
             lFinger.setPower(0.3);
