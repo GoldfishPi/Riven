@@ -1,6 +1,5 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.customops.Atomonous;
 
-import com.qualcomm.ftcrobotcontroller.opmodes.customops.AbstractOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
