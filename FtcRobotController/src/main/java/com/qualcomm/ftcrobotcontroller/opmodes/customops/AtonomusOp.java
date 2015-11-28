@@ -220,7 +220,7 @@ public class AtonomusOp extends OpMode {
     }
 
     //-------------------------------------
-    //functions here...
+    //functions here...                   *
     //-------------------------------------
 
     void newState(State newState){

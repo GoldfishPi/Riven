@@ -33,6 +33,7 @@ public class DriverOp extends OpMode {
         lDrive = hardwareMap.dcMotor.get("lDrive");
         rDrive = hardwareMap.dcMotor.get("rDrive");
 
+
         lFinger = hardwareMap.dcMotor.get("lFinger");
         rFinger = hardwareMap.dcMotor.get("rFinger");
 
@@ -45,13 +46,19 @@ public class DriverOp extends OpMode {
         lArm = hardwareMap.dcMotor.get("lArm");
         rArm = hardwareMap.dcMotor.get("rArm");
 
+        rDrive.setDirection(DcMotor.Direction.REVERSE);
+        rFinger.setDirection(DcMotor.Direction.REVERSE);
+        rGill.setDirection(DcMotor.Direction.REVERSE);
+        rWinch.setDirection(DcMotor.Direction.REVERSE);
+        rArm.setDirection(DcMotor.Direction.REVERSE);
+
     }
 
     @Override
     public void stop(){
 
     }
-//
+
     @Override
     public void init_loop(){
 
@@ -66,25 +73,9 @@ public class DriverOp extends OpMode {
     public void controllerOne(){
 
         //Drive controls
-        if(gamepad1.left_stick_x > 0.0){
-            lDrive.setPower(0.3);
-        }
-        else if(gamepad1.left_stick_x < 0.0){
-            lDrive.setPower(-0.3);
-        }
-        else{
-            lDrive.setPower(0.0);
-        }
+        lDrive.setPower(gamepad1.left_stick_y);
+        rDrive.setPower(gamepad1.right_stick_y);
 
-        if(gamepad1.right_stick_x > 0.0){
-            rDrive.setPower(0.3);
-        }
-        else if(gamepad1.right_stick_x < 0.0){
-            rDrive.setPower(-0.3);
-        }
-        else{
-            rDrive.setPower(0.0);
-        }
         //Finger controls
         if(gamepad1.left_trigger > 1){
             lFinger.setPower(0.3);
