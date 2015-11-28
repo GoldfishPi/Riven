@@ -1,4 +1,4 @@
-/* Copyright (c) 2014, 2015 Qualcomm Technologies Inc
+/* opyright (c) 2014, 2015 Qualcomm Technologies Inc
 
 All rights reserved.
 
@@ -40,6 +40,7 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.hardware.usb.UsbManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -242,6 +243,8 @@ public class FtcRobotControllerActivity extends Activity {
     return true;
   }
 
+
+
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
@@ -268,6 +271,13 @@ public class FtcRobotControllerActivity extends Activity {
         Intent viewLogsIntent = new Intent("com.qualcomm.ftccommon.ViewLogsActivity.intent.action.Launch");
         viewLogsIntent.putExtra(LaunchActivityConstantsList.VIEW_LOGS_ACTIVITY_FILENAME, RobotLog.getLogFilename(this));
         startActivity(viewLogsIntent);
+        return true;
+      case R.id.Score:
+          Intent getNameScreenIntent = new Intent(this, ScoreScreen.class);
+          startActivity(getNameScreenIntent);
+          getNameScreenIntent.putExtra("callingActivity", "FtcRobotControllerActivity");
+
+          startActivityForResult(getNameScreenIntent, 1);
         return true;
       default:
         return super.onOptionsItemSelected(item);
@@ -381,4 +391,21 @@ public class FtcRobotControllerActivity extends Activity {
       }
     });
   }
+
+  public void OnTcButton(View v) {
+
+      Intent intent = new Intent();
+      intent.setAction(Intent.ACTION_VIEW);
+      intent.addCategory(Intent.CATEGORY_BROWSABLE);
+      intent.setData(Uri.parse("http://timecrafters.ddns.net/"));
+      startActivity(intent);
+
+
+  }
+
+  public void onAboutTimecraftersClicked(View view){
+
+
+  }
+
 }

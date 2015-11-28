@@ -5,7 +5,9 @@
           android:versionCode="4"
           android:versionName="1.2">
 
-
+  <uses-permission
+      android:name="android.permission.INTERNET"
+      android:required="true"/>
   <uses-permission
     android:name="android.permission.ACCESS_WIFI_STATE"
     android:required="true" />
@@ -85,6 +87,11 @@
         <category android:name="android.intent.category.DEFAULT" />
       </intent-filter>
     </activity>
+    
+    <activity android:name=".ScoreScreen"
+        android:label="Bio"
+        android:theme="@style/AppTheme"/>
+    
   </application>
 
 </manifest>
