@@ -46,9 +46,11 @@ public class AtonomusOp extends OpMode {
             new PathSeg(10.0, 10.0, 1.0)
     };
 
-    final double countPerInchDrive = 56;
+    final double COUNT_PER_INCH_DRIVE = 56;
     final double white = 0.5;
-    final double range = 0.5;
+    final double RANGE = 0.5;
+
+
 
 
     //-------------------------------
@@ -89,6 +91,9 @@ public class AtonomusOp extends OpMode {
     private PathSeg[] currentPath;
 
     private int currentSeg;
+
+    public boolean debug = true;
+
 
 
 
@@ -176,7 +181,7 @@ public class AtonomusOp extends OpMode {
 
             case STATE_DRIVE_TO_WALL:
 
-                if (distanceSonsor.getLightDetected() > range)
+                if (distanceSonsor.getLightDetected() > RANGE)
                 {
 
                     setDriveSpeed(0.0, 0.0);
@@ -347,8 +352,8 @@ public class AtonomusOp extends OpMode {
         int left;
         int right;
         if (currentPath != null){
-            left = (int)(currentPath[currentSeg].LEFT * countPerInchDrive);
-            right =  (int)(currentPath[currentSeg].RIGHT * countPerInchDrive);
+            left = (int)(currentPath[currentSeg].LEFT * COUNT_PER_INCH_DRIVE);
+            right =  (int)(currentPath[currentSeg].RIGHT * COUNT_PER_INCH_DRIVE);
             addEncoderTarget(left, right);
             setDriveSpeed(currentPath[currentSeg].speed, currentPath[currentSeg].speed);
 
@@ -370,6 +375,29 @@ public class AtonomusOp extends OpMode {
             }
         }
         return false;
+    }
+
+    public static void debug(DebugLevel level, String message)
+    {
+        String name = "Siver";
+        switch (level)
+        {
+            default:
+            case INFO:
+                    System.out.println("[" + name + "]" + message);
+                break;
+            case WARNING:
+                System.out.println("[" + name + "] [WARNING] " + message);
+                break;
+            case SEVERE:
+                System.out.println("[" + name + "] [SEVERE] " + message);
+                break;
+        }
+    }
+
+    public static enum DebugLevel
+    {
+        INFO, WARNING, SEVERE;
     }
 }
 
