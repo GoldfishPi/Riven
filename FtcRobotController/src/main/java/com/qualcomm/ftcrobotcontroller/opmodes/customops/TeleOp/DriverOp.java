@@ -17,8 +17,8 @@ public class DriverOp extends OpMode {
     private DcMotor lGill;
     private DcMotor rGill;
 
-    private DcMotor lWinch;
-    private DcMotor rWinch;
+    private DcMotor armOut;
+    private DcMotor armIn;
 
     private DcMotor lArm;
     private DcMotor rArm;
@@ -47,8 +47,8 @@ public class DriverOp extends OpMode {
         lGill = hardwareMap.dcMotor.get("lGill");
         rGill = hardwareMap.dcMotor.get("rGill");
 
-        lWinch = hardwareMap.dcMotor.get("lWinch");
-        rWinch = hardwareMap.dcMotor.get("rWinch");
+        armOut = hardwareMap.dcMotor.get("/0lWinch");
+        armIn = hardwareMap.dcMotor.get("/0rWinch");
 
         lArm = hardwareMap.dcMotor.get("lArm");
         rArm = hardwareMap.dcMotor.get("rArm");
@@ -56,7 +56,7 @@ public class DriverOp extends OpMode {
         rDrive.setDirection(DcMotor.Direction.REVERSE);
         rFinger.setDirection(DcMotor.Direction.REVERSE);
         rGill.setDirection(DcMotor.Direction.REVERSE);
-        rWinch.setDirection(DcMotor.Direction.REVERSE);
+        armIn.setDirection(DcMotor.Direction.REVERSE);
         rArm.setDirection(DcMotor.Direction.REVERSE);
 
     }
@@ -122,16 +122,16 @@ public class DriverOp extends OpMode {
 
         //extending arm controlls.
         if (gamepad2.left_stick_y > 0.0){
-            lWinch.setPower(-0.3);
-            rWinch.setPower(0.3);
+            armOut.setPower(-0.3);
+            armIn.setPower(0.3);
         }
         else if (gamepad2.left_stick_y < 0.0){
-            lWinch.setPower(0.3);
-            rWinch.setPower(-0.3);
+            armOut.setPower(0.3);
+            armIn.setPower(-0.3);
         }
         else {
-            lWinch.setPower(0.0);
-            rWinch.setPower(0.0);
+            armOut.setPower(0.0);
+            armIn.setPower(0.0);
         }
 
         //raising arm controlls

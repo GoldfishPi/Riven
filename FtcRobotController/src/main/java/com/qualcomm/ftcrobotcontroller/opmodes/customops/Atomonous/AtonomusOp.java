@@ -100,6 +100,10 @@ public class AtonomusOp extends OpMode {
     public void stateMachine() {
     }
 
+    public AtonomusOp(){
+
+    }
+
     @Override
     public void init() {
 
