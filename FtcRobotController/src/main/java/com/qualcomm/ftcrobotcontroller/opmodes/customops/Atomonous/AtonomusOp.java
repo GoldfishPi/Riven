@@ -10,8 +10,8 @@ import com.qualcomm.robotcore.util.Range;
 
 /* This autonomous does the following steps
 * 0) Wait For encoder to reset
-* 1) Drive forward until the light sensor senses white line
-* 2) turn until back sensor senses white line
+* 1) Drive forward until the light sensor senses WHITE line
+* 2) turn until back sensor senses WHITE line
 * 3) Drive forward until the distance sensor reads 5
 * 4) Raise Arm using encoder ticks
 * 5) Extend Arm using encoder ticks
@@ -47,7 +47,7 @@ public class AtonomusOp extends OpMode {
     };
 
     final double COUNT_PER_INCH_DRIVE = 56;
-    final double white = 0.5;
+    final double WHITE = 0.5;
     final double RANGE = 0.5;
 
 
@@ -163,7 +163,7 @@ public class AtonomusOp extends OpMode {
 
             case STATE_DRIVE_TO_WHITE_LINE:
 
-                if (frontLightSensor.getLightDetectedRaw() > white) {
+                if (frontLightSensor.getLightDetectedRaw() > WHITE) {
 
                     setDriveSpeed(1.0, -1.0);
                     newState(State.STATE_TURN);
@@ -173,7 +173,7 @@ public class AtonomusOp extends OpMode {
 
             case STATE_TURN:
 
-                if (backLightSensor.getLightDetectedRaw() > white) {
+                if (backLightSensor.getLightDetectedRaw() > WHITE) {
 
                     setDriveSpeed(0.3, 0.3);
                     newState(State.STATE_DRIVE_TO_WALL);
@@ -391,18 +391,18 @@ public class AtonomusOp extends OpMode {
                     System.out.println("[" + name + "]" + message);
                 break;
             case WARNING:
-                System.out.println("[" + name + "] [WARNING] " + message);
-                break;
-            case SEVERE:
-                System.out.println("[" + name + "] [SEVERE] " + message);
-                break;
+        System.out.println("[" + name + "] [WARNING] " + message);
+        break;
+        case SEVERE:
+        System.out.println("[" + name + "] [SEVERE] " + message);
+        break;
         }
-    }
+        }
 
-    public static enum DebugLevel
-    {
-        INFO, WARNING, SEVERE;
-    }
+public static enum DebugLevel
+{
+    INFO, WARNING, SEVERE;
+}
 }
 
 class PathSeg{

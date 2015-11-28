@@ -2,6 +2,7 @@ package com.qualcomm.ftcrobotcontroller.opmodes.customops.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.Range;
 
 /**
  * Created by goldfishpi on 11/21/15.
@@ -25,6 +26,8 @@ public class DriverOp extends OpMode {
 
     private boolean aPressed;
     private boolean xPressed;
+
+    final double driveSpeed = 0.5;
 
 
     public DriverOp() {
@@ -80,8 +83,10 @@ public class DriverOp extends OpMode {
     public void controllerOne(){
 
         //Drive controls
-        lDrive.setPower(gamepad1.left_stick_y);
+       lDrive.setPower(gamepad1.left_stick_y);
         rDrive.setPower(gamepad1.right_stick_y);
+
+
 
         //Finger controls
         if(gamepad1.left_trigger < 0.0){
@@ -156,5 +161,28 @@ public class DriverOp extends OpMode {
 
 
     }
-}//blag
+
+    //----------------------------------
+    //Methods
+    //----------------------------------
+
+    void setDrivePower(double leftPower, double rightPower){
+        lDrive.setPower(Range.clip(leftPower, -1, 1));
+        rDrive.setPower(Range.clip(rightPower, -1, 1));
+    }
+    void setDriveSpeed(double leftSpeed, double rightSpeed){
+        setDrivePower(leftSpeed, rightSpeed);
+    }
+
+    void setArmPower(double leftArmPower, double rightArmPower){
+        lArm.setPower(Range.clip(leftArmPower, -1, 1));
+        rArm.setPower(Range.clip(rightArmPower, -1, 1));
+    }
+    void setArmSpeed(double leftArmSpeed, double rightArmSpeed){
+        setArmPower(leftArmSpeed, rightArmSpeed);
+    }
+
+
+
+}
 
