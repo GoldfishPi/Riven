@@ -8,6 +8,11 @@ import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+/*
+* created by c5 and GoldfishPi
+* Contact details: timecrafters8962@gmail.com
+* */
+
 /* This autonomous does the following steps
 * 0) Wait For encoder to reset
 * 1) Drive forward until the light sensor senses WHITE line
