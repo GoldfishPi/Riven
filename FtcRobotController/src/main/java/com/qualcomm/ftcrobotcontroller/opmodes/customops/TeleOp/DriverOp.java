@@ -47,8 +47,8 @@ public class DriverOp extends OpMode {
         lGill = hardwareMap.dcMotor.get("lGill");
         rGill = hardwareMap.dcMotor.get("rGill");
 
-        armOut = hardwareMap.dcMotor.get("/0lWinch");
-        armIn = hardwareMap.dcMotor.get("/0rWinch");
+        armOut = hardwareMap.dcMotor.get("lWinch");
+        armIn = hardwareMap.dcMotor.get("rWinch");
 
         lArm = hardwareMap.dcMotor.get("lArm");
         rArm = hardwareMap.dcMotor.get("rArm");
