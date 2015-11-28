@@ -46,6 +46,7 @@ public class AtonomusOp extends OpMode {
     final PathSeg[] driveBack = {
 
             new PathSeg(10.0, 10.0, 1.0)
+
     };
 
     final double count_per_inch_drive = 140;
@@ -68,9 +69,6 @@ public class AtonomusOp extends OpMode {
 
     private DcMotor lArm;
     private DcMotor rArm;
-
-    private DcMotor lCoffin;
-    private DcMotor rCoffin;
 
     private int leftEncoderTarget;
     private int rightEncoderTarget;
@@ -114,10 +112,6 @@ public class AtonomusOp extends OpMode {
         lArm = hardwareMap.dcMotor.get("lArm");
         rArm = hardwareMap.dcMotor.get("rArm");
         rArm.setDirection(DcMotor.Direction.REVERSE);
-
-        lCoffin = hardwareMap.dcMotor.get("lCoffin");
-        rCoffin = hardwareMap.dcMotor.get("rCoffin");
-        rCoffin.setDirection(DcMotor.Direction.REVERSE);
 
         setDrivePower(0, 0);
         resetDriveEncoders();
@@ -192,13 +186,6 @@ public class AtonomusOp extends OpMode {
                 if(stateTime.time() > 3.0 ) {
                     setArmSpeed(0.0, 0.0);
                     setWinchSpeed(0.5, 0.5);
-                    newState(State.STATE_EXTEND_ARM);
-                }
-            case STATE_EXTEND_ARM:
-                if (stateTime.time() > 3.0) {
-                    setWinchSpeed(0.0, 0.0);
-                    setCoffinSpeed(0.1, 0.1);
-                    startPath(driveBack);
                     newState(State.STATE_DRIVE_BACK);
                 }
 
@@ -250,19 +237,6 @@ public class AtonomusOp extends OpMode {
 
         setDrivePower(leftSpeed, rightSpeed);
     }
-
-    void setCoffinPower(double leftCoffinPower, double rightCoffinPower){
-
-        lCoffin.setPower(Range.clip(leftCoffinPower, -1, 1));
-        rCoffin.setPower(Range.clip(rightCoffinPower, -1, 1));
-    }
-
-    void setCoffinSpeed(double leftCoffinSpeed, double rightCoffinSpeed){
-
-        setCoffinPower(leftCoffinSpeed, rightCoffinSpeed);
-    }
-
-
     void setArmPower(double leftPowerArm, double rightPowerArm){
         lArm.setPower(Range.clip(leftPowerArm, -1, 1));
         rArm.setPower(Range.clip(rightPowerArm, -1, 1));
