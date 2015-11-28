@@ -122,11 +122,11 @@ public class DriverOp extends OpMode {
 
         //extending arm controlls.
         if (gamepad2.left_stick_y > 0.0){
-            armOut.setPower(-0.3);
+            armOut.setPower(-0.6);
             armIn.setPower(0.3);
         }
         else if (gamepad2.left_stick_y < 0.0){
-            armOut.setPower(0.3);
+            armOut.setPower(0.6);
             armIn.setPower(-0.3);
         }
         else {
