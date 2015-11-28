@@ -23,6 +23,9 @@ public class DriverOp extends OpMode {
     private DcMotor lArm;
     private DcMotor rArm;
 
+    private boolean aPressed;
+    private boolean xPressed;
+
 
     public DriverOp() {
 
@@ -30,6 +33,10 @@ public class DriverOp extends OpMode {
 
     @Override
     public void init() {
+
+        aPressed = false;
+        xPressed = false;
+
         lDrive = hardwareMap.dcMotor.get("lDrive");
         rDrive = hardwareMap.dcMotor.get("rDrive");
 
@@ -77,7 +84,7 @@ public class DriverOp extends OpMode {
         rDrive.setPower(gamepad1.right_stick_y);
 
         //Finger controls
-        if(gamepad1.left_trigger > 1){
+        if(gamepad1.left_trigger < 0.0){
             lFinger.setPower(0.3);
         }
         else if(gamepad1.left_bumper){
@@ -86,7 +93,7 @@ public class DriverOp extends OpMode {
         else{
             lFinger.setPower(0.0);
         }
-        if(gamepad1.right_trigger > 1){
+        if(gamepad1.right_trigger < 0.0){
             rFinger.setPower(0.3);
         }
         else if(gamepad1.right_bumper){
