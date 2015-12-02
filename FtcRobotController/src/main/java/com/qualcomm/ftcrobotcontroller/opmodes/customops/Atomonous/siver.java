@@ -4,6 +4,9 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by goldfishpi on 11/21/15.
  */
@@ -27,6 +30,9 @@ public class siver extends OpMode {
     private DcMotor[] motors = {lDrive, rDrive, lFinger, rFinger, lGill, rGill, lWinch, rWinch, lArm, rArm};
 
     private int[] states = {1,2,3,4};
+
+    List<String> robotStates = new ArrayList<String>();
+
     private int currentState;
 
     private boolean running = true;
@@ -35,7 +41,6 @@ public class siver extends OpMode {
 
     //powers
     private double lowPower = 0.3;
-
 
 
     @Override

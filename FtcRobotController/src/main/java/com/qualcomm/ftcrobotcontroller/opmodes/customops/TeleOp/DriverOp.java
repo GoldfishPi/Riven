@@ -20,8 +20,8 @@ public class DriverOp extends OpMode {
     private DcMotor armOut;
     private DcMotor armIn;
 
-    private DcMotor lArm;
-    private DcMotor rArm;
+    private DcMotor arm;
+
 
     private boolean aPressed;
     private boolean xPressed;
@@ -50,14 +50,14 @@ public class DriverOp extends OpMode {
         armOut = hardwareMap.dcMotor.get("lWinch");
         armIn = hardwareMap.dcMotor.get("rWinch");
 
-        lArm = hardwareMap.dcMotor.get("lArm");
-        rArm = hardwareMap.dcMotor.get("rArm");
+        arm = hardwareMap.dcMotor.get("arm");
+
 
         rDrive.setDirection(DcMotor.Direction.REVERSE);
         rFinger.setDirection(DcMotor.Direction.REVERSE);
         rGill.setDirection(DcMotor.Direction.REVERSE);
         armIn.setDirection(DcMotor.Direction.REVERSE);
-        rArm.setDirection(DcMotor.Direction.REVERSE);
+
 
     }
 
@@ -68,6 +68,7 @@ public class DriverOp extends OpMode {
 
     @Override
     public void init_loop(){
+
 
     }
 
@@ -84,7 +85,7 @@ public class DriverOp extends OpMode {
         rDrive.setPower(gamepad1.right_stick_y);
 
         //Finger controls
-        if(gamepad1.left_trigger < 0.0){
+        if(gamepad1.left_trigger != 0.0){
             lFinger.setPower(0.3);
         }
         else if(gamepad1.left_bumper){
@@ -93,7 +94,7 @@ public class DriverOp extends OpMode {
         else{
             lFinger.setPower(0.0);
         }
-        if(gamepad1.right_trigger < 0.0){
+        if(gamepad1.right_trigger != 0.0){
             rFinger.setPower(0.3);
         }
         else if(gamepad1.right_bumper){
@@ -102,19 +103,7 @@ public class DriverOp extends OpMode {
         else{
             rFinger.setPower(0.0);
         }
-        //gill controll
-        if(gamepad1.x){
-            lGill.setPower(0.3);
-        }
-        else{
-            lGill.setPower(-0.1);
-        }
-        if(gamepad1.b){
-            rGill.setPower(0.3);
-        }
-        else{
-            rGill.setPower(0.1);
-        }
+        //gill controll go here
     }
 
     public  void controllerTwo(){
@@ -122,12 +111,12 @@ public class DriverOp extends OpMode {
 
         //extending arm controlls.
         if (gamepad2.left_stick_y > 0.0){
-            armOut.setPower(-0.6);
-            armIn.setPower(0.3);
+            armOut.setPower(-1.0);
+            armIn.setPower(0.5);
         }
         else if (gamepad2.left_stick_y < 0.0){
-            armOut.setPower(0.6);
-            armIn.setPower(-0.3);
+            armOut.setPower(1.0);
+            armIn.setPower(-0.5);
         }
         else {
             armOut.setPower(0.0);
@@ -135,25 +124,7 @@ public class DriverOp extends OpMode {
         }
 
         //raising arm controlls
-        if (gamepad2.right_stick_y > 0){
-            lArm.setPower(0.3);
-            rArm.setPower(0.3);
-        }
-        else if (gamepad2.right_stick_y < 0){
-
-            lArm.setPower(-0.3);
-            rArm.setPower(-0.3);
-        }
-        else{
-            lArm.setPower(0.0);
-            rArm.setPower(0.0);
-        }
-
-
-
-
-
-
+        arm.setPower(gamepad2.right_stick_y);
 
     }
 }//blag
