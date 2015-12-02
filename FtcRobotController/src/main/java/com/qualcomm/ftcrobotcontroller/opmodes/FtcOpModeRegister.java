@@ -37,6 +37,7 @@ import com.qualcomm.ftcrobotcontroller.opmodes.Junk.NullOp;
 import com.qualcomm.ftcrobotcontroller.opmodes.Junk.PushBotAuto;
 import com.qualcomm.ftcrobotcontroller.opmodes.Junk.PushBotManual;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.Atomonous.AtonomusOp;
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.LightTest;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.TeleOp.DriverOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeRegister;
@@ -54,6 +55,7 @@ public class FtcOpModeRegister implements OpModeRegister {
    */
   public void register(OpModeManager manager) {
 
+
     /*
      * register your op modes here.
      * The first parameter is the name of the op mode
@@ -64,6 +66,7 @@ public class FtcOpModeRegister implements OpModeRegister {
 
     manager.register("Atonomus", AtonomusOp.class);
     manager.register("Driver Op", DriverOp.class);
+    manager.register("LightTest", LightTest.class);
 
     manager.register("NullOp", NullOp.class);
 
