@@ -13,6 +13,7 @@ public class LightTest extends OpMode {
     public void init(){
 
         sensor = hardwareMap.lightSensor.get("light");
+        sensor.enableLed(true);
 
     }
 
@@ -22,4 +23,5 @@ public class LightTest extends OpMode {
         telemetry.addData("light",sensor.getLightDetected());
 
     }
+
 }
