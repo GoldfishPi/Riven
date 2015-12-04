@@ -192,11 +192,11 @@ public class FtcRobotControllerActivity extends Activity {
     callback.wifiDirectUpdate(WifiDirectAssistant.Event.DISCONNECTED);
 
     entireScreenLayout.setOnTouchListener(new View.OnTouchListener() {
-      @Override
-      public boolean onTouch(View v, MotionEvent event) {
-        dimmer.handleDimTimer();
-        return false;
-      }
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            dimmer.handleDimTimer();
+            return false;
+        }
     });
 
   }
@@ -279,6 +279,14 @@ public class FtcRobotControllerActivity extends Activity {
 
           startActivityForResult(getNameScreenIntent, 1);
         return true;
+
+        case R.id.action_universe:
+            Intent getNameScreenIntentUniverse = new Intent(this, universeScreen.class);
+            startActivity(getNameScreenIntentUniverse);
+            getNameScreenIntentUniverse.putExtra("callingActivity", "FtcRobotControllerActivity");
+
+            startActivityForResult(getNameScreenIntentUniverse, 1);
+
       default:
         return super.onOptionsItemSelected(item);
     }
@@ -385,10 +393,10 @@ public class FtcRobotControllerActivity extends Activity {
 
   public void showToast(final Toast toast) {
     runOnUiThread(new Runnable() {
-      @Override
-      public void run() {
-        toast.show();
-      }
+        @Override
+        public void run() {
+            toast.show();
+        }
     });
   }
 
@@ -403,9 +411,5 @@ public class FtcRobotControllerActivity extends Activity {
 
   }
 
-  public void onAboutTimecraftersClicked(View view){
-
-
-  }
 
 }
