@@ -27,8 +27,7 @@ import com.qualcomm.robotcore.util.Range;
 
 public class AtonomusOp extends OpMode {
 
-    private enum State
-    {
+    private enum State {
 
         STATE_INITIAL,
         STATE_DRIVE_TO_WHITE_LINE,
@@ -39,23 +38,6 @@ public class AtonomusOp extends OpMode {
         STATE_RELEASE_CLIMBERS,
         STATE_DRIVE_BACK,
         STATE_STOP,
-
-    }
-
-    private enum DriveState
-    {
-
-        STATE_INITAL,
-        DRIVE_TO_WALL,
-        RAIS_ARM_BUCKET_HEIGHT,
-        EXTEND_ARM,
-        RETRACT_ARM,
-        LOWER_ARM_BUCKET_HEIGHT,
-        ROTATE,
-        DRIVE_TO_RAMP,
-        RAISE_ARM_MOUNTAIN_HEIGHT,
-
-
 
     }
 
@@ -74,9 +56,11 @@ public class AtonomusOp extends OpMode {
     final double RANGE = 0.5;
 
 
-    //-------------------------------//
-    // motor declearations           //
-    //-------------------------------//
+
+
+    //-------------------------------
+    // motor declearations
+    //-------------------------------
 
     private DcMotor lDrive;
     private DcMotor rDrive;
@@ -114,6 +98,9 @@ public class AtonomusOp extends OpMode {
     private int currentSeg;
 
     public boolean debug = true;
+
+
+
 
     public void stateMachine() {
     }
