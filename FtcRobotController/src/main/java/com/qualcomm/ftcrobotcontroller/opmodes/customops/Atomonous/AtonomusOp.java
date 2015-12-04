@@ -22,7 +22,12 @@ import com.qualcomm.robotcore.util.Range;
 * 5) Extend Arm using encoder ticks
 * 6) release climbers
 * 7) Drive straight back
-* 8) Stop all
+* 8) Turn to become inline with the mountain
+* 9) Drive to ramp
+* 10) Raise arm to inline with ramp
+* 11) lower arm slightly
+* 12) pull robot up
+* End) Stop all
  */
 
 public class AtonomusOp extends OpMode {
@@ -37,6 +42,11 @@ public class AtonomusOp extends OpMode {
         STATE_EXTEND_ARM,
         STATE_RELEASE_CLIMBERS,
         STATE_DRIVE_BACK,
+        STATE_TURN_TO_RAMP,
+        STATE_RAISE_ARM_MOUNTAIN,
+        STATE_LOWER_ARM_SLIGHTLY,
+        PULL_ARM_UP,
+
         STATE_STOP,
 
     }
