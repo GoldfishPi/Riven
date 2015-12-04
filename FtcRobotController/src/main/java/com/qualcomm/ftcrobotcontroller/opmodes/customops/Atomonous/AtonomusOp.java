@@ -15,8 +15,8 @@ import com.qualcomm.robotcore.util.Range;
 
 /* This autonomous does the following steps
 * 0) Wait For encoder to reset
-* 1) Drive forward until the light sensor senses WHITE line
-* 2) turn until back sensor senses WHITE line
+* 1) Drive forward to middle
+* 2) turn 90 degrees
 * 3) Drive forward until the distance sensor reads 5
 * 4) Raise Arm using encoder ticks
 * 5) Extend Arm using encoder ticks
@@ -30,7 +30,7 @@ public class AtonomusOp extends OpMode {
     private enum State {
 
         STATE_INITIAL,
-        STATE_DRIVE_TO_WHITE_LINE,
+        DRIVE_TO_MIDDLE,
         STATE_TURN,
         STATE_DRIVE_TO_WALL,
         STATE_RAISE_ARM,
@@ -42,20 +42,27 @@ public class AtonomusOp extends OpMode {
     }
 
 
-        //Drive forward using encoders (leftMotor, rightMotor, Speed)
+    //Drive forward using encoders (leftMotor, rightMotor, Speed)
     //final PathSeg[] DriveForward = {
-     //   new PathSeg(1.0, 1.0, 1.0),
+    //   new PathSeg(1.0, 1.0, 1.0),
     //};
     final PathSeg[] driveBack = {
 
             new PathSeg(10.0, 10.0, 1.0)
     };
+    final PathSeg[] driveForward = {
+
+            new PathSeg(48.0, 48.0, 1.0)
+    };
+
+    final PathSeg[] turn90 = {
+
+            new PathSeg(6.0, -6.0, 0.5)
+    };
 
     final double COUNT_PER_INCH_DRIVE = 56;
     final double WHITE = 0.5;
-    final double RANGE = 0.5;
-
-
+    final double RANGE = 10;
 
 
     //-------------------------------
@@ -65,8 +72,8 @@ public class AtonomusOp extends OpMode {
     private DcMotor lDrive;
     private DcMotor rDrive;
 
-   //private DcMotor lFinger;
-   //private DcMotor rFinger;
+    //private DcMotor lFinger;
+    //private DcMotor rFinger;
 
     private DcMotor lWinch;
     private DcMotor rWinch;
@@ -91,7 +98,7 @@ public class AtonomusOp extends OpMode {
     public ElapsedTime stateTime = new ElapsedTime();  // time into state
 
 
-    private State   currentState;
+    private State currentState;
 
     private PathSeg[] currentPath;
 
@@ -100,12 +107,10 @@ public class AtonomusOp extends OpMode {
     public boolean debug = true;
 
 
-
-
     public void stateMachine() {
     }
 
-    public AtonomusOp(){
+    public AtonomusOp() {
 
     }
 
@@ -156,42 +161,39 @@ public class AtonomusOp extends OpMode {
     @Override
     public void loop() {
 
-        switch (currentState)
-        {
+        switch (currentState) {
             case STATE_INITIAL:
                 if (encodersAtZero()) {
                     setDriveSpeed(1.0, 1.0);
-                    lightSensor.enableLed(true);
-                    newState(State.STATE_DRIVE_TO_WHITE_LINE);
+                    startPath(driveForward);
+                    newState(State.DRIVE_TO_MIDDLE);
                 }
                 break;
 
-            case STATE_DRIVE_TO_WHITE_LINE:
+            case DRIVE_TO_MIDDLE:
 
-                if (frontLightSensor.getLightDetectedRaw() > WHITE) {
+                if (pathComplete()) {
 
-                    setDriveSpeed(1.0, -1.0);
+                    startPath(turn90);
                     newState(State.STATE_TURN);
                 }
-                    break;
+                break;
 
 
             case STATE_TURN:
 
-                if (backLightSensor.getLightDetectedRaw() > WHITE) {
+                if (pathComplete()) {
 
                     setDriveSpeed(0.3, 0.3);
                     newState(State.STATE_DRIVE_TO_WALL);
                 }
 
-                    break;
-
+                break;
 
 
             case STATE_DRIVE_TO_WALL:
 
-                if (distanceSonsor.getLightDetected() > RANGE)
-                {
+                if (distanceSonsor.getLightDetected() > RANGE) {
 
                     setDriveSpeed(0.0, 0.0);
                     setArmSpeed(0.3, 0.3);
@@ -201,7 +203,7 @@ public class AtonomusOp extends OpMode {
                 break;
             case STATE_RAISE_ARM:
 
-                if(stateTime.time() > 3.0 ) {
+                if (stateTime.time() > 3.0) {
                     setArmSpeed(0.0, 0.0);
                     setWinchSpeed(0.5, 0.5);
                     newState(State.STATE_EXTEND_ARM);
@@ -215,7 +217,7 @@ public class AtonomusOp extends OpMode {
                 }
 
             case STATE_DRIVE_BACK:
-                if(pathComplete()){
+                if (pathComplete()) {
                     setDriveSpeed(0.0, 0.0);
                     newState(State.STATE_STOP);
                 }
@@ -224,8 +226,9 @@ public class AtonomusOp extends OpMode {
                 break;
         }
     }
+
     @Override
-    public void stop(){
+    public void stop() {
 
         useConstantPower();
         setDrivePower(0.0, 0.0);
@@ -235,121 +238,123 @@ public class AtonomusOp extends OpMode {
     //functions here...                   *
     //-------------------------------------
 
-    void newState(State newState){
+    void newState(State newState) {
         stateTime.reset();
         currentState = newState;
     }
 
-    void setEncoderTarget(int leftEncoder, int rightEncoder){
+    void setEncoderTarget(int leftEncoder, int rightEncoder) {
 
         lDrive.setTargetPosition(leftEncoderTarget = leftEncoder);
         rDrive.setTargetPosition(rightEncoderTarget = rightEncoder);
 
     }
 
-    void addEncoderTarget(int leftEncoder, int rightEncoder){
+    void addEncoderTarget(int leftEncoder, int rightEncoder) {
 
         lDrive.setTargetPosition(leftEncoderTarget += leftEncoder);
         rDrive.setTargetPosition(rightEncoderTarget += rightEncoder);
     }
 
-     void setDrivePower(double leftPower, double rightPower){
+    void setDrivePower(double leftPower, double rightPower) {
         lDrive.setPower(Range.clip(leftPower, -1, 1));
         rDrive.setPower(Range.clip(rightPower, -1, 1));
     }
 
-    void setDriveSpeed( double leftSpeed, double rightSpeed){
+    void setDriveSpeed(double leftSpeed, double rightSpeed) {
 
         setDrivePower(leftSpeed, rightSpeed);
     }
 
-    void setCoffinPower(double leftCoffinPower, double rightCoffinPower){
+    void setCoffinPower(double leftCoffinPower, double rightCoffinPower) {
 
         lCoffin.setPower(Range.clip(leftCoffinPower, -1, 1));
         rCoffin.setPower(Range.clip(rightCoffinPower, -1, 1));
     }
 
-    void setCoffinSpeed(double leftCoffinSpeed, double rightCoffinSpeed){
+    void setCoffinSpeed(double leftCoffinSpeed, double rightCoffinSpeed) {
 
         setCoffinPower(leftCoffinSpeed, rightCoffinSpeed);
     }
 
 
-    void setArmPower(double leftPowerArm, double rightPowerArm){
+    void setArmPower(double leftPowerArm, double rightPowerArm) {
         lArm.setPower(Range.clip(leftPowerArm, -1, 1));
         rArm.setPower(Range.clip(rightPowerArm, -1, 1));
     }
 
-    void setArmSpeed(double leftArmSpeed, double rightArmSpeed){
+    void setArmSpeed(double leftArmSpeed, double rightArmSpeed) {
         setArmPower(leftArmSpeed, rightArmSpeed);
     }
 
-    void setWinchPower(double leftWinchPower, double rightWinchPower){
+    void setWinchPower(double leftWinchPower, double rightWinchPower) {
 
         lWinch.setPower(Range.clip(leftWinchPower, -1, 1));
         rWinch.setPower(Range.clip(rightWinchPower, -1, 1));
     }
 
-    void setWinchSpeed(double leftWinchSpeed, double rightWinchSpeed){
+    void setWinchSpeed(double leftWinchSpeed, double rightWinchSpeed) {
 
         setWinchPower(leftWinchSpeed, rightWinchSpeed);
     }
 
-    public void runToPosition(){
+    public void runToPosition() {
 
         setDriveMode(DcMotorController.RunMode.RUN_TO_POSITION);
     }
 
-    public void useConstantSpeed(){
+    public void useConstantSpeed() {
         setDriveMode(DcMotorController.RunMode.RUN_TO_POSITION);
     }
 
-    public void useConstantPower(){
+    public void useConstantPower() {
 
         setDriveMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
 
     }
-    public void resetDriveEncoders(){
+
+    public void resetDriveEncoders() {
 
         setEncoderTarget(0, 0);
         setDriveMode(DcMotorController.RunMode.RESET_ENCODERS);
 
     }
 
-    void synchEncoders(){
+    void synchEncoders() {
 
         leftEncoderTarget = lDrive.getCurrentPosition();
         rightEncoderTarget = rDrive.getCurrentPosition();
     }
 
-    public void setDriveMode(DcMotorController.RunMode mode){
-        if(lDrive.getChannelMode() != mode)
+    public void setDriveMode(DcMotorController.RunMode mode) {
+        if (lDrive.getChannelMode() != mode)
             lDrive.setChannelMode(mode);
 
-        if(rDrive.getChannelMode() != mode)
+        if (rDrive.getChannelMode() != mode)
             rDrive.setChannelMode(mode);
     }
 
-    int getLeftPosition(){
+    int getLeftPosition() {
         return lDrive.getCurrentPosition();
     }
 
-    int getRightPosition(){
+    int getRightPosition() {
         return rDrive.getCurrentPosition();
 
     }
 
 
-    boolean moveComplete(){
-       return ((Math.abs(getLeftPosition() - leftEncoderTarget) < 10) &&
-               (Math.abs(getRightPosition() - rightEncoderTarget) < 10));
+    boolean moveComplete() {
+        return ((Math.abs(getLeftPosition() - leftEncoderTarget) < 10) &&
+                (Math.abs(getRightPosition() - rightEncoderTarget) < 10));
     }
 
-    boolean encodersAtZero(){
+    boolean encodersAtZero() {
 
         return ((Math.abs(getLeftPosition()) < 5) && (Math.abs(getRightPosition()) < 5));
     }
-    private void startPath(PathSeg[] path){
+
+    private void startPath(PathSeg[] path) {
         currentPath = path;
         currentSeg = 0;
         synchEncoders();
@@ -357,12 +362,12 @@ public class AtonomusOp extends OpMode {
         startSeg();
     }
 
-    private void startSeg(){
+    private void startSeg() {
         int left;
         int right;
-        if (currentPath != null){
-            left = (int)(currentPath[currentSeg].LEFT * COUNT_PER_INCH_DRIVE);
-            right =  (int)(currentPath[currentSeg].RIGHT * COUNT_PER_INCH_DRIVE);
+        if (currentPath != null) {
+            left = (int) (currentPath[currentSeg].LEFT * COUNT_PER_INCH_DRIVE);
+            right = (int) (currentPath[currentSeg].RIGHT * COUNT_PER_INCH_DRIVE);
             addEncoderTarget(left, right);
             setDriveSpeed(currentPath[currentSeg].speed, currentPath[currentSeg].speed);
 
@@ -370,12 +375,11 @@ public class AtonomusOp extends OpMode {
         }
     }
 
-    private boolean pathComplete(){
-        if (moveComplete()){
-            if (currentSeg < currentPath.length){
+    private boolean pathComplete() {
+        if (moveComplete()) {
+            if (currentSeg < currentPath.length) {
                 startSeg();
-            }
-            else {
+            } else {
                 currentPath = null;
                 currentSeg = 0;
                 setDriveSpeed(0, 0);
@@ -386,38 +390,35 @@ public class AtonomusOp extends OpMode {
         return false;
     }
 
-    public static void debug(DebugLevel level, String message)
-    {
+    public static void debug(DebugLevel level, String message) {
         String name = "Siver";
-        switch (level)
-        {
+        switch (level) {
             default:
             case INFO:
-                    System.out.println("[" + name + "]" + message);
+                System.out.println("[" + name + "]" + message);
                 break;
             case WARNING:
-        System.out.println("[" + name + "] [WARNING] " + message);
-        break;
-        case SEVERE:
-        System.out.println("[" + name + "] [SEVERE] " + message);
-        break;
+                System.out.println("[" + name + "] [WARNING] " + message);
+                break;
+            case SEVERE:
+                System.out.println("[" + name + "] [SEVERE] " + message);
+                break;
         }
-        }
+    }
 
-public static enum DebugLevel
-{
-    INFO, WARNING, SEVERE;
-}
+    public static enum DebugLevel {
+        INFO, WARNING, SEVERE;
+    }
 }
 
-class PathSeg{
+class PathSeg {
     public double LEFT;
     public double RIGHT;
     public double speed;
 
-    public PathSeg(double Left, double Right, double Speed){
+    public PathSeg(double Left, double Right, double Speed) {
 
-        LEFT = Left ;
+        LEFT = Left;
         RIGHT = Right;
         speed = Speed;
 
@@ -425,4 +426,4 @@ class PathSeg{
     }
 }
 
-//sup
+//sup sup
