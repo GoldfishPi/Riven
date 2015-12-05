@@ -95,6 +95,7 @@ public class AtonomusOp extends OpMode {
 
     private DcMotor lArm;
     private DcMotor rArm;
+    private DcMotor arm;
 
     private DcMotor lCoffin;
     private DcMotor rCoffin;
@@ -143,9 +144,8 @@ public class AtonomusOp extends OpMode {
         rWinch = hardwareMap.dcMotor.get("rWinch");
         rWinch.setDirection(DcMotor.Direction.REVERSE);
 
-        lArm = hardwareMap.dcMotor.get("lArm");
-        rArm = hardwareMap.dcMotor.get("rArm");
-        rArm.setDirection(DcMotor.Direction.REVERSE);
+        arm = hardwareMap.dcMotor.get("arm");
+
 
         lCoffin = hardwareMap.dcMotor.get("lCoffin");
         rCoffin = hardwareMap.dcMotor.get("rCoffin");
@@ -222,7 +222,7 @@ public class AtonomusOp extends OpMode {
                 if (distanceSonsor.getLightDetected() > RANGE) {
 
                     setDriveSpeed(0.0, 0.0);
-                    setArmSpeed(0.3, 0.3);
+                    setArmSpeed(0.3);
                     newState(State.STATE_RAISE_ARM);
                 }
                 break;
@@ -230,7 +230,7 @@ public class AtonomusOp extends OpMode {
             case STATE_RAISE_ARM:
 
                 if (stateTime.time() > 3.0) {
-                    setArmSpeed(0.0, 0.0);
+                    setArmSpeed(0.0);
                     setWinchSpeed(0.5, 0.5);
                     newState(State.STATE_EXTEND_ARM);
                 }
@@ -259,7 +259,7 @@ public class AtonomusOp extends OpMode {
                 break;
             case STATE_RAISE_ARM_MOUNTAIN:
                 if(pathComplete()){
-                    setArmSpeed(0.3, 0.6);
+                    setArmSpeed(0.3);
 
                     if( lArm.getTargetPosition() > 1000 ){
                         newState(State.STATE_LOWER_ARM_SLIGHTLY);
@@ -269,7 +269,7 @@ public class AtonomusOp extends OpMode {
                 break;
             case STATE_LOWER_ARM_SLIGHTLY:
 
-                setArmSpeed(-0.3, -0.6);
+                setArmSpeed(-0.3);
                 if(lArm.getTargetPosition() < 750)
 
                 break;
@@ -333,13 +333,13 @@ public class AtonomusOp extends OpMode {
     }
 
 
-    void setArmPower(double leftPowerArm, double rightPowerArm) {
-        lArm.setPower(Range.clip(leftPowerArm, -1, 1));
-        rArm.setPower(Range.clip(rightPowerArm, -1, 1));
+    void setArmPower(double powerArm) {
+        arm.setPower(Range.clip(powerArm, -1, 1));
+
     }
 
-    void setArmSpeed(double leftArmSpeed, double rightArmSpeed) {
-        setArmPower(leftArmSpeed, rightArmSpeed);
+    void setArmSpeed(double armSpeed) {
+        setArmPower(armSpeed);
     }
 
     void setWinchPower(double leftWinchPower, double rightWinchPower) {
