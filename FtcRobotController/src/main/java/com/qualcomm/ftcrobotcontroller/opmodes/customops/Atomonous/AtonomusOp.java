@@ -259,7 +259,8 @@ public class AtonomusOp extends OpMode {
                 break;
             case STATE_RAISE_ARM_MOUNTAIN:
                 if(pathComplete()){
-                    setArmSpeed(0.3, 0.3);
+                    setArmSpeed(0.3, 0.6);
+
                     if( lArm.getTargetPosition() > 1000 ){
                         newState(State.STATE_LOWER_ARM_SLIGHTLY);
                         break;
@@ -268,8 +269,13 @@ public class AtonomusOp extends OpMode {
                 break;
             case STATE_LOWER_ARM_SLIGHTLY:
 
+                setArmSpeed(-0.3, -0.6);
+                if(lArm.getTargetPosition() < 750)
+
                 break;
             case STATE_PULL_ROBOT:
+                setWinchSpeed(-0.3, -0.6);
+
                 break;
             case STATE_STOP:
                 break;
@@ -282,9 +288,9 @@ public class AtonomusOp extends OpMode {
         setDrivePower(0.0, 0.0);
     }
 
-    //-------------------------------------
-    //functions here...                   *
-    //-------------------------------------
+    //-------------------------------------//
+    //functions here...                    //
+    //-------------------------------------//
 
     void newState(State newState) {
         stateTime.reset();
