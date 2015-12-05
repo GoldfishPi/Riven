@@ -43,7 +43,7 @@ public class AtonomusOp extends OpMode {
         STATE_TURN_TO_RAMP,
         STATE_RAISE_ARM_MOUNTAIN,
         STATE_LOWER_ARM_SLIGHTLY,
-        PULL_ROBOT,
+        STATE_PULL_ROBOT,
 
         STATE_STOP,
 
@@ -67,6 +67,12 @@ public class AtonomusOp extends OpMode {
     final PathSeg[] turn90 = {
 
             new PathSeg(6.0, -6.0, 0.5)
+    };
+
+    final PathSeg[] turn45 = {
+
+            new PathSeg(3.0, -3.0, 0.3)
+
     };
 
     final double COUNT_PER_INCH_DRIVE = 56;
@@ -169,6 +175,19 @@ public class AtonomusOp extends OpMode {
 
     @Override
     public void loop() {
+                /*STATE_INITIAL,
+                STATE_DRIVE_TO_MIDDLE ,
+                STATE_TURN,
+                STATE_DRIVE_TO_WALL,
+                STATE_RAISE_ARM,
+                STATE_EXTEND_ARM,
+                STATE_DRIVE_BACK,
+                STATE_TURN_TO_RAMP,
+                STATE_RAISE_ARM_MOUNTAIN,
+                STATE_LOWER_ARM_SLIGHTLY,
+                PULL_ROBOT,
+
+                STATE_STOP,*/
 
         switch (currentState) {
             case STATE_INITIAL:
@@ -188,7 +207,6 @@ public class AtonomusOp extends OpMode {
                 }
                 break;
 
-
             case STATE_TURN:
 
                 if (pathComplete()) {
@@ -199,7 +217,6 @@ public class AtonomusOp extends OpMode {
 
                 break;
 
-
             case STATE_DRIVE_TO_WALL:
 
                 if (distanceSonsor.getLightDetected() > RANGE) {
@@ -208,8 +225,8 @@ public class AtonomusOp extends OpMode {
                     setArmSpeed(0.3, 0.3);
                     newState(State.STATE_RAISE_ARM);
                 }
-
                 break;
+
             case STATE_RAISE_ARM:
 
                 if (stateTime.time() > 3.0) {
@@ -218,6 +235,7 @@ public class AtonomusOp extends OpMode {
                     newState(State.STATE_EXTEND_ARM);
                 }
                 break;
+
             case STATE_EXTEND_ARM:
                 if (stateTime.time() > 3.0) {
                     setWinchSpeed(0.0, 0.0);
@@ -230,10 +248,29 @@ public class AtonomusOp extends OpMode {
             case STATE_DRIVE_BACK:
                 if (pathComplete()) {
                     setDriveSpeed(0.0, 0.0);
-                    newState(State.STATE_STOP);
+                    newState(State.STATE_TURN_TO_RAMP);
+                    break;
+                }
+
+            case STATE_TURN_TO_RAMP:
+                resetDriveEncoders();
+                startPath(turn45);
+                newState(State.STATE_RAISE_ARM_MOUNTAIN);
+                break;
+            case STATE_RAISE_ARM_MOUNTAIN:
+                if(pathComplete()){
+                    setArmSpeed(0.3, 0.3);
+                    if( lArm.getTargetPosition() > 1000 ){
+                        newState(State.STATE_LOWER_ARM_SLIGHTLY);
+                        break;
+                    }
                 }
                 break;
+            case STATE_LOWER_ARM_SLIGHTLY:
 
+                break;
+            case STATE_PULL_ROBOT:
+                break;
             case STATE_STOP:
                 break;
         }
@@ -241,7 +278,6 @@ public class AtonomusOp extends OpMode {
 
     @Override
     public void stop() {
-
         useConstantPower();
         setDrivePower(0.0, 0.0);
     }
@@ -253,6 +289,7 @@ public class AtonomusOp extends OpMode {
     void newState(State newState) {
         stateTime.reset();
         currentState = newState;
+
     }
 
     void setEncoderTarget(int leftEncoder, int rightEncoder) {
