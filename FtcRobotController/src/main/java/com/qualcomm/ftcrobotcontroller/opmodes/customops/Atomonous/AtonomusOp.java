@@ -20,7 +20,6 @@ import com.qualcomm.robotcore.util.Range;
 * 3) Drive forward until the distance sensor reads 5
 * 4) Raise Arm using encoder ticks
 * 5) Extend Arm using encoder ticks
-* 6) release climbers
 * 7) Drive straight back
 * 8) Turn to become inline with the mountain
 * 9) Drive to ramp
@@ -35,12 +34,11 @@ public class AtonomusOp extends OpMode {
     private enum State {
 
         STATE_INITIAL,
-        DRIVE_TO_MIDDLE,
+        STATE_DRIVE_TO_MIDDLE ,
         STATE_TURN,
         STATE_DRIVE_TO_WALL,
         STATE_RAISE_ARM,
         STATE_EXTEND_ARM,
-        STATE_RELEASE_CLIMBERS,
         STATE_DRIVE_BACK,
         STATE_TURN_TO_RAMP,
         STATE_RAISE_ARM_MOUNTAIN,
@@ -60,6 +58,7 @@ public class AtonomusOp extends OpMode {
 
             new PathSeg(10.0, 10.0, 1.0)
     };
+
     final PathSeg[] driveForward = {
 
             new PathSeg(48.0, 48.0, 1.0)
@@ -71,7 +70,7 @@ public class AtonomusOp extends OpMode {
     };
 
     final double COUNT_PER_INCH_DRIVE = 56;
-    final double WHITE = 0.5;
+
     final double RANGE = 10;
 
 
@@ -176,11 +175,11 @@ public class AtonomusOp extends OpMode {
                 if (encodersAtZero()) {
                     setDriveSpeed(1.0, 1.0);
                     startPath(driveForward);
-                    newState(State.DRIVE_TO_MIDDLE);
+                    newState(State.STATE_DRIVE_TO_MIDDLE);
                 }
                 break;
 
-            case DRIVE_TO_MIDDLE:
+            case STATE_DRIVE_TO_MIDDLE:
 
                 if (pathComplete()) {
 
@@ -218,6 +217,7 @@ public class AtonomusOp extends OpMode {
                     setWinchSpeed(0.5, 0.5);
                     newState(State.STATE_EXTEND_ARM);
                 }
+                break;
             case STATE_EXTEND_ARM:
                 if (stateTime.time() > 3.0) {
                     setWinchSpeed(0.0, 0.0);
@@ -225,12 +225,14 @@ public class AtonomusOp extends OpMode {
                     startPath(driveBack);
                     newState(State.STATE_DRIVE_BACK);
                 }
+                break;
 
             case STATE_DRIVE_BACK:
                 if (pathComplete()) {
                     setDriveSpeed(0.0, 0.0);
                     newState(State.STATE_STOP);
                 }
+                break;
 
             case STATE_STOP:
                 break;
