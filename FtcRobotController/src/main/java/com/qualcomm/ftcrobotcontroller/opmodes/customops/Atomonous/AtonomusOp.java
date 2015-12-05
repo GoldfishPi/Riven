@@ -45,7 +45,7 @@ public class AtonomusOp extends OpMode {
         STATE_TURN_TO_RAMP,
         STATE_RAISE_ARM_MOUNTAIN,
         STATE_LOWER_ARM_SLIGHTLY,
-        PULL_ARM_UP,
+        PULL_ROBOT,
 
         STATE_STOP,
 
