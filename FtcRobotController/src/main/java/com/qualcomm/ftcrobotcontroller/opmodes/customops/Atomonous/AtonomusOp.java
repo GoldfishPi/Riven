@@ -275,7 +275,6 @@ public class AtonomusOp extends OpMode {
                 break;
             case STATE_PULL_ROBOT:
                 setWinchSpeed(-0.3, -0.6);
-
                 break;
             case STATE_STOP:
                 break;

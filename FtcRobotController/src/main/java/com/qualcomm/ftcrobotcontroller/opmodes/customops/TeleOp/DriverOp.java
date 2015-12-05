@@ -103,7 +103,6 @@ public class DriverOp extends OpMode {
         else{
             rFinger.setPower(0.0);
         }
-        //gill controll go here
     }
 
     public  void controllerTwo(){
@@ -125,6 +124,27 @@ public class DriverOp extends OpMode {
 
         //raising arm controlls
         arm.setPower(gamepad2.right_stick_y);
+        if(gamepad2.left_trigger != 0.0){
+            lGill.setPower(0.5);
+        }
+        else if(gamepad2.left_bumper){
+            lGill.setPower(-0.5);
+        }
+        else{
+            lGill.setPower(0.0);
+        }
+
+        if(gamepad2.right_trigger !=0){
+            rGill.setPower(0.5);
+        }
+        else if(gamepad2.right_bumper){
+            rGill.setPower(-0.5);
+        }
+        else{
+            rGill.setPower(0.0);
+        }
+
+
 
     }
 }//blag
