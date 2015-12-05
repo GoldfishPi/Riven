@@ -23,8 +23,7 @@ public class DriverOp extends OpMode {
     private DcMotor arm;
 
 
-    private boolean aPressed;
-    private boolean xPressed;
+
 
 
     public DriverOp() {
@@ -34,8 +33,7 @@ public class DriverOp extends OpMode {
     @Override
     public void init() {
 
-        aPressed = false;
-        xPressed = false;
+
 
         lDrive = hardwareMap.dcMotor.get("lDrive");
         rDrive = hardwareMap.dcMotor.get("rDrive");
