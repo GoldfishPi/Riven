@@ -146,7 +146,6 @@ public class AtonomusOp extends OpMode {
 
         arm = hardwareMap.dcMotor.get("arm");
 
-
         lCoffin = hardwareMap.dcMotor.get("lCoffin");
         rCoffin = hardwareMap.dcMotor.get("rCoffin");
         rCoffin.setDirection(DcMotor.Direction.REVERSE);
