@@ -114,10 +114,10 @@ public class DriverOp extends OpMode {
         }
         else{evening = false;}
         if(gamepad1.a){
-            driveEqual(backward);
+            driveEqual(forward);
         }
         if(gamepad1.y){
-            driveEqual(forward);
+            driveEqual(backward);
         }
 
         driveEncoderCheck(rDrive, lDrive);
@@ -234,18 +234,16 @@ public class DriverOp extends OpMode {
             }
         }
         if(direction == "backward"){
-            if(rDrive.getCurrentPosition() < lDrive.getCurrentPosition()){
-                rDrive.setPower(-0.1);
-                lDrive.setPower(-1.0);
-            }
-            else if(lDrive.getCurrentPosition() < lDrive.getCurrentPosition()){
+            if (rDrive.getCurrentPosition() > lDrive.getCurrentPosition()){
                 rDrive.setPower(-1.0);
                 lDrive.setPower(-0.1);
             }
-            else{
+            else if(lDrive.getCurrentPosition() > rDrive.getCurrentPosition()){
                 rDrive.setPower(-0.1);
-                lDrive.setPower(-0.1);
+                lDrive.setPower(-1.0);
             }
+            rDrive.setPower(-0.1);
+            lDrive.setPower(-0.1);
         }
     }
 }
