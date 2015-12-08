@@ -111,6 +111,9 @@ public class DriverOp extends OpMode {
             evenDriveMotors();
         }
         else{evening = false;}
+        if(gamepad1.a){
+            driveEqual();
+        }
 
         driveEncoderCheck(rDrive, lDrive);
     }
@@ -209,6 +212,21 @@ public class DriverOp extends OpMode {
         else{
             rDrive.setPower(0.0);
             lDrive.setPower(0.0);
+        }
+    }
+
+    public void driveEqual(){
+        if(rDrive.getCurrentPosition() > lDrive.getCurrentPosition()){
+            rDrive.setPower(0.1);
+            lDrive.setPower(1.0);
+        }
+        else if(lDrive.getCurrentPosition() > rDrive.getCurrentPosition() ){
+            rDrive.setPower(1.0);
+            lDrive.setPower(0.1);
+        }
+        else{
+            rDrive.setPower(0.1);
+            lDrive.setPower(0.1);
         }
     }
 }
