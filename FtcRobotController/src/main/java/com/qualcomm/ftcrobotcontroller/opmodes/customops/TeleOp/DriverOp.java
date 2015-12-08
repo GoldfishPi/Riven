@@ -45,11 +45,10 @@ public class DriverOp extends OpMode {
         lGill = hardwareMap.dcMotor.get("lGill");
         rGill = hardwareMap.dcMotor.get("rGill");
 
-        armOut = hardwareMap.dcMotor.get("lWinch");
-        armIn = hardwareMap.dcMotor.get("rWinch");
+        armOut = hardwareMap.dcMotor.get("armOut");
+        armIn = hardwareMap.dcMotor.get("armIn");
 
         arm = hardwareMap.dcMotor.get("arm");
-
 
         rDrive.setDirection(DcMotor.Direction.REVERSE);
         rFinger.setDirection(DcMotor.Direction.REVERSE);
