@@ -22,6 +22,9 @@ public class DriverOp extends OpMode {
 
     private DcMotor arm;
 
+    boolean rFast;
+    boolean lFast;
+
 
 
 
@@ -35,8 +38,8 @@ public class DriverOp extends OpMode {
 
 
 
-        lDrive = hardwareMap.dcMotor.get("lDrive");
-        rDrive = hardwareMap.dcMotor.get("rDrive");
+        lDrive = hardwareMap.dcMotor.get("LeftDrive");
+        rDrive = hardwareMap.dcMotor.get("RightDrive");
 
 
         lFinger = hardwareMap.dcMotor.get("lFinger");
@@ -100,6 +103,8 @@ public class DriverOp extends OpMode {
         else{
             rFinger.setPower(0.0);
         }
+
+        driveEncoderCheck(rDrive, lDrive);
     }
 
     public  void controllerTwo(){
@@ -119,6 +124,8 @@ public class DriverOp extends OpMode {
                 armOut.setPower(0.0);
                 armIn.setPower(0.5);
             }
+
+
         }
         //retracting arm controls
         else if (gamepad2.left_stick_y < 0.0){
@@ -166,6 +173,19 @@ public class DriverOp extends OpMode {
         }
 
 
+
+    }
+
+    public void driveEncoderCheck(DcMotor motor1, DcMotor motor2){
+        telemetry.addData("right to fast", rFast );
+        telemetry.addData("left to fast", lFast);
+        if(motor1.getCurrentPosition() > motor2.getCurrentPosition() +100){
+            rFast = true;
+        }else{rFast = false;}
+
+        if(motor2.getCurrentPosition() > motor1.getCurrentPosition() + 100){
+            lFast = true;
+        }else{lFast = false;}
 
     }
 }
