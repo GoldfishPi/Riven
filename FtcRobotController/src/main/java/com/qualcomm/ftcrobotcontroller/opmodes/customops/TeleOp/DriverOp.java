@@ -241,9 +241,10 @@ public class DriverOp extends OpMode {
             else if(lDrive.getCurrentPosition() > rDrive.getCurrentPosition()){
                 rDrive.setPower(-0.1);
                 lDrive.setPower(-1.0);
+            }else {
+                rDrive.setPower(-0.1);
+                lDrive.setPower(-0.1);
             }
-            rDrive.setPower(-0.1);
-            lDrive.setPower(-0.1);
         }
     }
 }
