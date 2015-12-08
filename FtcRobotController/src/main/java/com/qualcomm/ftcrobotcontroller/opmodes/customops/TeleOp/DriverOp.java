@@ -104,6 +104,10 @@ public class DriverOp extends OpMode {
             rFinger.setPower(0.0);
         }
 
+        if(gamepad1.x){
+            evenDriveMotors();
+        }
+
         driveEncoderCheck(rDrive, lDrive);
     }
 
@@ -187,6 +191,21 @@ public class DriverOp extends OpMode {
             lFast = true;
         }else{lFast = false;}
 
+    }
+
+    public void evenDriveMotors(){
+        if(rFast){
+            rDrive.setPower(1.0);
+            lDrive.setPower(0.0);
+        }
+        if(lFast){
+            rDrive.setPower(0.0);
+            lDrive.setPower(1.0);
+        }
+        else{
+            rDrive.setPower(0.0);
+            lDrive.setPower(0.0);
+        }
     }
 }
 
