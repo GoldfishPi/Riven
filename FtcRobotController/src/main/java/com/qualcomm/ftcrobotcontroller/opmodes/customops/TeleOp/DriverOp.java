@@ -23,6 +23,8 @@ public class DriverOp extends OpMode {
     private DcMotor arm;
 
     boolean evening = false;
+    String forward = "forward";
+    String backward = "backward";
 
     boolean rFast;
     boolean lFast;
@@ -112,7 +114,10 @@ public class DriverOp extends OpMode {
         }
         else{evening = false;}
         if(gamepad1.a){
-            driveEqual();
+            driveEqual(backward);
+        }
+        if(gamepad1.y){
+            driveEqual(forward);
         }
 
         driveEncoderCheck(rDrive, lDrive);
@@ -215,18 +220,32 @@ public class DriverOp extends OpMode {
         }
     }
 
-    public void driveEqual(){
-        if(rDrive.getCurrentPosition() > lDrive.getCurrentPosition()){
-            rDrive.setPower(0.1);
-            lDrive.setPower(1.0);
+    public void driveEqual(String direction){
+        if(direction == "forward") {
+            if (rDrive.getCurrentPosition() > lDrive.getCurrentPosition()) {
+                rDrive.setPower(0.1);
+                lDrive.setPower(1.0);
+            } else if (lDrive.getCurrentPosition() > rDrive.getCurrentPosition()) {
+                rDrive.setPower(1.0);
+                lDrive.setPower(0.1);
+            } else {
+                rDrive.setPower(0.1);
+                lDrive.setPower(0.1);
+            }
         }
-        else if(lDrive.getCurrentPosition() > rDrive.getCurrentPosition() ){
-            rDrive.setPower(1.0);
-            lDrive.setPower(0.1);
-        }
-        else{
-            rDrive.setPower(0.1);
-            lDrive.setPower(0.1);
+        if(direction == "backward"){
+            if(rDrive.getCurrentPosition() < lDrive.getCurrentPosition()){
+                rDrive.setPower(-0.1);
+                lDrive.setPower(-1.0);
+            }
+            else if(lDrive.getCurrentPosition() < lDrive.getCurrentPosition()){
+                rDrive.setPower(-1.0);
+                lDrive.setPower(-0.1);
+            }
+            else{
+                rDrive.setPower(-0.1);
+                lDrive.setPower(-0.1);
+            }
         }
     }
 }
