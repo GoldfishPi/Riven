@@ -38,8 +38,8 @@ public class DriverOp extends OpMode {
 
 
 
-        lDrive = hardwareMap.dcMotor.get("LeftDrive");
-        rDrive = hardwareMap.dcMotor.get("RightDrive");
+        lDrive = hardwareMap.dcMotor.get("leftDrive");
+        rDrive = hardwareMap.dcMotor.get("rightDrive");
 
 
         lFinger = hardwareMap.dcMotor.get("lFinger");
