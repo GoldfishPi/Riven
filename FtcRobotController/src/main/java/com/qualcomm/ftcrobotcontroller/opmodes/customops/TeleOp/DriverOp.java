@@ -22,6 +22,8 @@ public class DriverOp extends OpMode {
 
     private DcMotor arm;
 
+    boolean evening = false;
+
     boolean rFast;
     boolean lFast;
 
@@ -85,28 +87,28 @@ public class DriverOp extends OpMode {
         rDrive.setPower(gamepad1.right_stick_y);
 
         //Finger controls
-        if(gamepad1.left_trigger != 0.0){
-            lFinger.setPower(0.3);
-        }
-        else if(gamepad1.left_bumper){
-            lFinger.setPower(-0.3);
-        }
-        else{
-            lFinger.setPower(0.0);
-        }
-        if(gamepad1.right_trigger != 0.0){
-            rFinger.setPower(0.3);
-        }
-        else if(gamepad1.right_bumper){
-            rFinger.setPower(-0.3);
-        }
-        else{
-            rFinger.setPower(0.0);
+        if(!evening) {
+            if (gamepad1.left_trigger != 0.0) {
+                lFinger.setPower(0.3);
+            } else if (gamepad1.left_bumper) {
+                lFinger.setPower(-0.3);
+            } else {
+                lFinger.setPower(0.0);
+            }
+            if (gamepad1.right_trigger != 0.0) {
+                rFinger.setPower(0.3);
+            } else if (gamepad1.right_bumper) {
+                rFinger.setPower(-0.3);
+            } else {
+                rFinger.setPower(0.0);
+            }
         }
 
         if(gamepad1.x){
+            evening = true;
             evenDriveMotors();
         }
+        else{evening = false;}
 
         driveEncoderCheck(rDrive, lDrive);
     }
@@ -198,7 +200,7 @@ public class DriverOp extends OpMode {
             rDrive.setPower(1.0);
             lDrive.setPower(0.0);
         }
-        if(lFast){
+        else if(lFast){
             rDrive.setPower(0.0);
             lDrive.setPower(1.0);
         }
