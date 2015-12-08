@@ -76,6 +76,8 @@ public class DriverOp extends OpMode {
 
     @Override
     public void loop(){
+        telemetry.addData("Right Motor", rDrive.getCurrentPosition());
+        telemetry.addData("Left Motor", lDrive.getCurrentPosition());
         controllerOne();
         controllerTwo();
     }
