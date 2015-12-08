@@ -109,7 +109,7 @@ public class DriverOp extends OpMode {
         if (gamepad2.left_stick_y > 0.0) {
             if (armIn.getCurrentPosition() / 2 > armOut.getCurrentPosition() + 100 && armIn.getCurrentPosition() / 2 < armOut.getCurrentPosition() - 100){
                 armOut.setPower(-1.0);
-            armIn.setPower(0.5);
+                armIn.setPower(0.5);
             }
             else if(armIn.getCurrentPosition()/2 > armOut.getCurrentPosition() + 101) {
                 armOut.setPower(-1.0);
@@ -122,6 +122,19 @@ public class DriverOp extends OpMode {
         }
         //retracting arm controls
         else if (gamepad2.left_stick_y < 0.0){
+            if(armOut.getCurrentPosition() * 2 > armIn.getCurrentPosition() + 100 && armOut.getCurrentPosition() * 2 < armIn.getCurrentPosition() - 100){
+                armOut.setPower(1.0);
+                armIn.setPower(-0.5);
+            }
+            else if(armOut.getCurrentPosition() * 2 > armIn.getCurrentPosition() + 101){
+                armOut.setPower(0.0);
+                armIn.setPower(-0.5);
+            }
+            else if(armOut.getCurrentPosition() * 2 < armIn.getCurrentPosition() - 101){
+                armOut.setPower(1.0);
+                armIn.setPower(0.0);
+            }
+
             armOut.setPower(1.0);
             armIn.setPower(-0.5);
         }
