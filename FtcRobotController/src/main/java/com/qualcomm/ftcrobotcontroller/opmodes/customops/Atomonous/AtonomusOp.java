@@ -320,7 +320,7 @@ public class AtonomusOp extends OpMode {
 
         setDriveSpeed(0.5, 5.0);
 
-        driveEqual("forward");
+
 
     }
 
