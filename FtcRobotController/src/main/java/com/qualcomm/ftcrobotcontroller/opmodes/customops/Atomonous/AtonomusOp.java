@@ -324,7 +324,10 @@ public class AtonomusOp extends OpMode {
 
     }
 
-    public void turnRobot( double dRadius , double dDegreeTurn ){
+    public void turnRobot( double dRadius, double dDegreeTurn ){
+
+        dRadius = 24;
+        dDegreeTurn = 45;
 
         dOutsideWheelDistance = dDegreeTurn * Math.PI * dRadius / 180;
         wheelCircumfrance = 4 * Math.PI;
