@@ -3,6 +3,7 @@ package com.qualcomm.ftcrobotcontroller.opmodes.customops.TeleOp;
 import com.qualcomm.ftcrobotcontroller.opmodes.Junk.MatrixK9TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorController;
 
 /**
  * Created by goldfishpi on 11/21/15.
@@ -24,11 +25,20 @@ public class DriverOp extends OpMode {
     private DcMotor arm;
 
     boolean evening = false;
+
     String forward = "forward";
     String backward = "backward";
 
+    private boolean encoderInit = false;
+    private int[] encoderValues;
+    private int addedFirstEncoders;
+    private int addedSecoundEncoders;
+
+
     boolean rFast;
     boolean lFast;
+
+
 
 
 
@@ -43,20 +53,20 @@ public class DriverOp extends OpMode {
 
 
 
-        lDrive = hardwareMap.dcMotor.get("leftDrive");
-        rDrive = hardwareMap.dcMotor.get("rightDrive");
+        lDrive  = hardwareMap.dcMotor.get("leftDrive");
+        rDrive  = hardwareMap.dcMotor.get("rightDrive");
 
 
         lFinger = hardwareMap.dcMotor.get("lFinger");
         rFinger = hardwareMap.dcMotor.get("rFinger");
 
-        lGill = hardwareMap.dcMotor.get("lGill");
-        rGill = hardwareMap.dcMotor.get("rGill");
+        lGill   = hardwareMap.dcMotor.get("lGill");
+        rGill   = hardwareMap.dcMotor.get("rGill");
 
-        armOut = hardwareMap.dcMotor.get("armOut");
-        armIn = hardwareMap.dcMotor.get("armIn");
+        armOut  = hardwareMap.dcMotor.get("armOut");
+        armIn   = hardwareMap.dcMotor.get("armIn");
 
-        arm = hardwareMap.dcMotor.get("arm");
+        arm     = hardwareMap.dcMotor.get("arm");
 
         rDrive.setDirection(DcMotor.Direction.REVERSE);
         rFinger.setDirection(DcMotor.Direction.REVERSE);
@@ -74,6 +84,12 @@ public class DriverOp extends OpMode {
     @Override
     public void init_loop(){
 
+        resetEncoders(lDrive);
+        resetEncoders(rDrive);
+        resetEncoders(armIn);
+        resetEncoders(armOut);
+        resetEncoders(arm);
+
 
     }
 
@@ -88,11 +104,12 @@ public class DriverOp extends OpMode {
     public void controllerOne(){
 
         //Drive controls
+        if(!evening) {
         lDrive.setPower(gamepad1.left_stick_y);
         rDrive.setPower(gamepad1.right_stick_y);
 
         //Finger controls
-        if(!evening) {
+
             if (gamepad1.left_trigger != 0.0) {
                 lFinger.setPower(0.3);
             } else if (gamepad1.left_bumper) {
@@ -127,7 +144,6 @@ public class DriverOp extends OpMode {
 
 
     public  void controllerTwo(){
-
 
         //extending arm controls.
         if (gamepad2.left_stick_y > 0.0) {
@@ -217,30 +233,41 @@ public class DriverOp extends OpMode {
 
     public void driveEqual(String direction){
         if(direction == "forward") {
-            if (rDrive.getCurrentPosition() > lDrive.getCurrentPosition()) {
-                rDrive.setPower(0.1);
-                lDrive.setPower(1.0);
-            } else if (lDrive.getCurrentPosition() > rDrive.getCurrentPosition()) {
-                rDrive.setPower(1.0);
-                lDrive.setPower(0.1);
+            if (encoderInit) {
+                encoderInit = false;
+
+                encoderValues[0] = armOut.getCurrentPosition();
+                encoderValues[1] = armIn.getCurrentPosition();
             } else {
-                rDrive.setPower(0.1);
-                lDrive.setPower(0.1);
+                encoderValues[3] = armIn.getCurrentPosition();
+                encoderValues[2] = armOut.getCurrentPosition();
+                addedFirstEncoders = encoderValues[0] + encoderValues[1];
+                addedSecoundEncoders = encoderValues[2] + encoderValues[3];
+                addedSecoundEncoders /= 2;
+                addedFirstEncoders /= 2;
+                if (addedFirstEncoders - addedSecoundEncoders == 0) {
+
+                    armOut.setPower(1.0);
+                    armIn.setPower(-0.5);
+
+
+                }else if(addedFirstEncoders - addedSecoundEncoders != 0){
+                    armOut.setPower(1.0);
+                    armIn.setPower(0.0);
+                }else {
+
+
+                }
             }
         }
         if(direction == "backward"){
-            if (rDrive.getCurrentPosition() > lDrive.getCurrentPosition()){
-                rDrive.setPower(-1.0);
-                lDrive.setPower(-0.1);
-            }
-            else if(lDrive.getCurrentPosition() > rDrive.getCurrentPosition()){
-                rDrive.setPower(-0.1);
-                lDrive.setPower(-1.0);
-            }else {
-                rDrive.setPower(-0.1);
-                lDrive.setPower(-0.1);
-            }
+
         }
     }
+
+    public void resetEncoders(DcMotor motor){
+        motor.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
+    }
+
 }
 
