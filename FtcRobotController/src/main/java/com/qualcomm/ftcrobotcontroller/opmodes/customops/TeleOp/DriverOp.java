@@ -139,6 +139,7 @@ public class DriverOp extends OpMode {
             else if(armIn.getCurrentPosition()/2 < armOut.getCurrentPosition() - 101) {
                 armOut.setPower(0.0);
                 armIn.setPower(0.5);
+
             }
 
 

@@ -75,7 +75,7 @@ public class AtonomusOp extends OpMode {
 
     };
 
-    final double COUNT_PER_INCH_DRIVE = 56;
+    final double COUNT_PER_INCH_DRIVE = 120;
 
     final double RANGE = 10;
 
@@ -84,14 +84,14 @@ public class AtonomusOp extends OpMode {
     // motor declearations
     //-------------------------------
 
-    private DcMotor lDrive;
-    private DcMotor rDrive;
+    private DcMotor leftDrive;
+    private DcMotor rightDrive;
 
     //private DcMotor lFinger;
     //private DcMotor rFinger;
 
-    private DcMotor lWinch;
-    private DcMotor rWinch;
+    private DcMotor armOut;
+    private DcMotor armIn;
 
     private DcMotor lArm;
     private DcMotor rArm;
@@ -133,16 +133,16 @@ public class AtonomusOp extends OpMode {
     @Override
     public void init() {
 
-        lDrive = hardwareMap.dcMotor.get("lDrive");
-        rDrive = hardwareMap.dcMotor.get("rDrive");
-        rDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftDrive = hardwareMap.dcMotor.get("leftDrive");
+        rightDrive = hardwareMap.dcMotor.get("rightDrive");
+        rightDrive.setDirection(DcMotor.Direction.REVERSE);
 
         //lFinger = hardwareMap.dcMotor.get("lFinger");
         //rFinger = hardwareMap.dcMotor.get("rFinger");
 
-        lWinch = hardwareMap.dcMotor.get("lWinch");
-        rWinch = hardwareMap.dcMotor.get("rWinch");
-        rWinch.setDirection(DcMotor.Direction.REVERSE);
+        armOut = hardwareMap.dcMotor.get("armOut");
+        armIn = hardwareMap.dcMotor.get("armIn");
+        armIn.setDirection(DcMotor.Direction.REVERSE);
 
         arm = hardwareMap.dcMotor.get("arm");
 
@@ -298,20 +298,20 @@ public class AtonomusOp extends OpMode {
 
     void setEncoderTarget(int leftEncoder, int rightEncoder) {
 
-        lDrive.setTargetPosition(leftEncoderTarget = leftEncoder);
-        rDrive.setTargetPosition(rightEncoderTarget = rightEncoder);
+        leftDrive.setTargetPosition(leftEncoderTarget = leftEncoder);
+        rightDrive.setTargetPosition(rightEncoderTarget = rightEncoder);
 
     }
 
     void addEncoderTarget(int leftEncoder, int rightEncoder) {
 
-        lDrive.setTargetPosition(leftEncoderTarget += leftEncoder);
-        rDrive.setTargetPosition(rightEncoderTarget += rightEncoder);
+        leftDrive.setTargetPosition(leftEncoderTarget += leftEncoder);
+        rightDrive.setTargetPosition(rightEncoderTarget += rightEncoder);
     }
 
     void setDrivePower(double leftPower, double rightPower) {
-        lDrive.setPower(Range.clip(leftPower, -1, 1));
-        rDrive.setPower(Range.clip(rightPower, -1, 1));
+        leftDrive.setPower(Range.clip(leftPower, -1, 1));
+        rightDrive.setPower(Range.clip(rightPower, -1, 1));
     }
 
     void setDriveSpeed(double leftSpeed, double rightSpeed) {
@@ -342,8 +342,8 @@ public class AtonomusOp extends OpMode {
 
     void setWinchPower(double leftWinchPower, double rightWinchPower) {
 
-        lWinch.setPower(Range.clip(leftWinchPower, -1, 1));
-        rWinch.setPower(Range.clip(rightWinchPower, -1, 1));
+        armOut.setPower(Range.clip(leftWinchPower, -1, 1));
+        armIn.setPower(Range.clip(rightWinchPower, -1, 1));
     }
 
     void setWinchSpeed(double leftWinchSpeed, double rightWinchSpeed) {
@@ -375,24 +375,24 @@ public class AtonomusOp extends OpMode {
 
     void synchEncoders() {
 
-        leftEncoderTarget = lDrive.getCurrentPosition();
-        rightEncoderTarget = rDrive.getCurrentPosition();
+        leftEncoderTarget = leftDrive.getCurrentPosition();
+        rightEncoderTarget = rightDrive.getCurrentPosition();
     }
 
     public void setDriveMode(DcMotorController.RunMode mode) {
-        if (lDrive.getChannelMode() != mode)
-            lDrive.setChannelMode(mode);
+        if (leftDrive.getChannelMode() != mode)
+            leftDrive.setChannelMode(mode);
 
-        if (rDrive.getChannelMode() != mode)
-            rDrive.setChannelMode(mode);
+        if (rightDrive.getChannelMode() != mode)
+            rightDrive.setChannelMode(mode);
     }
 
     int getLeftPosition() {
-        return lDrive.getCurrentPosition();
+        return leftDrive.getCurrentPosition();
     }
 
     int getRightPosition() {
-        return rDrive.getCurrentPosition();
+        return rightDrive.getCurrentPosition();
 
     }
 
