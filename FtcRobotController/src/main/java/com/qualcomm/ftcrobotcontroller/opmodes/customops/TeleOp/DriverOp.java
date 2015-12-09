@@ -1,5 +1,6 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.customops.TeleOp;
 
+import com.qualcomm.ftcrobotcontroller.opmodes.Junk.MatrixK9TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -123,42 +124,30 @@ public class DriverOp extends OpMode {
         driveEncoderCheck(rDrive, lDrive);
     }
 
+
+
     public  void controllerTwo(){
 
 
         //extending arm controls.
         if (gamepad2.left_stick_y > 0.0) {
-            if (armIn.getCurrentPosition() / 2 > armOut.getCurrentPosition() + 100 && armIn.getCurrentPosition() / 2 < armOut.getCurrentPosition() - 100){
+            if(armIn.getCurrentPosition() > armOut.getCurrentPosition()/2){
+
                 armOut.setPower(-1.0);
-                armIn.setPower(0.5);
-            }
-            else if(armIn.getCurrentPosition()/2 > armOut.getCurrentPosition() + 101) {
-                armOut.setPower(-1.0);
-                armIn.setPower(0.0);
-            }
-            else if(armIn.getCurrentPosition()/2 < armOut.getCurrentPosition() - 101) {
-                armOut.setPower(0.0);
+                armIn.setPower(0.1);
+
+            }else if( armOut.getCurrentPosition()/2 > armIn.getCurrentPosition() ){
+                armOut.setPower(-0.1);
                 armIn.setPower(0.5);
 
+            }else{
+                armOut.setPower(-1.0);
+                armIn.setPower(0.5);
+
             }
-
-
         }
         //retracting arm controls
         else if (gamepad2.left_stick_y < 0.0){
-            if(armOut.getCurrentPosition() * 2 > armIn.getCurrentPosition() + 100 && armOut.getCurrentPosition() * 2 < armIn.getCurrentPosition() - 100){
-                armOut.setPower(1.0);
-                armIn.setPower(-0.5);
-            }
-            else if(armOut.getCurrentPosition() * 2 > armIn.getCurrentPosition() + 101){
-                armOut.setPower(0.0);
-                armIn.setPower(-0.5);
-            }
-            else if(armOut.getCurrentPosition() * 2 < armIn.getCurrentPosition() - 101){
-                armOut.setPower(1.0);
-                armIn.setPower(0.0);
-            }
-
             armOut.setPower(1.0);
             armIn.setPower(-0.5);
         }
