@@ -329,11 +329,11 @@ public class AtonomusOp extends OpMode {
         dOutsideWheelDistance = dDegreeTurn * Math.PI * dRadius / 180;
         wheelCircumfrance = 4 * Math.PI;
 
-        adRotatingRobotDrive[0] = wheelCircumfrance * (80 / 40) * 1440 / 40;
+        adRotatingRobotDrive[0] = wheelCircumfrance * (80 / 40) * 1120;
 
         dInsideWheelDistance = dDegreeTurn * Math.PI * (dRadius + wheelBase);
 
-        adRotatingRobotDrive[1] = wheelCircumfrance * (80 / 40) * 1440 / 40;
+        adRotatingRobotDrive[1] = wheelCircumfrance * (80 / 40) * 1120;
 
         adRotatingRobotDrive[2] =   adRotatingRobotDrive[0] /   adRotatingRobotDrive[1];
 
