@@ -142,15 +142,11 @@ public class AtonomusOp extends OpMode {
         //lFinger = hardwareMap.dcMotor.get("lFinger");
         //rFinger = hardwareMap.dcMotor.get("rFinger");
 
-        lWinch = hardwareMap.dcMotor.get("lWinch");
-        rWinch = hardwareMap.dcMotor.get("rWinch");
+        lWinch = hardwareMap.dcMotor.get("armOut");
+        rWinch = hardwareMap.dcMotor.get("armIn");
         rWinch.setDirection(DcMotor.Direction.REVERSE);
 
         arm = hardwareMap.dcMotor.get("arm");
-
-        lCoffin = hardwareMap.dcMotor.get("lCoffin");
-        rCoffin = hardwareMap.dcMotor.get("rCoffin");
-        rCoffin.setDirection(DcMotor.Direction.REVERSE);
 
         setDrivePower(0, 0);
         resetDriveEncoders();
