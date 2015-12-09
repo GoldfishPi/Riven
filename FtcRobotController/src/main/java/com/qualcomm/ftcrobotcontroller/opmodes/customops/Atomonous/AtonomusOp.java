@@ -34,16 +34,9 @@ public class AtonomusOp extends OpMode {
     private enum State {
 
         STATE_INITIAL,
-        STATE_DRIVE_TO_MIDDLE ,
-        STATE_TURN,
-        STATE_DRIVE_TO_WALL,
-        STATE_RAISE_ARM,
-        STATE_EXTEND_ARM,
-        STATE_DRIVE_BACK,
-        STATE_TURN_TO_RAMP,
-        STATE_RAISE_ARM_MOUNTAIN,
-        STATE_LOWER_ARM_SLIGHTLY,
-        STATE_PULL_ROBOT,
+        STATE_DRIVE_FORWARD,
+
+
 
         STATE_STOP,
 
@@ -75,7 +68,7 @@ public class AtonomusOp extends OpMode {
 
     };
 
-    final double COUNT_PER_INCH_DRIVE = 120;
+    final double COUNT_PER_INCH_DRIVE = 56;
 
     final double RANGE = 10;
 
@@ -90,10 +83,8 @@ public class AtonomusOp extends OpMode {
     //private DcMotor lFinger;
     //private DcMotor rFinger;
 
-    private DcMotor armOut;
-    private DcMotor armIn;
-
-    private double distanceBetweenWheels = 15.75;
+    private DcMotor lWinch;
+    private DcMotor rWinch;
 
     private DcMotor lArm;
     private DcMotor rArm;
@@ -107,6 +98,13 @@ public class AtonomusOp extends OpMode {
 
     public LightSensor frontLightSensor;
     public LightSensor backLightSensor;
+
+   double wheelBase = 15.75f;
+    double wheelCircumfrance;
+    double dInsideWheelDistance;
+    double dOutsideWheelDistance;
+    double[] adRotatingRobotDrive = new double[3];
+
 
     public OpticalDistanceSensor distanceSonsor;
     public LightSensor lightSensor;
@@ -132,6 +130,8 @@ public class AtonomusOp extends OpMode {
 
     }
 
+
+
     @Override
     public void init() {
 
@@ -142,9 +142,9 @@ public class AtonomusOp extends OpMode {
         //lFinger = hardwareMap.dcMotor.get("lFinger");
         //rFinger = hardwareMap.dcMotor.get("rFinger");
 
-        armOut = hardwareMap.dcMotor.get("armOut");
-        armIn = hardwareMap.dcMotor.get("armIn");
-        armIn.setDirection(DcMotor.Direction.REVERSE);
+        lWinch = hardwareMap.dcMotor.get("lWinch");
+        rWinch = hardwareMap.dcMotor.get("rWinch");
+        rWinch.setDirection(DcMotor.Direction.REVERSE);
 
         arm = hardwareMap.dcMotor.get("arm");
 
@@ -187,96 +187,23 @@ public class AtonomusOp extends OpMode {
                 STATE_RAISE_ARM_MOUNTAIN,
                 STATE_LOWER_ARM_SLIGHTLY,
                 PULL_ROBOT,
-
                 STATE_STOP,*/
 
         switch (currentState) {
             case STATE_INITIAL:
                 if (encodersAtZero()) {
                     setDriveSpeed(1.0, 1.0);
+                    driveTurn((int) adRotatingRobotDrive[0], (int) adRotatingRobotDrive[1]);
                     startPath(driveForward);
-                    newState(State.STATE_DRIVE_TO_MIDDLE);
+                    newState(State.STATE_DRIVE_FORWARD);
                 }
                 break;
-
-            case STATE_DRIVE_TO_MIDDLE:
-
-                if (pathComplete()) {
-
-                    startPath(turn90);
-                    newState(State.STATE_TURN);
-                }
-                break;
-
-            case STATE_TURN:
-
-                if (pathComplete()) {
-
-                    setDriveSpeed(0.3, 0.3);
-                    newState(State.STATE_DRIVE_TO_WALL);
+            case STATE_DRIVE_FORWARD:
+                if(moveComplete()){
+                    newState(State.STATE_STOP);
                 }
 
-                break;
 
-            case STATE_DRIVE_TO_WALL:
-
-                if (distanceSonsor.getLightDetected() > RANGE) {
-
-                    setDriveSpeed(0.0, 0.0);
-                    setArmSpeed(0.3);
-                    newState(State.STATE_RAISE_ARM);
-                }
-                break;
-
-            case STATE_RAISE_ARM:
-
-                if (stateTime.time() > 3.0) {
-                    setArmSpeed(0.0);
-                    setWinchSpeed(0.5, 0.5);
-                    newState(State.STATE_EXTEND_ARM);
-                }
-                break;
-
-            case STATE_EXTEND_ARM:
-                if (stateTime.time() > 3.0) {
-                    setWinchSpeed(0.0, 0.0);
-                    setCoffinSpeed(0.1, 0.1);
-                    startPath(driveBack);
-                    newState(State.STATE_DRIVE_BACK);
-                }
-                break;
-
-            case STATE_DRIVE_BACK:
-                if (pathComplete()) {
-                    setDriveSpeed(0.0, 0.0);
-                    newState(State.STATE_TURN_TO_RAMP);
-                    break;
-                }
-
-            case STATE_TURN_TO_RAMP:
-                resetDriveEncoders();
-                startPath(turn45);
-                newState(State.STATE_RAISE_ARM_MOUNTAIN);
-                break;
-            case STATE_RAISE_ARM_MOUNTAIN:
-                if(pathComplete()){
-                    setArmSpeed(0.3);
-
-                    if( lArm.getTargetPosition() > 1000 ){
-                        newState(State.STATE_LOWER_ARM_SLIGHTLY);
-                        break;
-                    }
-                }
-                break;
-            case STATE_LOWER_ARM_SLIGHTLY:
-
-                setArmSpeed(-0.3);
-                if(lArm.getTargetPosition() < 750)
-
-                break;
-            case STATE_PULL_ROBOT:
-                setWinchSpeed(-0.3, -0.6);
-                break;
             case STATE_STOP:
                 break;
         }
@@ -344,8 +271,8 @@ public class AtonomusOp extends OpMode {
 
     void setWinchPower(double leftWinchPower, double rightWinchPower) {
 
-        armOut.setPower(Range.clip(leftWinchPower, -1, 1));
-        armIn.setPower(Range.clip(rightWinchPower, -1, 1));
+        lWinch.setPower(Range.clip(leftWinchPower, -1, 1));
+        rWinch.setPower(Range.clip(rightWinchPower, -1, 1));
     }
 
     void setWinchSpeed(double leftWinchSpeed, double rightWinchSpeed) {
@@ -389,6 +316,66 @@ public class AtonomusOp extends OpMode {
             rightDrive.setChannelMode(mode);
     }
 
+    public void driveTurn(int left, int right) {
+
+        setEncoderTarget(left, right);
+
+
+
+        setDriveSpeed(0.5, 5.0);
+
+        driveEqual("forward");
+
+    }
+
+    public void turnRobot( double dRadius , double dDegreeTurn ){
+
+        dOutsideWheelDistance = dDegreeTurn * Math.PI * dRadius / 180;
+        wheelCircumfrance = 4 * Math.PI;
+
+        adRotatingRobotDrive[0] = wheelCircumfrance * (80 / 40) * 1044;
+
+        dInsideWheelDistance = dDegreeTurn * Math.PI * (dRadius + wheelBase);
+
+        adRotatingRobotDrive[1] = wheelCircumfrance * (80 / 40) * 1044;
+
+        adRotatingRobotDrive[2] =   adRotatingRobotDrive[0] /   adRotatingRobotDrive[1];
+
+
+
+
+
+
+
+    }
+
+    public void driveEqual(String Direction) {
+        if (Direction == "forward") {
+            if (rightDrive.getCurrentPosition() > leftDrive.getCurrentPosition()) {
+                rightDrive.setPower(0.1);
+                leftDrive.setPower(1.0);
+            } else if (leftDrive.getCurrentPosition() > rightDrive.getCurrentPosition()) {
+                rightDrive.setPower(1.0);
+                leftDrive.setPower(0.1);
+            } else {
+                rightDrive.setPower(0.1);
+                leftDrive.setPower(0.1);
+            }
+        }
+        if (Direction == "backward") {
+            if (rightDrive.getCurrentPosition() > leftDrive.getCurrentPosition()) {
+                rightDrive.setPower(-1.0);
+                leftDrive.setPower(-0.1);
+            } else if (leftDrive.getCurrentPosition() > rightDrive.getCurrentPosition()) {
+                rightDrive.setPower(-0.1);
+                leftDrive.setPower(-1.0);
+            } else {
+                rightDrive.setPower(-0.1);
+                leftDrive.setPower(-0.1);
+            }
+        }}
+
+
     int getLeftPosition() {
         return leftDrive.getCurrentPosition();
     }
@@ -430,6 +417,7 @@ public class AtonomusOp extends OpMode {
         }
     }
 
+
     private boolean pathComplete() {
         if (moveComplete()) {
             if (currentSeg < currentPath.length) {
@@ -459,16 +447,11 @@ public class AtonomusOp extends OpMode {
                 System.out.println("[" + name + "] [SEVERE] " + message);
                 break;
         }
-
-
-
     }
 
     public static enum DebugLevel {
         INFO, WARNING, SEVERE;
     }
-
-    public void turn45(){}
 }
 
 class PathSeg {
@@ -483,41 +466,5 @@ class PathSeg {
         speed = Speed;
 
 
-
-
     }
-}}
-
-
-class turn
-
-    public void turn45(float fRadius, float fDegreeTurn) {
-
-        float wheelBase = 15.75;
-        float fWheelCircumfrance;
-        float fDistanceInsideTurn;
-        float fDistanceOutsideTurn;
-        float fEncoder2;
-        float fEncoder1;
-        float ret = [3];
-
-
-        fDistanceInsideTurn = fDegreeTurn * Math.PI / 180 * fRadius;
-
-        fWheelCircumfrance = 4 * Math.PI;
-
-        ret[0] = fWheelCircumfrance * 2 * 1044;
-
-        fDistanceOutsideTurn = fDegreeTurn * Math.PI / 180 * (fRadius + 15.75);
-
-        ret[1] = fWheelCircumfrance * 2 * 1044;
-    }
-
-
-
-
-
-    }
-
-
-//sup sup
+}
