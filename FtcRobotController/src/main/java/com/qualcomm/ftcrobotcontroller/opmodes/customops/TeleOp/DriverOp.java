@@ -150,9 +150,9 @@ public class DriverOp extends OpMode {
             armOut.setPower(1.0);
             armIn.setPower(-0.5);
         }else if(gamepad2.y){
-            armOut.setPower(0.1);
+            armOut.setPower(-0.1);
         }else if(gamepad2.a){
-            armIn.setPower(-0.1);
+            armIn.setPower(0.1);
         }
         else {
             armOut.setPower(0.0);
