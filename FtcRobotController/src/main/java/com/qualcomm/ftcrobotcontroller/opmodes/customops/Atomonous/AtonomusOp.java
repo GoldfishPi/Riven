@@ -93,6 +93,8 @@ public class AtonomusOp extends OpMode {
     private DcMotor armOut;
     private DcMotor armIn;
 
+    private double distanceBetweenWheels = 15.75;
+
     private DcMotor lArm;
     private DcMotor rArm;
     private DcMotor arm;
@@ -457,11 +459,16 @@ public class AtonomusOp extends OpMode {
                 System.out.println("[" + name + "] [SEVERE] " + message);
                 break;
         }
+
+
+
     }
 
     public static enum DebugLevel {
         INFO, WARNING, SEVERE;
     }
+
+    public void turn45(){}
 }
 
 class PathSeg {
@@ -476,7 +483,41 @@ class PathSeg {
         speed = Speed;
 
 
+
+
     }
-}
+}}
+
+
+class turn
+
+    public void turn45(float fRadius, float fDegreeTurn) {
+
+        float wheelBase = 15.75;
+        float fWheelCircumfrance;
+        float fDistanceInsideTurn;
+        float fDistanceOutsideTurn;
+        float fEncoder2;
+        float fEncoder1;
+        float ret = [3];
+
+
+        fDistanceInsideTurn = fDegreeTurn * Math.PI / 180 * fRadius;
+
+        fWheelCircumfrance = 4 * Math.PI;
+
+        ret[0] = fWheelCircumfrance * 2 * 1044;
+
+        fDistanceOutsideTurn = fDegreeTurn * Math.PI / 180 * (fRadius + 15.75);
+
+        ret[1] = fWheelCircumfrance * 2 * 1044;
+    }
+
+
+
+
+
+    }
+
 
 //sup sup
