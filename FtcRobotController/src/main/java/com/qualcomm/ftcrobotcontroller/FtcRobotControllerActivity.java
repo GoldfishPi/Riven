@@ -224,7 +224,7 @@ public class FtcRobotControllerActivity extends Activity {
   public void onWindowFocusChanged(boolean hasFocus){
     super.onWindowFocusChanged(hasFocus);
     // When the window loses focus (e.g., the action overflow is shown),
-    // cancel any pending hide action. When the window gains focus,
+    // cancel any pending hide action. When the window gains focus,  rWinch.setDirection(DcMotor.Direction.REVERSE);
     // hide the system UI.
     if (hasFocus) {
       if (ImmersiveMode.apiOver19()){

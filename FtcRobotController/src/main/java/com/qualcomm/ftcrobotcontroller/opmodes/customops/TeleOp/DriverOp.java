@@ -172,17 +172,7 @@ public class DriverOp extends OpMode {
             aPressed = false;
         }
 
-
-        if(gamepad2.right_stick_y > 0){
-            arm.setPower(1.0);
-        }
-        else if(gamepad2.right_stick_y < 0){
-            arm.setPower(-1.0);
-        }
-
-        else{
-            arm.setPower(0.0);
-        }
+        arm.setPower(gamepad2.right_stick_y);
 
         //gill controls
         if(gamepad2.left_trigger != 0.0){
@@ -205,7 +195,6 @@ public class DriverOp extends OpMode {
         else{
             rGill.setPower(0.0);
         }
-
 
 
     }
@@ -278,7 +267,6 @@ public class DriverOp extends OpMode {
                 armOut.setPower(driveSpeed);
                 armIn.setPower(slowSpeed);
             }
-
 
             armOut.setTargetPosition(armOut.getCurrentPosition() + (int) (rotation));
             armIn.setTargetPosition((int) (armIn.getCurrentPosition() + (rotation / ratio)));
