@@ -176,17 +176,29 @@ public class DriverOp extends OpMode {
 
         //Arm up and down
 
+
+        if (gamepad2.right_stick_y < 0.0 && !armRatchet) {
+            arm.setTargetPosition((int)(arm.getCurrentPosition() + rotation));
+            arm.setPower(0.4);
+            armRatchet = true;
+        }
+        else if(gamepad2.right_stick_y == 0 && armRatchet){
+            arm.setPower(0.0);
+            armRatchet = false;
+        }
+
+
+
         if (gamepad2.right_stick_y > 0.0 && !armRatchet) {
             arm.setTargetPosition((int)(arm.getCurrentPosition() + rotation));
             arm.setPower(0.4);
             armRatchet = true;
         }
-        else if(gamepad2.right_stick_y == 0){
+        else if(gamepad2.right_stick_y == 0 && armRatchet){
             arm.setPower(0.0);
-        }
-        else if (gamepad2.right_stick_y < 0 && armRatchet) {
             armRatchet = false;
         }
+
 
         //gill controls
         if(gamepad2.left_trigger != 0.0){
@@ -198,6 +210,8 @@ public class DriverOp extends OpMode {
         else{
             lGill.setPower(0.0);
         }
+
+
 
 
         if(gamepad2.right_trigger !=0){
