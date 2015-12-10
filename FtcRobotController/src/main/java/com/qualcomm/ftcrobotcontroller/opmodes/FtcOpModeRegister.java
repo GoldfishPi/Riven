@@ -33,6 +33,7 @@ package com.qualcomm.ftcrobotcontroller.opmodes;
 
 import com.qualcomm.ftcrobotcontroller.opmodes.Junk.NullOp;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.Atomonous.AtonomusOp;
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.Atomonous.siver;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.TeleOp.ArmTest;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.TeleOp.DriverOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
@@ -63,6 +64,7 @@ public class FtcOpModeRegister implements OpModeRegister {
     manager.register("Atonomus", AtonomusOp.class);
     manager.register("Driver Op", DriverOp.class);
     manager.register("test drive", ArmTest.class);
+    manager.register("motor test", siver.class);
 
     manager.register("NullOp", NullOp.class);
 

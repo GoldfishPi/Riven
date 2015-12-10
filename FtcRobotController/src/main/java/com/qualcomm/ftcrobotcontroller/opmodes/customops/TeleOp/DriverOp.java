@@ -133,7 +133,7 @@ public class DriverOp extends OpMode {
             } else if (gamepad1.left_bumper) {
                 lFinger.setPower(-0.3);
             } else {
-                lFinger.setPower(0.0);
+                 lFinger.setPower(0.0);
             }
             if (gamepad1.right_trigger != 0.0) {
                 rFinger.setPower(0.3);

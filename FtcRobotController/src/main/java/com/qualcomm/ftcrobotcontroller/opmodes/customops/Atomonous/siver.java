@@ -1,6 +1,5 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.customops.Atomonous;
 
-import com.qualcomm.ftcrobotcontroller.opmodes.customops.TeleOp.DriverOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
@@ -39,8 +38,6 @@ public class siver extends OpMode {
 
     //powers
     private double lowPower = 0.3;
-
-    private DriverOp driverOp = new DriverOp();
 
 
     @Override
@@ -90,8 +87,6 @@ public class siver extends OpMode {
 
         armIn.setPower(0.1);
         armIn.setTargetPosition(100);
-
-        driverOp.resetEncoders(armIn);
 
 
 

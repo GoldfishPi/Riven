@@ -108,13 +108,10 @@ public class AtonomusOp extends OpMode {
         arm = hardwareMap.dcMotor.get("arm");
 
         setDrivePower(0, 0);
-
-
     }
 
     @Override
     public void init_loop() {
-
 
 
     }
