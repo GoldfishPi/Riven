@@ -1,5 +1,9 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.customops.TeleOp;
 
+import android.media.MediaPlayer;
+import android.provider.MediaStore;
+
+import com.qualcomm.ftcrobotcontroller.R;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
@@ -49,12 +53,6 @@ public class DriverOp extends OpMode {
     private boolean yPressed = false;
     private boolean aPressed = false;
 
-
-
-
-
-
-
     public DriverOp() {
 
     }
@@ -81,7 +79,16 @@ public class DriverOp extends OpMode {
         rFinger.setDirection(DcMotor.Direction.REVERSE);
         rGill.setDirection(DcMotor.Direction.REVERSE);
         armIn.setDirection(DcMotor.Direction.FORWARD);
-        armOut.setDirection(DcMotor.Direction.FORWARD           );
+        armOut.setDirection(DcMotor.Direction.FORWARD);
+        resetEncoders(lDrive);
+        resetEncoders(rDrive);
+        resetEncoders(armIn);
+        resetEncoders(armOut);
+        resetEncoders(arm);
+        arm.setChannelMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
+
+        armOutInital = armOut.getCurrentPosition() + 100000;
+        armInInital = armIn.getCurrentPosition() + 100000;
 
     }
 
@@ -148,26 +155,35 @@ public class DriverOp extends OpMode {
 
 
 //toggles arm out with gamepad.2's y button arm in with gampad.2's a button
-        if (gamepad2.y && !yPressed){
+        if (gamepad2.y){
+
             yPressed = true;
-            extendEqual("out");
+            extendEqual("out", Math.abs(gamepad2.left_stick_y));
         }
         else if(!gamepad2.y && yPressed){
             yPressed = false;
         }
 
-        if (gamepad2.a && !aPressed) {
+        if (gamepad2.a ) {
             aPressed = true;
-            extendEqual("in");
+            extendEqual("in", Math.abs(gamepad2.left_stick_y));
         }
         else if (!gamepad2.a && aPressed ){
             aPressed = false;
         }
 
 
+        if(gamepad2.right_stick_y > 0){
+            arm.setPower(1.0);
+        }
+        else if(gamepad2.right_stick_y < 0){
+            arm.setPower(-1.0);
+        }
 
-        //raising arm controls
-        arm.setPower(gamepad2.right_stick_y);
+        else{
+            arm.setPower(0.0);
+        }
+
         //gill controls
         if(gamepad2.left_trigger != 0.0){
             lGill.setPower(0.5);
@@ -222,7 +238,15 @@ public class DriverOp extends OpMode {
         }
     }
 
-    public void extendEqual(String direction){
+    public void extendEqual(String direction, double speed){
+
+        double ratio = 1;
+        double driveSpeed = speed;
+        double slowSpeed = 0.0;
+        int lbm = 200;
+
+        double absInEncoder = Math.abs(armIn.getCurrentPosition());
+        double absOutEncoder = Math.abs(armOut.getCurrentPosition());
 
         if(direction == "out") {
                 /*armOutFinal = armOut.getCurrentPosition() + 100000;
@@ -246,12 +270,22 @@ public class DriverOp extends OpMode {
             setMotorToRunToPos(armIn);
             setMotorToRunToPos(armOut);
 
+            if(absOutEncoder >= absInEncoder - lbm) {
+                armOut.setPower(driveSpeed);
+                armIn.setPower(driveSpeed);
+            }
+            else if(absInEncoder - lbm >= absOutEncoder){
+                armOut.setPower(driveSpeed);
+                armIn.setPower(slowSpeed);
+            }
 
-            armOut.setTargetPosition(armOut.getCurrentPosition() +(int)( rotation));
-            armIn.setTargetPosition((int)(armIn.getCurrentPosition() + (rotation/1)));
 
-            armOut.setPower(1.0);
-            armIn.setPower(1.0);
+            armOut.setTargetPosition(armOut.getCurrentPosition() + (int) (rotation));
+            armIn.setTargetPosition((int) (armIn.getCurrentPosition() + (rotation / ratio)));
+
+
+
+
 
         }
         if(direction == "in") {
@@ -275,25 +309,30 @@ public class DriverOp extends OpMode {
             setMotorToRunToPos(armIn);
             setMotorToRunToPos(armOut);
 
+            if(absInEncoder <= absOutEncoder - lbm) {
+                armOut.setPower(-driveSpeed);
+                armIn.setPower(-driveSpeed);
+            }
+            else if (absOutEncoder - lbm <= absInEncoder) {
 
-            armOut.setTargetPosition(armOut.getCurrentPosition() - (int)(rotation));
-            armIn.setTargetPosition((int)(armIn.getCurrentPosition() - (rotation/1)));
+                armOut.setPower(-slowSpeed);
+                armIn.setPower(-driveSpeed);
 
-            armOut.setPower(-1.0);
-            armIn.setPower(-1.0);
+            }
+
+            armOut.setTargetPosition(armOut.getCurrentPosition() - (int) (rotation));
+            armIn.setTargetPosition((int) (armIn.getCurrentPosition() - (rotation / ratio)));
+
         }
-
-
-
     }
+
 
     public void resetEncoders(DcMotor motor){
         motor.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
         motor.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
     }
-    public void setMotorToRunToPos(DcMotor motor){
+    public void setMotorToRunToPos(DcMotor motor) {
         motor.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
     }
-
 }
 

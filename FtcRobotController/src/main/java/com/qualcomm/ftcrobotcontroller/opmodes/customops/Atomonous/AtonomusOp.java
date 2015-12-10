@@ -1,5 +1,6 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.customops.Atomonous;
 
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.TeleOp.DriverOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
@@ -80,6 +81,8 @@ public class AtonomusOp extends OpMode {
     public ElapsedTime runTime = new ElapsedTime();  // time into round
 
     public ElapsedTime stateTime = new ElapsedTime();  // time into state
+
+    public DriverOp driverOp = new DriverOp(); //imports
 
 
     public AtonomusOp() {
