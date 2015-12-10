@@ -178,8 +178,8 @@ public class DriverOp extends OpMode {
 
 
         if (gamepad2.right_stick_y < 0.0 && !armRatchet) {
-            arm.setTargetPosition((int)(arm.getCurrentPosition() + rotation));
-            arm.setPower(0.4);
+            arm.setTargetPosition((int)(arm.getCurrentPosition() + rotation/4));
+            arm.setPower(0.2);
             armRatchet = true;
         }
         else if(gamepad2.right_stick_y == 0 && armRatchet){
@@ -190,8 +190,8 @@ public class DriverOp extends OpMode {
 
 
         if (gamepad2.right_stick_y > 0.0 && !armRatchet) {
-            arm.setTargetPosition((int)(arm.getCurrentPosition() - rotation));
-            arm.setPower(-0.4);
+            arm.setTargetPosition((int)(arm.getCurrentPosition() - rotation/4));
+            arm.setPower(-0.2);
             armRatchet = true;
         }
         else if(gamepad2.right_stick_y == 0 && armRatchet){
