@@ -166,9 +166,9 @@ public class DriverOp extends OpMode {
 
 
 
-        //raising arm controlls
+        //raising arm controls
         arm.setPower(gamepad2.right_stick_y);
-        //gill controlls
+        //gill controls
         if(gamepad2.left_trigger != 0.0){
             lGill.setPower(0.5);
         }
