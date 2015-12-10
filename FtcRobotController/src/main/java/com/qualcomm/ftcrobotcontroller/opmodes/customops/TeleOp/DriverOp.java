@@ -183,19 +183,19 @@ public class DriverOp extends OpMode {
             armRatchet = true;
         }
         else if(!gamepad2.x && armRatchet){
-            arm.setPower(0.0);
+            arm.setPower(0.2);
             armRatchet = false;
         }
 
 
 
-        if (gamepad2.b && !armRatchet) {
+        if (gamepad2.x && !armRatchet) {
             arm.setTargetPosition((int)(arm.getCurrentPosition() - rotation/2));
             arm.setPower(-0.4);
             armRatchet = true;
         }
-        else if(!gamepad2.b && armRatchet){
-            arm.setPower(0.0);
+        else if(!gamepad2.x && armRatchet){
+            arm.setPower(0.2);
             armRatchet = false;
         }
 
