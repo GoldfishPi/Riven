@@ -88,8 +88,7 @@ public class DriverOp extends OpMode {
         resetEncoders(armOut);
         resetEncoders(arm);
         arm.setChannelMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
-        setMotorToRunToPos(arm);
-        arm.setPower(0.4);
+
 
         armOutInital = armOut.getCurrentPosition() + 100000;
         armInInital = armIn.getCurrentPosition() + 100000;
@@ -121,6 +120,7 @@ public class DriverOp extends OpMode {
         telemetry.addData("winch in current position", armIn.getCurrentPosition());
         controllerOne();
         controllerTwo();
+        setMotorToRunToPos(arm);
     }
 
     public void controllerOne(){
@@ -174,11 +174,15 @@ public class DriverOp extends OpMode {
             aPressed = false;
         }
 
-        if (gamepad2.right_stick_y > 0.0 && !armRatchet) {
+        if (gamepad2.right_stick_y != 0.0 && !armRatchet) {
             arm.setTargetPosition((int)(arm.getCurrentPosition() + rotation));
+            arm.setPower(0.4);
             armRatchet = true;
         }
-        if (gamepad2.right_stick_y == 0 && armRatchet) {
+        else if(gamepad2.right_stick_y == 0){
+            arm.setPower(0.0);
+        }
+        else if (gamepad2.right_stick_y == 0 && armRatchet) {
             armRatchet = false;
         }
 
