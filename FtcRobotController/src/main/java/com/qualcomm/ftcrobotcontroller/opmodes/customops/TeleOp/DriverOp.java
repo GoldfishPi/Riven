@@ -53,6 +53,8 @@ public class DriverOp extends OpMode {
     private boolean yPressed = false;
     private boolean aPressed = false;
 
+    boolean armRatchet = false;
+
     public DriverOp() {
 
     }
@@ -86,6 +88,8 @@ public class DriverOp extends OpMode {
         resetEncoders(armOut);
         resetEncoders(arm);
         arm.setChannelMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
+        setMotorToRunToPos(arm);
+        arm.setPower(0.4);
 
         armOutInital = armOut.getCurrentPosition() + 100000;
         armInInital = armIn.getCurrentPosition() + 100000;
@@ -151,28 +155,32 @@ public class DriverOp extends OpMode {
 
 
 
-    public  void controllerTwo(){
+    public  void controllerTwo() {
 
 
 //toggles arm out with gamepad.2's y button arm in with gampad.2's a button
-        if (gamepad2.y){
+        if (gamepad2.y) {
 
             yPressed = true;
             extendEqual("out", Math.abs(gamepad2.left_stick_y));
-        }
-        else if(!gamepad2.y && yPressed){
+        } else if (!gamepad2.y && yPressed) {
             yPressed = false;
         }
 
-        if (gamepad2.a ) {
+        if (gamepad2.a) {
             aPressed = true;
             extendEqual("in", Math.abs(gamepad2.left_stick_y));
-        }
-        else if (!gamepad2.a && aPressed ){
+        } else if (!gamepad2.a && aPressed) {
             aPressed = false;
         }
 
-        arm.setPower(gamepad2.right_stick_y);
+        if (gamepad2.right_stick_y > 0.0 && !armRatchet) {
+            arm.setTargetPosition((int)(arm.getCurrentPosition() + rotation));
+            armRatchet = true;
+        }
+        if (gamepad2.right_stick_y == 0 && armRatchet) {
+            armRatchet = false;
+        }
 
         //gill controls
         if(gamepad2.left_trigger != 0.0){
