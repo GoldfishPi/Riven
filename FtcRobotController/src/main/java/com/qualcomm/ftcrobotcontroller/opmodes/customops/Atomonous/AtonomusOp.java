@@ -31,44 +31,12 @@ import com.qualcomm.robotcore.util.Range;
 
 public class AtonomusOp extends OpMode {
 
-    private enum State {
-
-        STATE_INITIAL,
-        STATE_DRIVE_FORWARD,
-
-
-
-        STATE_STOP,
-
-    }
-
-
     //Drive forward using encoders (leftMotor, rightMotor, Speed)
     //final PathSeg[] DriveForward = {
     //   new PathSeg(1.0, 1.0, 1.0),
     //};
-    final PathSeg[] driveBack = {
 
-            new PathSeg(10.0, 10.0, 1.0)
-    };
 
-    final PathSeg[] driveForward = {
-
-            new PathSeg(48.0, 48.0, 1.0)
-    };
-
-    final PathSeg[] turn90 = {
-
-            new PathSeg(6.0, -6.0, 0.5)
-    };
-
-    final PathSeg[] turn45 = {
-
-            new PathSeg(3.0, -3.0, 0.3)
-
-    };
-
-    final double COUNT_PER_INCH_DRIVE = 56;
 
     final double RANGE = 10;
 
@@ -114,18 +82,6 @@ public class AtonomusOp extends OpMode {
     public ElapsedTime stateTime = new ElapsedTime();  // time into state
 
 
-    private State currentState;
-
-    private PathSeg[] currentPath;
-
-    private int currentSeg;
-
-    public boolean debug = true;
-
-
-    public void stateMachine() {
-    }
-
     public AtonomusOp() {
 
     }
@@ -149,25 +105,45 @@ public class AtonomusOp extends OpMode {
         arm = hardwareMap.dcMotor.get("arm");
 
         setDrivePower(0, 0);
-        resetDriveEncoders();
+
 
     }
 
     @Override
     public void init_loop() {
 
-        resetDriveEncoders();
+
 
     }
+
+    public final int
+            STATE_TURN_45_RIGHT = 0,
+            STATE_DRIVE_STRAIGHT_CORNER_TO_GOAL = 1,
+            STATE_STOP = 2,
+            STATE_TURN_45_LEFT = 3;
+
+
+
+    public int stateMachineIndex = 0;
+    public int[] stateMachineArray;
+    public int[] debugArray;
+    public int[] autoRightCorner;
+    public int[] autoLeftCorner;
+
 
     @Override
     public void start() {
 
+        debugArray = new int[2];
+        debugArray[0] = STATE_TURN_45_RIGHT;
+        debugArray[1] = STATE_STOP;
 
-        setDriveSpeed(0, 0);
-        runToPosition(); // run to the position set by the encoders
-        runTime.reset();
-        newState(State.STATE_INITIAL);
+        for(int i=0; i<debugArray.length; i++){
+            stateMachineArray[i]=debugArray[i];
+        }
+
+
+
     }
 
     @Override
@@ -185,19 +161,21 @@ public class AtonomusOp extends OpMode {
                 PULL_ROBOT,
                 STATE_STOP,*/
 
-        switch (currentState) {
-            case STATE_INITIAL:
-                if (encodersAtZero()) {
-                    setDriveSpeed(1.0, 1.0);
-                    turnRobotCalculation(24, 45);// 24 inches, 45 degrees
-                    driveTurn((int) adRotatingRobotDrive[0], (int) adRotatingRobotDrive[1]);
-                    newState(State.STATE_DRIVE_FORWARD);
-                }
+        switch (stateMachineArray[0]) {
+            case STATE_TURN_45_RIGHT:
+                resetEncodersAuto(rightDrive);
+                resetEncodersAuto(leftDrive);
+                turnRobotCalculation(24, 45);// 24 inches, 45 degrees
+                driveTurn((int) adRotatingRobotDrive[0], (int) adRotatingRobotDrive[1]);
+                stateMachineIndex ++;
+
                 break;
-            case STATE_DRIVE_FORWARD:
-                if(moveComplete()){
-                    newState(State.STATE_STOP);
-                }
+            case STATE_DRIVE_STRAIGHT_CORNER_TO_GOAL:
+                resetEncodersAuto(rightDrive);
+                resetEncodersAuto(leftDrive);
+
+                   driveStraight(straightRobotCalculation((double)(12.5)));
+                break;
 
 
             case STATE_STOP:
@@ -215,11 +193,6 @@ public class AtonomusOp extends OpMode {
     //functions here...                    //
     //-------------------------------------//
 
-    void newState(State newState) {
-        stateTime.reset();
-        currentState = newState;
-
-    }
 
     void setEncoderTarget(int leftEncoder, int rightEncoder) {
 
@@ -290,14 +263,6 @@ public class AtonomusOp extends OpMode {
         setDriveMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
 
     }
-
-    public void resetDriveEncoders() {
-
-        setEncoderTarget(0, 0);
-        setDriveMode(DcMotorController.RunMode.RESET_ENCODERS);
-
-    }
-
     void synchEncoders() {
 
         leftEncoderTarget = leftDrive.getCurrentPosition();
@@ -324,27 +289,45 @@ public class AtonomusOp extends OpMode {
 
     }
 
-    public void turnRobotCalculation( double dRadius, double dDegreeTurn ){
+    public void driveStraight(int encoderValue){
+        resetEncodersAuto(leftDrive);
+        resetEncodersAuto(rightDrive);
+        setEncoderTarget(encoderValue, encoderValue);
+        setDriveSpeed(0.5, 0.5);
 
-        dOutsideWheelDistance = dDegreeTurn * Math.PI * dRadius / 180;
-        wheelCircumfrance = 4 * Math.PI;
-
-        adRotatingRobotDrive[0] = wheelCircumfrance * (80 / 40) * 1120;
-
-        dInsideWheelDistance = dDegreeTurn * Math.PI * (dRadius + wheelBase);
-
-        adRotatingRobotDrive[1] = wheelCircumfrance * (80 / 40) * 1120;
-
-        adRotatingRobotDrive[2] =   adRotatingRobotDrive[0] /   adRotatingRobotDrive[1];
-
-
-
-
+    }
+    public void resetEncodersAuto(DcMotor motor){
+        motor.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
+        motor.setChannelMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
 
 
 
     }
 
+    public void turnRobotCalculation( double dRadius, double dDegreeTurn ){
+
+        dOutsideWheelDistance = dDegreeTurn * Math.PI * dRadius / 180;
+        wheelCircumfrance = 4 * Math.PI;
+
+        adRotatingRobotDrive[0] = wheelCircumfrance * (80 / 40) * 280;
+
+        dInsideWheelDistance = dDegreeTurn * Math.PI * (dRadius + wheelBase);
+
+        adRotatingRobotDrive[1] = wheelCircumfrance * (80 / 40) * 280;
+
+        adRotatingRobotDrive[2] =   adRotatingRobotDrive[0] /   adRotatingRobotDrive[1];
+
+    }
+
+    public int straightRobotCalculation(Double dDistance){
+
+
+        wheelCircumfrance = 4 * Math.PI;
+
+        return (int) (dDistance * (80 / 40) * 280);
+
+
+    }
     public void driveEqual(String Direction) {
         if (Direction == "forward") {
             if (rightDrive.getCurrentPosition() > leftDrive.getCurrentPosition()) {
@@ -392,75 +375,13 @@ public class AtonomusOp extends OpMode {
         return ((Math.abs(getLeftPosition()) < 5) && (Math.abs(getRightPosition()) < 5));
     }
 
-    private void startPath(PathSeg[] path) {
-        currentPath = path;
-        currentSeg = 0;
-        synchEncoders();
-        runToPosition();
-        startSeg();
-    }
-
-    private void startSeg() {
-        int left;
-        int right;
-        if (currentPath != null) {
-            left = (int) (currentPath[currentSeg].LEFT * COUNT_PER_INCH_DRIVE);
-            right = (int) (currentPath[currentSeg].RIGHT * COUNT_PER_INCH_DRIVE);
-            addEncoderTarget(left, right);
-            setDriveSpeed(currentPath[currentSeg].speed, currentPath[currentSeg].speed);
-
-            currentSeg++;
-        }
-    }
 
 
-    private boolean pathComplete() {
-        if (moveComplete()) {
-            if (currentSeg < currentPath.length) {
-                startSeg();
-            } else {
-                currentPath = null;
-                currentSeg = 0;
-                setDriveSpeed(0, 0);
-                useConstantSpeed();
-                return true;
-            }
-        }
-        return false;
-    }
 
-    public static void debug(DebugLevel level, String message) {
-        String name = "Siver";
-        switch (level) {
-            default:
-            case INFO:
-                System.out.println("[" + name + "]" + message);
-                break;
-            case WARNING:
-                System.out.println("[" + name + "] [WARNING] " + message);
-                break;
-            case SEVERE:
-                System.out.println("[" + name + "] [SEVERE] " + message);
-                break;
-        }
-    }
 
-    public static enum DebugLevel {
-        INFO, WARNING, SEVERE;
-    }
-}
 
-class PathSeg {
-    public double LEFT;
-    public double RIGHT;
-    public double speed;
-
-    public PathSeg(double Left, double Right, double Speed) {
-
-        LEFT = Left;
-        RIGHT = Right;
-        speed = Speed;
 
 
     }
-}
+
+
