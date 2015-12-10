@@ -122,6 +122,14 @@ public class AtonomusOp extends OpMode {
             STATE_STOP = 2,
             STATE_TURN_45_LEFT = 3;
 
+    public int
+            stateTurn45Right = 0,
+            stateDriveStraightConerToGoal = 0,
+            stateStop = 0,
+            stateTurn45Left = 0;
+
+
+
 
 
     public int stateMachineIndex = 0;
@@ -163,11 +171,19 @@ public class AtonomusOp extends OpMode {
 
         switch (stateMachineArray[0]) {
             case STATE_TURN_45_RIGHT:
-                resetEncodersAuto(rightDrive);
-                resetEncodersAuto(leftDrive);
-                turnRobotCalculation(24, 45);// 24 inches, 45 degrees
-                driveTurn((int) adRotatingRobotDrive[0], (int) adRotatingRobotDrive[1]);
-                stateMachineIndex ++;
+                if (stateTurn45Right == 0){
+
+                    stateTurn45Right = 1;
+                    resetEncodersAuto(rightDrive);
+                    resetEncodersAuto(leftDrive);
+                    turnRobotCalculation(24, 45);// 24 inches, 45 degrees
+                    driveTurn45Left((int) adRotatingRobotDrive[0], (int) adRotatingRobotDrive[1]);
+                }
+                else if (moveComplete() == true) {
+                    stateMachineIndex ++;
+                }
+
+
 
                 break;
             case STATE_DRIVE_STRAIGHT_CORNER_TO_GOAL:
@@ -198,7 +214,6 @@ public class AtonomusOp extends OpMode {
 
         leftDrive.setTargetPosition(leftEncoderTarget = leftEncoder);
         rightDrive.setTargetPosition(rightEncoderTarget = rightEncoder);
-
     }
 
     void addEncoderTarget(int leftEncoder, int rightEncoder) {
@@ -277,16 +292,18 @@ public class AtonomusOp extends OpMode {
             rightDrive.setChannelMode(mode);
     }
 
-    public void driveTurn(int left, int right) {
+    public void driveTurn45Left(int left, int right) {
+
+        resetEncodersAuto(leftDrive);
+        resetEncodersAuto(rightDrive);
+        setEncoderTarget(left, right);
+        setDriveSpeed(0.5, 5.0);
+    }
+
+    public void driveTurn45LeftCheck(int left, int right) {
 
         setEncoderTarget(left, right);
-
-
-
         setDriveSpeed(0.5, 5.0);
-
-
-
     }
 
     public void driveStraight(int encoderValue){
