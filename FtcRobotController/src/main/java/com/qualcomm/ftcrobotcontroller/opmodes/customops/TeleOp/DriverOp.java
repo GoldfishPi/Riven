@@ -265,7 +265,15 @@ public class DriverOp extends OpMode {
         if (arm.getChannelMode() == DcMotorController.RunMode.RUN_TO_POSITION && running) {
             arm.setPower(0.5);
         } else {
-            arm.setPower(0.2);
+            if (arm.getCurrentPosition() > arm.getTargetPosition()) {
+                arm.setPower(-0.1);
+            }
+            else if(arm.getCurrentPosition() < arm.getTargetPosition()){
+                arm.setPower(0.1);
+            }
+            else {
+                arm.setPower(0.0);
+            }
         }
 
 
