@@ -290,5 +290,7 @@ public class DriverOp extends OpMode {
     public void setMotorToRunToPos(DcMotor motor) {
         motor.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
     }
+
+    public void dropClimbers(){}
 }
 

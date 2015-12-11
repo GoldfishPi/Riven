@@ -43,6 +43,8 @@ import android.hardware.usb.UsbManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 import android.preference.PreferenceManager;
 import android.view.Gravity;
 import android.view.Menu;
@@ -103,6 +105,9 @@ public class FtcRobotControllerActivity extends Activity {
   protected FtcRobotControllerService controllerService;
 
   protected FtcEventLoop eventLoop;
+
+  // Testing out a WakeLock to have screen off but app running
+//  protected WakeLock deviceWakeLock;
 
   protected class RobotRestarter implements Restarter {
 
@@ -175,6 +180,11 @@ public class FtcRobotControllerActivity extends Activity {
     hittingMenuButtonBrightensScreen();
 
     if (USE_DEVICE_EMULATION) { HardwareFactory.enableDeviceEmulation(); }
+
+    // Tryout wake lock, inorder to have screen off
+//    PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+//    WakeLock deviceWakeLock   = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "TimecraftersTag");
+//    deviceWakeLock.acquire();
   }
 
   @Override
@@ -218,6 +228,9 @@ public class FtcRobotControllerActivity extends Activity {
     if (controllerService != null) unbindService(connection);
 
     RobotLog.cancelWriteLogcatToDisk(this);
+
+    // Wake lock released
+//     deviceWakeLock.release();
   }
 
   @Override
