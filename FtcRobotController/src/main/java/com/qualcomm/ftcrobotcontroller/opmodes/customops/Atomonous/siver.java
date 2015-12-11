@@ -94,6 +94,9 @@ public class siver extends OpMode {
                 crap.turnRobotCalculation(24, 45);
 
                 break;
+            default:
+                break;
+
 
         }
 
