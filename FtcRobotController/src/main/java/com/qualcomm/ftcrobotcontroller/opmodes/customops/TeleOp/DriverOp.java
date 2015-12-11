@@ -172,7 +172,7 @@ public class DriverOp extends OpMode {
                 armControlls(0.3, true);
             }
             else{
-                armControlls(gamepad2.right_stick_y, false);
+                armControlls(0.0, false);
             }
 
             //Arm In and Out
@@ -263,9 +263,9 @@ public class DriverOp extends OpMode {
 
     public void armControlls(double speed, boolean running) {
 
-        if (arm.getChannelMode() == DcMotorController.RunMode.RUN_TO_POSITION && running) {
+        if (running) {
             arm.setPower(0.5);
-        } else {
+        } else if (!running) {
             if (arm.getCurrentPosition() > arm.getTargetPosition()) {
                 arm.setPower(-0.1);
             }
