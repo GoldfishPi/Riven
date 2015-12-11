@@ -281,9 +281,9 @@ public class DriverOp extends OpMode {
         //Arm up and down
         if (gamepad2.right_stick_y > 0.0) {
 
-            arm.setTargetPosition(arm.getCurrentPosition() + (int) rotation / 3);
+            arm.setTargetPosition(arm.getCurrentPosition() + 112);
         } else if (gamepad2.right_stick_y < 0.0) {
-            arm.setTargetPosition(arm.getCurrentPosition() - (int) rotation / 3);
+            arm.setTargetPosition(arm.getCurrentPosition() - 112);
         }
 
     }
