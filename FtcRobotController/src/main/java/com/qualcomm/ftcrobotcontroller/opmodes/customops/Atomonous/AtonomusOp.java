@@ -146,8 +146,8 @@ public class AtonomusOp extends OpMode {
          lDrivePower = 0.0;
          rDrivePower = 0.0;
 
-         lDrive.setPower(lDrivePower);
-         rDrive.setPower(rDrivePower);
+         lDrive.setPower(Range.clip(lDrivePower, -1.0, 1.0));
+         rDrive.setPower(Range.clip(rDrivePower, -1.0, 1.0));
 
          lDrive.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
          rDrive.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
@@ -159,21 +159,11 @@ public class AtonomusOp extends OpMode {
 
     @Override
     public void loop() {
-        System.out.print("Left position:");
-        System.out.print(String.valueOf(lDrive.getCurrentPosition()));
-        System.out.println();
+        telemetry.addData("Left position", lDrive.getCurrentPosition());
+        telemetry.addData("right position", rDrive.getCurrentPosition());
 
-        System.out.print("Right position:");
-        System.out.print(String.valueOf(rDrive.getCurrentPosition()));
-        System.out.println();
-
-        System.out.print("left target:");
-        System.out.print(String.valueOf(leftEncoderTarget));
-        System.out.println();
-
-        System.out.print("right target:");
-        System.out.print(String.valueOf(rightEncoderTarget));
-        System.out.println();
+        telemetry.addData("left target", leftEncoderTarget);
+        telemetry.addData("right target", rightEncoderTarget);
 
         switch (stateMachineArray[stateMachineIndex]) {
             case STATE_TURN_45_RIGHT:
@@ -190,21 +180,21 @@ public class AtonomusOp extends OpMode {
                     System.out.print(String.valueOf(adRotatingRobotDrive[0]));
 
                     lDrivePower = 1.0;
-                    rDrivePower = 1.0 * adRotatingRobotDrive[2];
+                    rDrivePower = (1.0 * adRotatingRobotDrive[2]);
 
                     lDrive.setTargetPosition(leftEncoderTarget);
                     rDrive.setTargetPosition(rightEncoderTarget);
 
-                    lDrive.setPower(lDrivePower);
-                    rDrive.setPower(rDrivePower);
+                    lDrive.setPower(Range.clip(lDrivePower, -1.0, 1.0));
+                    rDrive.setPower(Range.clip(rDrivePower, -1.0, 1.0));
                 }
 
-                if ((lDrive.getCurrentPosition() > leftEncoderTarget)) {
+                if ((lDrive.getCurrentPosition() >= leftEncoderTarget - 15)) {
                     lDrivePower = 0.0;
                     lDrive.setPower(lDrivePower);
                 }
 
-                if ((rDrive.getCurrentPosition() > rightEncoderTarget)) {
+                if ((rDrive.getCurrentPosition() >= rightEncoderTarget - 15)) {
                     rDrivePower = 0.0;
                     rDrive.setPower(rDrivePower);
                 }
@@ -373,9 +363,9 @@ public class AtonomusOp extends OpMode {
 
         wheelCircumfrance = 4 * Math.PI;
 
-        adRotatingRobotDrive[0] = 4.0 * dDegreeTurn * dRadius * (1.0); // dInsideWheelDistance * (80 / 40 * wheelCircumfrance) * 280;
+        adRotatingRobotDrive[0] = 3.0 * dDegreeTurn * dRadius * (1.0); // dInsideWheelDistance * (80 / 40 * wheelCircumfrance) * 280;
 
-        adRotatingRobotDrive[1] = 4.0 * dDegreeTurn * (dRadius + wheelBase) * (1.0); // dOutsideWheelDistance * (80 / 40 * wheelCircumfrance) * 280;
+        adRotatingRobotDrive[1] = 3.0 * dDegreeTurn * (dRadius + wheelBase) * (1.0); // dOutsideWheelDistance * (80 / 40 * wheelCircumfrance) * 280;
 
         adRotatingRobotDrive[2] =   adRotatingRobotDrive[0] /  adRotatingRobotDrive[1];
     }
