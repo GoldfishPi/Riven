@@ -263,7 +263,7 @@ public class DriverOp extends OpMode {
     public void armControlls(boolean running) {
 
         if (arm.getChannelMode() == DcMotorController.RunMode.RUN_TO_POSITION && running) {
-            arm.setPower(0.5);
+            arm.setPower(gamepad2.left_stick_y);
         } else {
             if (arm.getCurrentPosition() > arm.getTargetPosition()) {
                 arm.setPower(-0.1);
