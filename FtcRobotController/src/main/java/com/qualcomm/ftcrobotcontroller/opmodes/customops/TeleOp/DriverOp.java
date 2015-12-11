@@ -169,10 +169,10 @@ public class DriverOp extends OpMode {
     public void controllerTwo() {
         {
             if(gamepad2.right_stick_y != 0.0) {
-                armControlls(0.3, true);
+                armControlls(gamepad2.left_stick_y, true);
             }
             else{
-                armControlls(0.0, false);
+                armControlls(gamepad2.left_stick_y, false);
             }
 
             //Arm In and Out
@@ -264,7 +264,7 @@ public class DriverOp extends OpMode {
     public void armControlls(double speed, boolean running) {
 
         if (running) {
-            arm.setPower(0.5);
+            arm.setPower(speed);
         } else if (!running) {
             if (arm.getCurrentPosition() > arm.getTargetPosition()) {
                 arm.setPower(-0.1);
