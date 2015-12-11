@@ -117,8 +117,7 @@ public class DriverOp extends OpMode {
 
     @Override
     public void loop() {
-        telemetry.addData("Left Controller stick", gamepad2.left_stick_y);
-        telemetry.addData("Left Drive Motor", lDrive.getCurrentPosition());
+        telemetry.addData("arm target", arm.getTargetPosition());
         telemetry.addData("ArmLift", arm.getCurrentPosition());
         controllerOne();
         controllerTwo();
@@ -170,7 +169,7 @@ public class DriverOp extends OpMode {
     public void controllerTwo() {
         {
             if(gamepad2.right_stick_y != 0.0) {
-                armControlls(gamepad2.right_stick_y, true);
+                armControlls(0.3, true);
             }
             else{
                 armControlls(gamepad2.right_stick_y, false);
@@ -265,7 +264,7 @@ public class DriverOp extends OpMode {
     public void armControlls(double speed, boolean running) {
 
         if (arm.getChannelMode() == DcMotorController.RunMode.RUN_TO_POSITION && running) {
-            arm.setPower(speed);
+            arm.setPower(0.5);
         } else {
             if (arm.getCurrentPosition() > arm.getTargetPosition()) {
                 arm.setPower(-0.1);
