@@ -39,6 +39,8 @@ public class siver extends OpMode {
     //powers
     private double lowPower = 0.3;
 
+    private AtonomusOp crap = new AtonomusOp();
+
 
     @Override
     public void init() {
@@ -78,17 +80,22 @@ public class siver extends OpMode {
         resetEncoder(lDrive);
         resetEncoder(rDrive);
 
-        armIn.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
-        armOut.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+
     }
 
     @Override
     public void loop() {
 
-        armIn.setPower(0.1);
-        armIn.setTargetPosition(100);
+        switch (states[currentState]){
 
+            // turn 45 degrees
+            case 0:
 
+                crap.turnRobotCalculation(24, 45);
+
+                break;
+
+        }
 
     }
 
