@@ -42,8 +42,8 @@ public class AtonomusOp extends OpMode {
     private DcMotor lDrive;
     private DcMotor rDrive;
 
-    //private DcMotor lFinger;
-    //private DcMotor rFinger;
+    private DcMotor lFinger;
+    private DcMotor rFinger;
 
     private DcMotor armOut;
     private DcMotor armIn;
@@ -110,8 +110,8 @@ public class AtonomusOp extends OpMode {
         rDrive = hardwareMap.dcMotor.get("rDrive");
         rDrive.setDirection(DcMotor.Direction.REVERSE);
 
-        //lFinger = hardwareMap.dcMotor.get("lFinger");
-        //rFinger = hardwareMap.dcMotor.get("rFinger");
+        lFinger = hardwareMap.dcMotor.get("lFinger");
+        rFinger = hardwareMap.dcMotor.get("rFinger");
 
         armOut = hardwareMap.dcMotor.get("armOut");
         armIn = hardwareMap.dcMotor.get("armIn");
@@ -143,12 +143,6 @@ public class AtonomusOp extends OpMode {
 
     @Override
     public void loop() {
-
-
-
-
-
-
         switch (stateMachineArray[0]) {
             case STATE_TURN_45_RIGHT:
                 if (stateTurn45Right == 0){
@@ -163,6 +157,7 @@ public class AtonomusOp extends OpMode {
                     stateMachineIndex ++;
                 }
                 break;
+
             case STATE_DRIVE_STRAIGHT_CORNER_TO_GOAL:
                 if ( stateDriveStraightConerToGoal == 0) {
 
@@ -188,6 +183,7 @@ public class AtonomusOp extends OpMode {
                     stateMachineIndex ++;
                 }
                 break;
+
             case STATE_EXTEND_ARM:
                 if (stateExtnedArm == 0){
                     resetEncodersAuto(armOut);
@@ -198,6 +194,7 @@ public class AtonomusOp extends OpMode {
                     stateMachineIndex ++;
                 }
                 break;
+
             case STATE_RETRACT_ARM:
                 if(stateRetractArm == 0){
                     resetEncodersAuto(armOut);
@@ -208,12 +205,9 @@ public class AtonomusOp extends OpMode {
                     stateMachineIndex ++;
                 }
 
-
             case STATE_STOP:
                 break;
-
         }
-
     }
 
     @Override
@@ -226,31 +220,31 @@ public class AtonomusOp extends OpMode {
 
 
     void setEncoderTarget(int leftEncoder, int rightEncoder) {
-
         lDrive.setTargetPosition(leftEncoderTarget = leftEncoder);
         rDrive.setTargetPosition(rightEncoderTarget = rightEncoder);
     }
+
     void setDrivePower(double leftPower, double rightPower) {
         lDrive.setPower(Range.clip(leftPower, -1, 1));
         rDrive.setPower(Range.clip(rightPower, -1, 1));
     }
 
     void setDriveSpeed(double leftSpeed, double rightSpeed) {
-
         setDrivePower(leftSpeed, rightSpeed);
     }
+
     public void useConstantPower() {
-
         setDriveMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
-
     }
 
     public void setDriveMode(DcMotorController.RunMode mode) {
-        if (lDrive.getChannelMode() != mode)
+        if (lDrive.getChannelMode() != mode) {
             lDrive.setChannelMode(mode);
+        }
 
-        if (rDrive.getChannelMode() != mode)
+        if (rDrive.getChannelMode() != mode) {
             rDrive.setChannelMode(mode);
+        }
     }
 
 
@@ -278,6 +272,7 @@ public class AtonomusOp extends OpMode {
         setEncoderTarget(left, right);
         setDriveSpeed(0.5, 5.0);
     }
+
     private int count = 0;
 
     public void extendArm(){
@@ -285,12 +280,14 @@ public class AtonomusOp extends OpMode {
         while (count < 20){
             driverOp.extendEqual("out", 0.5);
             count++;
-        }}
+        }
+    }
 
     boolean extendFinished(){
         return count >= 20;
     }
     private int countIn = 0;
+
     public void retractArm(){
         countIn = 0;
         while(countIn < 20) {
@@ -298,6 +295,7 @@ public class AtonomusOp extends OpMode {
             countIn ++;
         }
     }
+
     boolean retractDone(){
         return countIn >= 20;
     }
@@ -308,14 +306,11 @@ public class AtonomusOp extends OpMode {
         resetEncodersAuto(rDrive);
         setEncoderTarget(encoderValue, encoderValue);
         setDriveSpeed(0.5, 0.5);
-
     }
+
     public void resetEncodersAuto(DcMotor motor){
         motor.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
         motor.setChannelMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
-
-
-
     }
 
     public void turnRobotCalculation( double dRadius, double dDegreeTurn ){
@@ -330,7 +325,6 @@ public class AtonomusOp extends OpMode {
         adRotatingRobotDrive[1] = wheelCircumfrance * (80 / 40) * 280;
 
         adRotatingRobotDrive[2] =   adRotatingRobotDrive[0] /   adRotatingRobotDrive[1];
-
     }
 
     public int straightRobotCalculation(Double dDistance){
@@ -339,9 +333,8 @@ public class AtonomusOp extends OpMode {
         wheelCircumfrance = 4 * Math.PI;
 
         return (int) (dDistance * (80 / 40) * 280);
-
-
     }
+
     public void driveEqual(String Direction) {
         if ("forward".equals(Direction)) {
             if (rDrive.getCurrentPosition() > lDrive.getCurrentPosition()) {
@@ -366,5 +359,6 @@ public class AtonomusOp extends OpMode {
                 rDrive.setPower(-0.1);
                 lDrive.setPower(-0.1);
             }
-        }}
+        }
     }
+}
