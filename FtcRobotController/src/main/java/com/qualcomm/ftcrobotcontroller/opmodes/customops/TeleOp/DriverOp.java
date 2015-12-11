@@ -117,8 +117,7 @@ public class DriverOp extends OpMode {
 
     @Override
     public void loop() {
-        telemetry.addData("Winch out current position", armOut.getCurrentPosition());
-        telemetry.addData("winch in current position", armIn.getCurrentPosition());
+        telemetry.addData("Left Drive Motor", lDrive.getCurrentPosition());
         controllerOne();
         controllerTwo();
         setMotorToRunToPos(arm);
@@ -168,8 +167,12 @@ public class DriverOp extends OpMode {
 
     public void controllerTwo() {
         {
-
-            armControlls();
+            if(gamepad2.right_stick_y != 0.0) {
+                armControlls(true);
+            }
+            else{
+                armControlls(false);
+            }
 
             //Arm In and Out
             if (gamepad2.y) {
@@ -257,12 +260,12 @@ public class DriverOp extends OpMode {
         }
     }
 
-    public void armControlls() {
+    public void armControlls(boolean running) {
 
-        if (arm.getChannelMode() == DcMotorController.RunMode.RUN_TO_POSITION) {
+        if (arm.getChannelMode() == DcMotorController.RunMode.RUN_TO_POSITION && running) {
             arm.setPower(0.5);
         } else {
-            arm.setPower(0.0);
+            arm.setPower(0.2);
         }
 
 
