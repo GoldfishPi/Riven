@@ -4,9 +4,6 @@ import com.qualcomm.ftcrobotcontroller.opmodes.customops.TeleOp.DriverOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
-import com.qualcomm.robotcore.hardware.LightSensor;
-import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 /*
@@ -32,55 +29,70 @@ import com.qualcomm.robotcore.util.Range;
 
 public class AtonomusOp extends OpMode {
 
-    //Drive forward using encoders (leftMotor, rightMotor, Speed)
-    //final PathSeg[] DriveForward = {
-    //   new PathSeg(1.0, 1.0, 1.0),
-    //};
 
 
 
-    final double RANGE = 10;
+
 
 
     //-------------------------------
     // motor declearations
     //-------------------------------
 
-    private DcMotor leftDrive;
-    private DcMotor rightDrive;
+    private DcMotor lDrive;
+    private DcMotor rDrive;
 
     //private DcMotor lFinger;
     //private DcMotor rFinger;
 
-    private DcMotor lWinch;
-    private DcMotor rWinch;
-
-    private DcMotor lArm;
-    private DcMotor rArm;
+    private DcMotor armOut;
+    private DcMotor armIn;
+    
     private DcMotor arm;
-
-    private DcMotor lCoffin;
-    private DcMotor rCoffin;
 
     private int leftEncoderTarget;
     private int rightEncoderTarget;
-
-    public LightSensor frontLightSensor;
-    public LightSensor backLightSensor;
 
     double wheelBase = 15.75;
     double wheelCircumfrance;
     double dInsideWheelDistance;
     double dOutsideWheelDistance;
-    double[] adRotatingRobotDrive = new double[3];
+    double[] adRotatingRobotDrive = new double[5];
 
 
-    public OpticalDistanceSensor distanceSonsor;
-    public LightSensor lightSensor;
+    public int stateMachineIndex = 0;
+    public int[] stateMachineArray;
+    public int[] debugArray;
+    public int[] autoRightCorner;
+    public int[] autoLeftCorner;
 
-    public ElapsedTime runTime = new ElapsedTime();  // time into round
 
-    public ElapsedTime stateTime = new ElapsedTime();  // time into state
+
+
+
+    final int
+            STATE_TURN_45_RIGHT = 0,
+            STATE_DRIVE_STRAIGHT_CORNER_TO_GOAL = 2,
+            STATE_STOP = 1,
+            STATE_TURN_45_LEFT = 3,
+            STATE_RAISE_ARM = 4,
+            STATE_EXTEND_ARM = 5,
+            STATE_RETRACT_ARM = 6;
+
+
+    public int
+            stateTurn45Right = 0,
+            stateDriveStraightConerToGoal = 0,
+            stateStop = 0,
+            stateTurn45Left = 0,
+            stateRaiseArm = 0,
+            stateExtnedArm = 0,
+            stateRetractArm = 0;
+
+
+
+
+
 
     public DriverOp driverOp = new DriverOp(); //imports
 
@@ -94,115 +106,118 @@ public class AtonomusOp extends OpMode {
     @Override
     public void init() {
 
-        leftDrive = hardwareMap.dcMotor.get("leftDrive");
-        rightDrive = hardwareMap.dcMotor.get("rightDrive");
-        rightDrive.setDirection(DcMotor.Direction.REVERSE);
+        lDrive = hardwareMap.dcMotor.get("lDrive");
+        rDrive = hardwareMap.dcMotor.get("rDrive");
+        rDrive.setDirection(DcMotor.Direction.REVERSE);
 
         //lFinger = hardwareMap.dcMotor.get("lFinger");
         //rFinger = hardwareMap.dcMotor.get("rFinger");
 
-        lWinch = hardwareMap.dcMotor.get("armOut");
-        rWinch = hardwareMap.dcMotor.get("armIn");
-        rWinch.setDirection(DcMotor.Direction.REVERSE);
+        armOut = hardwareMap.dcMotor.get("armOut");
+        armIn = hardwareMap.dcMotor.get("armIn");
+        armIn.setDirection(DcMotor.Direction.REVERSE);
 
         arm = hardwareMap.dcMotor.get("arm");
 
         setDrivePower(0, 0);
-    }
 
-    @Override
-    public void init_loop() {
-
-
-    }
-
-    public final int
-            STATE_TURN_45_RIGHT = 0,
-            STATE_DRIVE_STRAIGHT_CORNER_TO_GOAL = 1,
-            STATE_STOP = 2,
-            STATE_TURN_45_LEFT = 3;
-
-    public int
-            stateTurn45Right = 0,
-            stateDriveStraightConerToGoal = 0,
-            stateStop = 0,
-            stateTurn45Left = 0;
-
-
-
-
-
-    public int stateMachineIndex = 0;
-    public int[] stateMachineArray;
-    public int[] debugArray;
-    public int[] autoRightCorner;
-    public int[] autoLeftCorner;
-
-
-    @Override
-    public void start() {
-
-        debugArray = new int[2];
+        debugArray = new int[1];
         debugArray[0] = STATE_TURN_45_RIGHT;
         debugArray[1] = STATE_STOP;
 
-        for(int i=0; i<debugArray.length; i++){
-            stateMachineArray[i]=debugArray[i];
+        for (int i = 0; i < debugArray.length; i++) {
+            debugArray[i] = debugArray[i];}
+
+
+
+
         }
 
 
 
+     @Override
+    public void init_loop(){
+
     }
+
 
     @Override
     public void loop() {
-                /*STATE_INITIAL,
-                STATE_DRIVE_TO_MIDDLE ,
-                STATE_TURN,
-                STATE_DRIVE_TO_WALL,
-                STATE_RAISE_ARM,
-                STATE_EXTEND_ARM,
-                STATE_DRIVE_BACK,
-                STATE_TURN_TO_RAMP,
-                STATE_RAISE_ARM_MOUNTAIN,
-                STATE_LOWER_ARM_SLIGHTLY,
-                PULL_ROBOT,
-                STATE_STOP,*/
+
+
+
+
+
 
         switch (stateMachineArray[0]) {
             case STATE_TURN_45_RIGHT:
                 if (stateTurn45Right == 0){
 
                     stateTurn45Right = 1;
-                    resetEncodersAuto(rightDrive);
-                    resetEncodersAuto(leftDrive);
+                    resetEncodersAuto(rDrive);
+                    resetEncodersAuto(lDrive);
                     turnRobotCalculation(24, 45);// 24 inches, 45 degrees
                     driveTurn45Left((int) adRotatingRobotDrive[0], (int) adRotatingRobotDrive[1]);
                 }
-                else if (moveComplete() == true) {
+                else if (moveComplete()) {
+                    stateMachineIndex ++;
+                }
+                break;
+            case STATE_DRIVE_STRAIGHT_CORNER_TO_GOAL:
+                if ( stateDriveStraightConerToGoal == 0) {
+
+
+                    resetEncodersAuto(rDrive);
+                    resetEncodersAuto(lDrive);
+                    driveStraight(straightRobotCalculation((double) (12.5)));
+
+                }
+                else if(moveComplete()){
+                    stateMachineIndex ++;
+                }
+                break;
+
+            case STATE_RAISE_ARM:
+                if (stateRaiseArm == 0){
+                    resetEncodersAuto(arm);
+                    arm.setTargetPosition(280);
+                    arm.setPower(0.3);
+                }
+                else if(moveComplete()){
+                    arm.setPower(0.0);
+                    stateMachineIndex ++;
+                }
+                break;
+            case STATE_EXTEND_ARM:
+                if (stateExtnedArm == 0){
+                    resetEncodersAuto(armOut);
+                    resetEncodersAuto(armIn);
+                    extendArm();
+                }
+                else if (extendFinished()){
+                    stateMachineIndex ++;
+                }
+                break;
+            case STATE_RETRACT_ARM:
+                if(stateRetractArm == 0){
+                    resetEncodersAuto(armOut);
+                    resetEncodersAuto(armIn);
+                    retractArm();
+                }
+                else if(retractDone()){
                     stateMachineIndex ++;
                 }
 
 
-
-                break;
-            case STATE_DRIVE_STRAIGHT_CORNER_TO_GOAL:
-                resetEncodersAuto(rightDrive);
-                resetEncodersAuto(leftDrive);
-
-                   driveStraight(straightRobotCalculation((double)(12.5)));
-                break;
-
-
             case STATE_STOP:
                 break;
+
         }
+
     }
 
     @Override
     public void stop() {
-        useConstantPower();
-        setDrivePower(0.0, 0.0);
     }
 
     //-------------------------------------//
@@ -212,103 +227,85 @@ public class AtonomusOp extends OpMode {
 
     void setEncoderTarget(int leftEncoder, int rightEncoder) {
 
-        leftDrive.setTargetPosition(leftEncoderTarget = leftEncoder);
-        rightDrive.setTargetPosition(rightEncoderTarget = rightEncoder);
+        lDrive.setTargetPosition(leftEncoderTarget = leftEncoder);
+        rDrive.setTargetPosition(rightEncoderTarget = rightEncoder);
     }
-
-    void addEncoderTarget(int leftEncoder, int rightEncoder) {
-
-        leftDrive.setTargetPosition(leftEncoderTarget += leftEncoder);
-        rightDrive.setTargetPosition(rightEncoderTarget += rightEncoder);
-    }
-
     void setDrivePower(double leftPower, double rightPower) {
-        leftDrive.setPower(Range.clip(leftPower, -1, 1));
-        rightDrive.setPower(Range.clip(rightPower, -1, 1));
+        lDrive.setPower(Range.clip(leftPower, -1, 1));
+        rDrive.setPower(Range.clip(rightPower, -1, 1));
     }
 
     void setDriveSpeed(double leftSpeed, double rightSpeed) {
 
         setDrivePower(leftSpeed, rightSpeed);
     }
-
-    void setCoffinPower(double leftCoffinPower, double rightCoffinPower) {
-
-        lCoffin.setPower(Range.clip(leftCoffinPower, -1, 1));
-        rCoffin.setPower(Range.clip(rightCoffinPower, -1, 1));
-    }
-
-    void setCoffinSpeed(double leftCoffinSpeed, double rightCoffinSpeed) {
-
-        setCoffinPower(leftCoffinSpeed, rightCoffinSpeed);
-    }
-
-
-    void setArmPower(double powerArm) {
-        arm.setPower(Range.clip(powerArm, -1, 1));
-
-    }
-
-    void setArmSpeed(double armSpeed) {
-        setArmPower(armSpeed);
-    }
-
-    void setWinchPower(double leftWinchPower, double rightWinchPower) {
-
-        lWinch.setPower(Range.clip(leftWinchPower, -1, 1));
-        rWinch.setPower(Range.clip(rightWinchPower, -1, 1));
-    }
-
-    void setWinchSpeed(double leftWinchSpeed, double rightWinchSpeed) {
-
-        setWinchPower(leftWinchSpeed, rightWinchSpeed);
-    }
-
-    public void runToPosition() {
-
-        setDriveMode(DcMotorController.RunMode.RUN_TO_POSITION);
-    }
-
-    public void useConstantSpeed() {
-        setDriveMode(DcMotorController.RunMode.RUN_TO_POSITION);
-    }
-
     public void useConstantPower() {
 
         setDriveMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
 
     }
-    void synchEncoders() {
-
-        leftEncoderTarget = leftDrive.getCurrentPosition();
-        rightEncoderTarget = rightDrive.getCurrentPosition();
-    }
 
     public void setDriveMode(DcMotorController.RunMode mode) {
-        if (leftDrive.getChannelMode() != mode)
-            leftDrive.setChannelMode(mode);
+        if (lDrive.getChannelMode() != mode)
+            lDrive.setChannelMode(mode);
 
-        if (rightDrive.getChannelMode() != mode)
-            rightDrive.setChannelMode(mode);
+        if (rDrive.getChannelMode() != mode)
+            rDrive.setChannelMode(mode);
+    }
+
+
+
+
+    int getLeftPosition() {
+        return lDrive.getCurrentPosition();
+    }
+
+    int getRightPosition() {
+        return rDrive.getCurrentPosition();
+
+    }
+
+
+    boolean moveComplete() {
+        return ((Math.abs(getLeftPosition() - leftEncoderTarget) < 10) &&
+                (Math.abs(getRightPosition() - rightEncoderTarget) < 10));
     }
 
     public void driveTurn45Left(int left, int right) {
 
-        resetEncodersAuto(leftDrive);
-        resetEncodersAuto(rightDrive);
+        resetEncodersAuto(lDrive);
+        resetEncodersAuto(rDrive);
         setEncoderTarget(left, right);
         setDriveSpeed(0.5, 5.0);
     }
+    private int count = 0;
 
-    public void driveTurn45LeftCheck(int left, int right) {
+    public void extendArm(){
+        count = 0;
+        while (count < 20){
+            driverOp.extendEqual("out", 0.5);
+            count++;
+        }}
 
-        setEncoderTarget(left, right);
-        setDriveSpeed(0.5, 5.0);
+    boolean extendFinished(){
+        return count >= 20;
     }
+    private int countIn = 0;
+    public void retractArm(){
+        countIn = 0;
+        while(countIn < 20) {
+            driverOp.extendEqual("in", -0.5);
+            countIn ++;
+        }
+    }
+    boolean retractDone(){
+        return countIn >= 20;
+    }
+
 
     public void driveStraight(int encoderValue){
-        resetEncodersAuto(leftDrive);
-        resetEncodersAuto(rightDrive);
+        resetEncodersAuto(lDrive);
+        resetEncodersAuto(rDrive);
         setEncoderTarget(encoderValue, encoderValue);
         setDriveSpeed(0.5, 0.5);
 
@@ -346,60 +343,28 @@ public class AtonomusOp extends OpMode {
 
     }
     public void driveEqual(String Direction) {
-        if (Direction == "forward") {
-            if (rightDrive.getCurrentPosition() > leftDrive.getCurrentPosition()) {
-                rightDrive.setPower(0.1);
-                leftDrive.setPower(1.0);
-            } else if (leftDrive.getCurrentPosition() > rightDrive.getCurrentPosition()) {
-                rightDrive.setPower(1.0);
-                leftDrive.setPower(0.1);
+        if ("forward".equals(Direction)) {
+            if (rDrive.getCurrentPosition() > lDrive.getCurrentPosition()) {
+                rDrive.setPower(0.1);
+                lDrive.setPower(1.0);
+            } else if (lDrive.getCurrentPosition() > rDrive.getCurrentPosition()) {
+                rDrive.setPower(1.0);
+                lDrive.setPower(0.1);
             } else {
-                rightDrive.setPower(0.1);
-                leftDrive.setPower(0.1);
+                rDrive.setPower(0.1);
+                lDrive.setPower(0.1);
             }
         }
-        if (Direction == "backward") {
-            if (rightDrive.getCurrentPosition() > leftDrive.getCurrentPosition()) {
-                rightDrive.setPower(-1.0);
-                leftDrive.setPower(-0.1);
-            } else if (leftDrive.getCurrentPosition() > rightDrive.getCurrentPosition()) {
-                rightDrive.setPower(-0.1);
-                leftDrive.setPower(-1.0);
+        if (Direction .equals("backwards")) {
+            if (rDrive.getCurrentPosition() > lDrive.getCurrentPosition()) {
+                rDrive.setPower(-1.0);
+                lDrive.setPower(-0.1);
+            } else if (lDrive.getCurrentPosition() > rDrive.getCurrentPosition()) {
+                rDrive.setPower(-0.1);
+                lDrive.setPower(-1.0);
             } else {
-                rightDrive.setPower(-0.1);
-                leftDrive.setPower(-0.1);
+                rDrive.setPower(-0.1);
+                lDrive.setPower(-0.1);
             }
         }}
-
-
-    int getLeftPosition() {
-        return leftDrive.getCurrentPosition();
     }
-
-    int getRightPosition() {
-        return rightDrive.getCurrentPosition();
-
-    }
-
-
-    boolean moveComplete() {
-        return ((Math.abs(getLeftPosition() - leftEncoderTarget) < 10) &&
-                (Math.abs(getRightPosition() - rightEncoderTarget) < 10));
-    }
-
-    boolean encodersAtZero() {
-
-        return ((Math.abs(getLeftPosition()) < 5) && (Math.abs(getRightPosition()) < 5));
-    }
-
-
-
-
-
-
-
-
-    }
-//sup
-
-
