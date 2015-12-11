@@ -43,7 +43,7 @@ public class DriverOp extends OpMode {
     private int armOutDelta;
     private int armInDelta;
 
-    private double rotation = 280*3;
+    private double rotation = 280 * 3;
 
     private int lastTargetPosition;
 
@@ -62,20 +62,20 @@ public class DriverOp extends OpMode {
     @Override
     public void init() {
 
-        lDrive  = hardwareMap.dcMotor.get("lDrive");
-        rDrive  = hardwareMap.dcMotor.get("rDrive");
+        lDrive = hardwareMap.dcMotor.get("lDrive");
+        rDrive = hardwareMap.dcMotor.get("rDrive");
 
 
         lFinger = hardwareMap.dcMotor.get("lFinger");
         rFinger = hardwareMap.dcMotor.get("rFinger");
 
-        lGill   = hardwareMap.dcMotor.get("lGill");
-        rGill   = hardwareMap.dcMotor.get("rGill");
+        lGill = hardwareMap.dcMotor.get("lGill");
+        rGill = hardwareMap.dcMotor.get("rGill");
 
-        armOut  = hardwareMap.dcMotor.get("armOut");
-        armIn   = hardwareMap.dcMotor.get("armIn");
+        armOut = hardwareMap.dcMotor.get("armOut");
+        armIn = hardwareMap.dcMotor.get("armIn");
 
-        arm     = hardwareMap.dcMotor.get("arm");
+        arm = hardwareMap.dcMotor.get("arm");
 
         rDrive.setDirection(DcMotor.Direction.REVERSE);
         rFinger.setDirection(DcMotor.Direction.REVERSE);
@@ -94,12 +94,12 @@ public class DriverOp extends OpMode {
     }
 
     @Override
-    public void stop(){
+    public void stop() {
 
     }
 
     @Override
-    public void init_loop(){
+    public void init_loop() {
 
         resetEncoders(lDrive);
         resetEncoders(rDrive);
@@ -116,7 +116,7 @@ public class DriverOp extends OpMode {
     }
 
     @Override
-    public void loop(){
+    public void loop() {
         telemetry.addData("Winch out current position", armOut.getCurrentPosition());
         telemetry.addData("winch in current position", armIn.getCurrentPosition());
         controllerOne();
@@ -124,80 +124,91 @@ public class DriverOp extends OpMode {
         setMotorToRunToPos(arm);
     }
 
-    public void controllerOne(){{
+    public void controllerOne() {
+        {
 
-        //Drive controls
-        if(lDrive.getChannelMode() == DcMotorController.RunMode.RUN_TO_POSITION && rDrive.getChannelMode() == DcMotorController.RunMode.RUN_TO_POSITION){
-            lDrive.setPower(gamepad1.left_stick_y);
-            rDrive.setPower(gamepad1.right_stick_y);
-        }
+            //Drive controls
+            if (lDrive.getChannelMode() == DcMotorController.RunMode.RUN_TO_POSITION && rDrive.getChannelMode() == DcMotorController.RunMode.RUN_TO_POSITION) {
+                lDrive.setPower(gamepad1.left_stick_y);
+                rDrive.setPower(gamepad1.right_stick_y);
+            }
 
-        if(gamepad1.left_stick_y > 0.0){
-            lDrive.setTargetPosition(lDrive.getCurrentPosition() + (int)rotation);
-        }
-        else if(gamepad1.left_stick_y < 0.0){
-            lDrive.setTargetPosition(lDrive.getCurrentPosition() - (int)rotation);
-        }
-        if(gamepad1.right_stick_y > 0.0){
-            rDrive.setTargetPosition(rDrive.getCurrentPosition() + (int)rotation);
-        }
-        else if(gamepad1.right_stick_y < 0.0){
-            rDrive.setTargetPosition(rDrive.getCurrentPosition() - (int)rotation);
-        }
+            if (gamepad1.left_stick_y > 0.0) {
+                lDrive.setTargetPosition(lDrive.getCurrentPosition() + (int) rotation);
+            } else if (gamepad1.left_stick_y < 0.0) {
+                lDrive.setTargetPosition(lDrive.getCurrentPosition() - (int) rotation);
+            }
+            if (gamepad1.right_stick_y > 0.0) {
+                rDrive.setTargetPosition(rDrive.getCurrentPosition() + (int) rotation);
+            } else if (gamepad1.right_stick_y < 0.0) {
+                rDrive.setTargetPosition(rDrive.getCurrentPosition() - (int) rotation);
+            }
 
-        //Finger controls
+            //Finger controls
 
-        if (gamepad1.left_trigger != 0.0) {
-            lFinger.setPower(0.3);
-        } else if (gamepad1.left_bumper) {
+            if (gamepad1.left_trigger != 0.0) {
+                lFinger.setPower(0.3);
+            } else if (gamepad1.left_bumper) {
                 lFinger.setPower(-0.3);
-        } else {
-            lFinger.setPower(0.0);
+            } else {
+                lFinger.setPower(0.0);
+            }
+            if (gamepad1.right_trigger != 0.0) {
+                rFinger.setPower(0.3);
+            } else if (gamepad1.right_bumper) {
+                rFinger.setPower(-0.3);
+            } else {
+                rFinger.setPower(0.0);
+            }
+
+
         }
-        if (gamepad1.right_trigger != 0.0) {
-            rFinger.setPower(0.3);
-        } else if (gamepad1.right_bumper) {
-            rFinger.setPower(-0.3);
-        } else {
-            rFinger.setPower(0.0);
+    }
+
+
+    public void controllerTwo() {
+        {
+
+            armControlls();
+
+            //Arm In and Out
+            if (gamepad2.y) {
+
+                yPressed = true;
+                extendEqual("out", Math.abs(gamepad2.left_stick_y));
+            } else if (!gamepad2.y && yPressed) {
+                yPressed = false;
+            }
+
+            if (gamepad2.a) {
+                aPressed = true;
+                extendEqual("in", Math.abs(gamepad2.left_stick_y));
+            } else if (!gamepad2.a && aPressed) {
+                aPressed = false;
+            }
+
+            //gill controls
+            if (gamepad2.left_trigger != 0.0) {
+                lGill.setPower(0.5);
+            } else if (gamepad2.left_bumper) {
+                lGill.setPower(-0.5);
+            } else {
+                lGill.setPower(0.0);
+            }
+
+            if (gamepad2.right_trigger != 0) {
+                rGill.setPower(0.5);
+            } else if (gamepad2.right_bumper) {
+                rGill.setPower(-0.5);
+            } else {
+                rGill.setPower(0.0);
+            }
+
+
         }
+    }
 
-
-    }}
-
-
-
-    public  void controllerTwo() {{
-
-        armControlls();
-
-
-
-        //gill controls
-        if(gamepad2.left_trigger != 0.0){
-            lGill.setPower(0.5);
-        }
-        else if(gamepad2.left_bumper){
-            lGill.setPower(-0.5);
-        }
-        else{
-            lGill.setPower(0.0);
-        }
-
-        if(gamepad2.right_trigger !=0){
-            rGill.setPower(0.5);
-        }
-        else if(gamepad2.right_bumper){
-            rGill.setPower(-0.5);
-        }
-        else{
-            rGill.setPower(0.0);
-        }
-
-
-    }}
-
-    public void extendEqual(String direction, double speed){
+    public void extendEqual(String direction, double speed) {
 
         double ratio = 1;
         double driveSpeed = speed;
@@ -207,16 +218,15 @@ public class DriverOp extends OpMode {
         double absInEncoder = Math.abs(armIn.getCurrentPosition());
         double absOutEncoder = Math.abs(armOut.getCurrentPosition());
 
-        if(direction == "out") {
+        if (direction == "out") {
 
             setMotorToRunToPos(armIn);
             setMotorToRunToPos(armOut);
 
-            if(absOutEncoder >= absInEncoder - lbm) {
+            if (absOutEncoder >= absInEncoder - lbm) {
                 armOut.setPower(driveSpeed);
                 armIn.setPower(driveSpeed);
-            }
-            else if(absInEncoder - lbm >= absOutEncoder){
+            } else if (absInEncoder - lbm >= absOutEncoder) {
                 armOut.setPower(driveSpeed);
                 armIn.setPower(slowSpeed);
             }
@@ -226,16 +236,15 @@ public class DriverOp extends OpMode {
             String.valueOf(armIn);
 
         }
-        if(direction == "in") {
+        if (direction == "in") {
 
             setMotorToRunToPos(armIn);
             setMotorToRunToPos(armOut);
 
-            if(absInEncoder <= absOutEncoder + lbm) {
+            if (absInEncoder <= absOutEncoder + lbm) {
                 armOut.setPower(-driveSpeed);
                 armIn.setPower(-driveSpeed);
-            }
-            else if (absOutEncoder + lbm <= absInEncoder) {
+            } else if (absOutEncoder + lbm <= absInEncoder) {
 
                 armOut.setPower(-slowSpeed);
                 armIn.setPower(-driveSpeed);
@@ -248,49 +257,38 @@ public class DriverOp extends OpMode {
         }
     }
 
-    public void armControlls(){
+    public void armControlls() {
 
-        if(arm.getChannelMode() == DcMotorController.RunMode.RUN_TO_POSITION) {
+        if (arm.getChannelMode() == DcMotorController.RunMode.RUN_TO_POSITION) {
             arm.setPower(0.5);
-        }
-        else {
+        } else {
             arm.setPower(0.0);
         }
-        //Arm In and Out
-        if (gamepad2.y) {
 
-            yPressed = true;
-            extendEqual("out", Math.abs(gamepad2.left_stick_y));
-        } else if (!gamepad2.y && yPressed) {
-            yPressed = false;
-        }
-
-        if (gamepad2.a) {
-            aPressed = true;
-            extendEqual("in", Math.abs(gamepad2.left_stick_y));
-        } else if (!gamepad2.a && aPressed) {
-            aPressed = false;
-        }
 
         //Arm up and down
-        if(gamepad2.left_stick_y > 0.0 ){
-            arm.setTargetPosition(arm.getCurrentPosition() + (int)rotation/3);
-        }
-        else if (gamepad2.left_stick_y < 0.0){
-            arm.setTargetPosition(arm.getCurrentPosition() - (int)rotation/3);
+        if (gamepad2.right_stick_y > 0.0) {
+
+            arm.setTargetPosition(arm.getCurrentPosition() + (int) rotation / 3);
+        } else if (gamepad2.right_stick_y < 0.0) {
+            arm.setTargetPosition(arm.getCurrentPosition() - (int) rotation / 3);
         }
 
     }
 
 
-    public void resetEncoders(DcMotor motor){
+    public void resetEncoders(DcMotor motor) {
+
         motor.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
         motor.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+
+
     }
+
     public void setMotorToRunToPos(DcMotor motor) {
+
         motor.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
+
     }
 
-    public void dropClimbers(){}
 }
-
