@@ -52,6 +52,8 @@ public class AtonomusOp extends OpMode {
 
     private int leftEncoderTarget;
     private int rightEncoderTarget;
+    double lDrivePower;
+    double rDrivePower;
 
     double wheelBase = 15.75;
     double wheelCircumfrance;
@@ -59,9 +61,8 @@ public class AtonomusOp extends OpMode {
     double dOutsideWheelDistance;
     double[] adRotatingRobotDrive = new double[5];
 
-
     public int stateMachineIndex = 0;
-    public int[] stateMachineArray;
+    public int[] stateMachineArray = new int[100];
     public int[] debugArray;
     public int[] autoRightCorner;
     public int[] autoLeftCorner;
@@ -108,7 +109,8 @@ public class AtonomusOp extends OpMode {
 
         lDrive = hardwareMap.dcMotor.get("lDrive");
         rDrive = hardwareMap.dcMotor.get("rDrive");
-        rDrive.setDirection(DcMotor.Direction.REVERSE);
+        lDrive.setDirection(DcMotor.Direction.REVERSE);
+        rDrive.setDirection(DcMotor.Direction.FORWARD);
 
         lFinger = hardwareMap.dcMotor.get("lFinger");
         rFinger = hardwareMap.dcMotor.get("rFinger");
@@ -121,47 +123,92 @@ public class AtonomusOp extends OpMode {
 
         setDrivePower(0, 0);
 
-        debugArray = new int[1];
+        debugArray = new int[100];
         debugArray[0] = STATE_TURN_45_RIGHT;
         debugArray[1] = STATE_STOP;
 
-        for (int i = 0; i < debugArray.length; i++) {
-            debugArray[i] = debugArray[i];}
-
-
-
-
+        for (int i = 0; i < 100; i++) {
+            stateMachineArray[i] = debugArray[i];}
         }
 
 
 
      @Override
-    public void init_loop(){
+    public void init_loop() {
+         resetEncodersAuto(lDrive);
+         resetEncodersAuto(rDrive);
 
-    }
+         leftEncoderTarget = lDrive.getCurrentPosition();
+         rightEncoderTarget= rDrive.getCurrentPosition();
+
+         lDrive.setPower(lDrivePower);
+         rDrive.setPower(rDrivePower);
+
+         lDrive.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
+         rDrive.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
+     }
 
 
     @Override
     public void loop() {
-        switch (stateMachineArray[0]) {
+        lDrive.setTargetPosition(leftEncoderTarget);
+        rDrive.setTargetPosition(rightEncoderTarget);
+
+        lDrive.setPower(lDrivePower);
+        rDrive.setPower(rDrivePower);
+
+        System.out.print("Left positions:");
+        System.out.print(String.valueOf(lDrive.getCurrentPosition()));
+        System.out.println();
+
+        System.out.print("Right positions:");
+        System.out.print(String.valueOf(rDrive.getCurrentPosition()));
+        System.out.println();
+
+        System.out.print("left target:");
+        System.out.print(String.valueOf(leftEncoderTarget));
+        System.out.println();
+
+        System.out.print("right target:");
+        System.out.print(String.valueOf(rightEncoderTarget));
+        System.out.println();
+
+        switch (stateMachineArray[stateMachineIndex]) {
             case STATE_TURN_45_RIGHT:
                 if (stateTurn45Right == 0){
+                    System.out.print("Active\n");
 
                     stateTurn45Right = 1;
                     resetEncodersAuto(rDrive);
                     resetEncodersAuto(lDrive);
-                    turnRobotCalculation(24, 45);// 24 inches, 45 degrees
-                    driveTurn45Left((int) adRotatingRobotDrive[0], (int) adRotatingRobotDrive[1]);
+                    leftEncoderTarget = lDrive.getCurrentPosition();
+                    rightEncoderTarget= rDrive.getCurrentPosition();
+
+                    turnRobotCalculation(6, 45);// 24 inches, 45 degrees
+                    leftEncoderTarget  = (int) adRotatingRobotDrive[1];
+                    rightEncoderTarget = (int) adRotatingRobotDrive[0];
+
+                    System.out.print(String.valueOf(adRotatingRobotDrive[1]));
+                    System.out.print(String.valueOf(adRotatingRobotDrive[0]));
+
+                    lDrivePower = 1.0;
+                    rDrivePower = 1.0;
+
+                    lDrive.setTargetPosition(leftEncoderTarget);
+                    rDrive.setTargetPosition(rightEncoderTarget);
+
+                    lDrive.setPower(lDrivePower);
+                    rDrive.setPower(rDrivePower);
                 }
                 else if (moveComplete()) {
                     stateMachineIndex ++;
                 }
+
+                System.out.print("Waiting...\n");
                 break;
 
             case STATE_DRIVE_STRAIGHT_CORNER_TO_GOAL:
                 if ( stateDriveStraightConerToGoal == 0) {
-
-
                     resetEncodersAuto(rDrive);
                     resetEncodersAuto(lDrive);
                     driveStraight(straightRobotCalculation((double) (12.5)));
@@ -206,6 +253,8 @@ public class AtonomusOp extends OpMode {
                 }
 
             case STATE_STOP:
+                lDrivePower = 0.0;
+                rDrivePower = 0.0;
                 break;
         }
     }
@@ -248,21 +297,9 @@ public class AtonomusOp extends OpMode {
     }
 
 
-
-
-    int getLeftPosition() {
-        return lDrive.getCurrentPosition();
-    }
-
-    int getRightPosition() {
-        return rDrive.getCurrentPosition();
-
-    }
-
-
     boolean moveComplete() {
-        return ((Math.abs(getLeftPosition() - leftEncoderTarget) < 10) &&
-                (Math.abs(getRightPosition() - rightEncoderTarget) < 10));
+        return ((Math.abs(lDrive.getCurrentPosition() - leftEncoderTarget) < 10) &&
+                (Math.abs(rDrive.getCurrentPosition() - rightEncoderTarget) < 10));
     }
 
     public void driveTurn45Left(int left, int right) {
@@ -316,15 +353,15 @@ public class AtonomusOp extends OpMode {
     public void turnRobotCalculation( double dRadius, double dDegreeTurn ){
 
         dOutsideWheelDistance = dDegreeTurn * Math.PI * dRadius / 180;
-        wheelCircumfrance = 4 * Math.PI;
-
-        adRotatingRobotDrive[0] = wheelCircumfrance * (80 / 40) * 280;
-
         dInsideWheelDistance = dDegreeTurn * Math.PI * (dRadius + wheelBase);
 
-        adRotatingRobotDrive[1] = wheelCircumfrance * (80 / 40) * 280;
+        wheelCircumfrance = 4 * Math.PI;
 
-        adRotatingRobotDrive[2] =   adRotatingRobotDrive[0] /   adRotatingRobotDrive[1];
+        adRotatingRobotDrive[0] = dRadius * 35; // dInsideWheelDistance * (80 / 40 * wheelCircumfrance) * 280;
+
+        adRotatingRobotDrive[1] = (dRadius + wheelBase) * 35; // dOutsideWheelDistance * (80 / 40 * wheelCircumfrance) * 280;
+
+        adRotatingRobotDrive[2] =   adRotatingRobotDrive[0] /  adRotatingRobotDrive[1];
     }
 
     public int straightRobotCalculation(Double dDistance){
