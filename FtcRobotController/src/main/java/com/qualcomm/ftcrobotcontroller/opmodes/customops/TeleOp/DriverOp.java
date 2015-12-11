@@ -117,6 +117,7 @@ public class DriverOp extends OpMode {
 
     @Override
     public void loop() {
+        telemetry.addData("Left Controller stick", gamepad2.left_stick_y);
         telemetry.addData("Left Drive Motor", lDrive.getCurrentPosition());
         controllerOne();
         controllerTwo();
