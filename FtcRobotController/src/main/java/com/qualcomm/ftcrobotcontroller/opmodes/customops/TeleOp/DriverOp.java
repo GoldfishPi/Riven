@@ -119,6 +119,7 @@ public class DriverOp extends OpMode {
     public void loop() {
         telemetry.addData("Left Controller stick", gamepad2.left_stick_y);
         telemetry.addData("Left Drive Motor", lDrive.getCurrentPosition());
+        telemetry.addData("ArmLift", arm.getCurrentPosition());
         controllerOne();
         controllerTwo();
         setMotorToRunToPos(arm);
@@ -280,7 +281,6 @@ public class DriverOp extends OpMode {
 
         //Arm up and down
         if (gamepad2.right_stick_y > 0.0) {
-
             arm.setTargetPosition(arm.getCurrentPosition() + 112);
         } else if (gamepad2.right_stick_y < 0.0) {
             arm.setTargetPosition(arm.getCurrentPosition() - 112);
