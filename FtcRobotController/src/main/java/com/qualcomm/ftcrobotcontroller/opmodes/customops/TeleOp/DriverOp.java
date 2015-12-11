@@ -169,10 +169,10 @@ public class DriverOp extends OpMode {
     public void controllerTwo() {
         {
             if(gamepad2.right_stick_y != 0.0) {
-                armControlls(gamepad2.left_stick_y, true);
+                armControlls(0.3, true);
             }
             else{
-                armControlls(gamepad2.left_stick_y, false);
+                armControlls(0.3, false);
             }
 
             //Arm In and Out
