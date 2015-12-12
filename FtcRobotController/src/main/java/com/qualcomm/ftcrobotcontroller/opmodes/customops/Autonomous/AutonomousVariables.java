@@ -180,10 +180,7 @@ public class AutonomousVariables extends OpMode {
     }
 
     public int straightRobotCalculation(Double dDistance){
-
-
         wheelCircumfrance = 4 * Math.PI;
-
         return (int) (dDistance * (80 / 40) * 280);
     }
 

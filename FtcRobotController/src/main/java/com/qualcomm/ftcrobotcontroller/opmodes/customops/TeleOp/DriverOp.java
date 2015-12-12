@@ -87,6 +87,7 @@ public class DriverOp extends OpMode {
 
         rDrive.setDirection(DcMotor.Direction.FORWARD);
         lDrive.setDirection(DcMotor.Direction.REVERSE);
+
         rFinger.setDirection(DcMotor.Direction.REVERSE);
         lFinger.setDirection(DcMotor.Direction.FORWARD);
         rGill.setDirection(DcMotor.Direction.REVERSE);
