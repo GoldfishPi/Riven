@@ -59,11 +59,8 @@ public class AutonomousMountainLeft extends AutonomousVariables {
         stateWait = 0;
         stateMachineIndex = 0;
         debugArray = new int[100];
-        debugArray[0] = STATE_TURN_45_RIGHT;
+        debugArray[0] = STATE_DRIVE_STRAIGHT_CORNER_TO_GOAL;
         debugArray[1] = STATE_TURN_45_LEFT;
-        debugArray[2] = STATE_TURN_45_LEFT;
-        debugArray[3] = STATE_TURN_45_LEFT;
-        debugArray[4] = STATE_TURN_45_RIGHT;
 
         debugArray[5] = STATE_STOP;
 
@@ -110,9 +107,9 @@ public class AutonomousMountainLeft extends AutonomousVariables {
 
                     stateWait = 1;
 
-                    turnRobotCalculation(12, 45);// 24 inches, 45 degrees
-                    leftEncoderTarget  = (int) adRotatingRobotDrive[1] + lDrive.getCurrentPosition();
-                    rightEncoderTarget = (int) adRotatingRobotDrive[0] + rDrive.getCurrentPosition();
+                    //  turnRobotCalculation(12, 45);// 24 inches, 45 degrees
+                    leftEncoderTarget  = 100 + lDrive.getCurrentPosition();
+                    rightEncoderTarget = 25  + rDrive.getCurrentPosition();
 
                     System.out.print(String.valueOf(adRotatingRobotDrive[1]));
                     System.out.print(String.valueOf(adRotatingRobotDrive[0]));
@@ -156,9 +153,9 @@ public class AutonomousMountainLeft extends AutonomousVariables {
 
                     stateWait = 1;
 
-                    turnRobotCalculation(12, 45);// 24 inches, 45 degrees
-                    leftEncoderTarget  = (int) adRotatingRobotDrive[0] + lDrive.getCurrentPosition();
-                    rightEncoderTarget = (int) adRotatingRobotDrive[1] + rDrive.getCurrentPosition();
+                    //  turnRobotCalculation(12, 45);// 24 inches, 45 degrees
+                    leftEncoderTarget  = 100 + lDrive.getCurrentPosition();
+                    rightEncoderTarget = 25  + rDrive.getCurrentPosition();
 
                     System.out.print(String.valueOf(adRotatingRobotDrive[1]));
                     System.out.print(String.valueOf(adRotatingRobotDrive[0]));
@@ -199,10 +196,32 @@ public class AutonomousMountainLeft extends AutonomousVariables {
                 if ( stateDriveStraightConerToGoal == 0) {
                     resetEncodersAuto(rDrive);
                     resetEncodersAuto(lDrive);
-                    driveStraight(straightRobotCalculation((double) (12.5)));
 
+                    leftEncoderTarget = 18372 + lDrive.getCurrentPosition();
+                    rightEncoderTarget= 18388 + rDrive.getCurrentPosition();
+
+                    lDrive.setTargetPosition(leftEncoderTarget);
+                    rDrive.setTargetPosition(rightEncoderTarget);
                 }
-                else if(moveComplete()){
+
+                if ((lDrive.getCurrentPosition() >= leftEncoderTarget - 15)) {
+                    lDrivePower = 0.0;
+                    lDrive.setPower(lDrivePower);
+                }
+
+                if ((rDrive.getCurrentPosition() >= rightEncoderTarget - 15)) {
+                    rDrivePower = 0.0;
+                    rDrive.setPower(rDrivePower);
+                }
+
+                if ((lDrivePower == 0.0) && (rDrivePower == 0.0)) {
+                    System.out.print("Drive straight Complete\n");
+                    lDrivePower = 0.0;
+                    rDrivePower = 0.0;
+                    lDrive.setPower(lDrivePower);
+                    rDrive.setPower(rDrivePower);
+
+                    stateWait = 0;
                     stateMachineIndex ++;
                 }
                 break;

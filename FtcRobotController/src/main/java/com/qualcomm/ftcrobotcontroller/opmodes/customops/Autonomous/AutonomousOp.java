@@ -44,8 +44,8 @@ public class AutonomousOp extends AutonomousVariables {
     public void autonomousInit() {
         lDrive = getHardware("lDrive");
         rDrive = getHardware("rDrive");
-        lDrive.setDirection(DcMotor.Direction.REVERSE);
-        rDrive.setDirection(DcMotor.Direction.FORWARD);
+        lDrive.setDirection(DcMotor.Direction.FORWARD);
+        rDrive.setDirection(DcMotor.Direction.REVERSE);
 
         lFinger = getHardware("lFinger");
         rFinger = getHardware("rFinger");
