@@ -41,38 +41,9 @@ public class siver extends OpMode {
 
     private AutonomousOp crap = new AutonomousOp();
 
-
     @Override
     public void init() {
-
-        lDrive = hardwareMap.dcMotor.get("leftDrive");
-        rDrive = hardwareMap.dcMotor.get("rightDrive");
-        lDrive  = hardwareMap.dcMotor.get("leftDrive");
-        rDrive  = hardwareMap.dcMotor.get("rightDrive");
-
-
-        lFinger = hardwareMap.dcMotor.get("lFinger");
-        rFinger = hardwareMap.dcMotor.get("rFinger");
-
-        lGill   = hardwareMap.dcMotor.get("lGill");
-        rGill   = hardwareMap.dcMotor.get("rGill");
-
-        armOut  = hardwareMap.dcMotor.get("armOut");
-        armIn   = hardwareMap.dcMotor.get("armIn");
-
-        arm     = hardwareMap.dcMotor.get("arm");
-
-
-        lDrive.setDirection(DcMotor.Direction.REVERSE);
-
-        lDrive.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
-        rDrive.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
-
-        armIn.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
-        armOut.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
-
-
-
+        
     }
 
     @Override

@@ -4,7 +4,7 @@ import android.media.MediaPlayer;
 import android.provider.MediaStore;
 
 import com.qualcomm.ftcrobotcontroller.R;
-import com.qualcomm.ftcrobotcontroller.opmodes.customops.Atomonous.AtonomusOp;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
@@ -55,7 +55,7 @@ public class DriverOp extends OpMode {
     private boolean aPressed = false;
 
     boolean armRatchet = false;
-    private AtonomusOp crap = new AtonomusOp();
+
 
 
     public DriverOp() {

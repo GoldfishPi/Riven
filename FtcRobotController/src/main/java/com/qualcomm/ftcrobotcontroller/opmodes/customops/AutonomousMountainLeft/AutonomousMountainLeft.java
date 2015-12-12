@@ -1,5 +1,6 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.customops.AutonomousMountainLeft;
 
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AtonomousVerables;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -10,12 +11,16 @@ import com.qualcomm.robotcore.util.Range;
  * Created by cyberarm on 12/12/15.
  */
 
-public class AutonomousMountainLeft extends OpMode {
+public class AutonomousMountainLeft extends AtonomousVerables {
     public AutonomousOp autonomousOp;
+
+    public AutonomousMountainLeft(){
+        autonomousOp = new AutonomousOp();
+    }
 
     @Override
     public void init() {
-        autonomousOp = new AutonomousOp();
+
         autonomousOp.autonomousInit();
 //        autonomousOp.stateMode();
     }
