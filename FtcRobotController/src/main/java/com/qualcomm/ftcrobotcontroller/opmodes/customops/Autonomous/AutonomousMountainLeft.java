@@ -27,12 +27,12 @@ import com.qualcomm.robotcore.util.Range;
 * End) Stop all
  */
 
-public class AutonomousOp extends AutonomousVariables {
+public class AutonomousMountainLeft extends AutonomousVariables {
     //-------------------------------
     // motor declearations come from atonomous veriables class
-    //-------------------------------
+    //------------------------------//
 
-    public AutonomousOp() {
+    public AutonomousMountainLeft() {
 
     }
 
@@ -54,17 +54,18 @@ public class AutonomousOp extends AutonomousVariables {
         armIn  = getHardware("armIn");
         armIn.setDirection(DcMotor.Direction.REVERSE);
 
-        arm = getHardware("arm");
+        arm = hardwareMap.dcMotor.get("arm");
 
         stateWait = 0;
         stateMachineIndex = 0;
         debugArray = new int[100];
         debugArray[0] = STATE_TURN_45_RIGHT;
-        debugArray[1] = STATE_TURN_45_RIGHT;
-        debugArray[2] = STATE_TURN_45_RIGHT;
-        debugArray[3] = STATE_TURN_45_RIGHT;
+        debugArray[1] = STATE_TURN_45_LEFT;
+        debugArray[2] = STATE_TURN_45_LEFT;
+        debugArray[3] = STATE_TURN_45_LEFT;
+        debugArray[4] = STATE_TURN_45_RIGHT;
 
-        debugArray[4] = STATE_STOP;
+        debugArray[5] = STATE_STOP;
 
         for (int i = 0; i < 100; i++) {
             stateMachineArray[i] = debugArray[i];
@@ -92,7 +93,7 @@ public class AutonomousOp extends AutonomousVariables {
     }
 
     public void autonomousInitLoop() {
-     }
+    }
 
     @Override
     public void loop() {
@@ -150,49 +151,49 @@ public class AutonomousOp extends AutonomousVariables {
                 break;
 
             case STATE_TURN_45_LEFT:
-            if (stateWait == 0){
-                System.out.print("Start TURN_45_LEFT\n");
+                if (stateWait == 0){
+                    System.out.print("Start TURN_45_LEFT\n");
 
-                stateWait = 1;
+                    stateWait = 1;
 
-                leftEncoderTarget  = (int) lDrive.getCurrentPosition();
-                rightEncoderTarget = (int) rDrive.getCurrentPosition();
+                    turnRobotCalculation(12, 45);// 24 inches, 45 degrees
+                    leftEncoderTarget  = (int) adRotatingRobotDrive[0] + lDrive.getCurrentPosition();
+                    rightEncoderTarget = (int) adRotatingRobotDrive[1] + rDrive.getCurrentPosition();
 
-                System.out.print(String.valueOf(adRotatingRobotDrive[1]));
-                System.out.print(String.valueOf(adRotatingRobotDrive[0]));
+                    System.out.print(String.valueOf(adRotatingRobotDrive[1]));
+                    System.out.print(String.valueOf(adRotatingRobotDrive[0]));
 
-                lDrivePower = -1.0;
-                rDrivePower = (-1.0 * adRotatingRobotDrive[2]);
+                    lDrivePower = (1.0 * adRotatingRobotDrive[2]);
+                    rDrivePower = 1.0;
 
-                lDrive.setTargetPosition(leftEncoderTarget);
-                rDrive.setTargetPosition(rightEncoderTarget);
+                    lDrive.setTargetPosition(leftEncoderTarget);
+                    rDrive.setTargetPosition(rightEncoderTarget);
 
-                lDrive.setPower(Range.clip(lDrivePower, -1.0, 1.0));
-                rDrive.setPower(Range.clip(rDrivePower, -1.0, 1.0));
-            }
+                    lDrive.setPower(Range.clip(lDrivePower, -1.0, 1.0));
+                    rDrive.setPower(Range.clip(rDrivePower, -1.0, 1.0));
+                }
 
-            if ((lDrive.getCurrentPosition() >= leftEncoderTarget - 15)) {
-                lDrivePower = 0.0;
-                lDrive.setPower(lDrivePower);
-            }
+                if ((lDrive.getCurrentPosition() >= leftEncoderTarget - 15)) {
+                    lDrivePower = 0.0;
+                    lDrive.setPower(lDrivePower);
+                }
 
-            if ((rDrive.getCurrentPosition() >= rightEncoderTarget - 15)) {
-                rDrivePower = 0.0;
-                rDrive.setPower(rDrivePower);
-            }
+                if ((rDrive.getCurrentPosition() >= rightEncoderTarget - 15)) {
+                    rDrivePower = 0.0;
+                    rDrive.setPower(rDrivePower);
+                }
 
-            if ((lDrivePower == 0.0) && (rDrivePower == 0.0)) {
-                System.out.print("45 LEFT Complete\n");
-                lDrivePower = 0.0;
-                rDrivePower = 0.0;
-                lDrive.setPower(lDrivePower);
-                rDrive.setPower(rDrivePower);
+                if ((lDrivePower == 0.0) && (rDrivePower == 0.0)) {
+                    System.out.print("45 LEFT Complete\n");
+                    lDrivePower = 0.0;
+                    rDrivePower = 0.0;
+                    lDrive.setPower(lDrivePower);
+                    rDrive.setPower(rDrivePower);
 
-                stateWait = 0;
-                stateMachineIndex ++;
-            }
-
-            System.out.print("Waiting...\n");
+                    stateWait = 0;
+                    stateMachineIndex ++;
+                }
+                break;
 
             case STATE_DRIVE_STRAIGHT_CORNER_TO_GOAL:
                 if ( stateDriveStraightConerToGoal == 0) {
