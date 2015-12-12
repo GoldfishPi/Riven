@@ -54,7 +54,12 @@ public class DriverOp extends OpMode {
     private boolean yPressed = false;
     private boolean aPressed = false;
 
+    private boolean xPressed = false;
+    private boolean bPressed = false;
+
     boolean armRatchet = false;
+
+    public double armSpeed = 0.3;
 
 
 
@@ -80,11 +85,15 @@ public class DriverOp extends OpMode {
 
         arm = hardwareMap.dcMotor.get("arm");
 
-        rDrive.setDirection(DcMotor.Direction.REVERSE);
+        rDrive.setDirection(DcMotor.Direction.FORWARD);
+        lDrive.setDirection(DcMotor.Direction.REVERSE);
         rFinger.setDirection(DcMotor.Direction.REVERSE);
+        lFinger.setDirection(DcMotor.Direction.FORWARD);
         rGill.setDirection(DcMotor.Direction.REVERSE);
+        lGill.setDirection(DcMotor.Direction.FORWARD);
         armIn.setDirection(DcMotor.Direction.FORWARD);
         armOut.setDirection(DcMotor.Direction.FORWARD);
+
         resetEncoders(lDrive);
         resetEncoders(rDrive);
         resetEncoders(armIn);
@@ -120,6 +129,7 @@ public class DriverOp extends OpMode {
 
     @Override
     public void loop() {
+        telemetry.addData("ArmSpeed", armSpeed);
         if (gamepad1.b) {
             System.out.println("lDrive : " + lDrive.getCurrentPosition());
             System.out.println("rDrive : " + rDrive.getCurrentPosition());
@@ -141,15 +151,15 @@ public class DriverOp extends OpMode {
                 rDrive.setPower(gamepad1.right_stick_y);
             }
 
-            if (gamepad1.left_stick_y > 0.0) {
-                lDrive.setTargetPosition(lDrive.getCurrentPosition() + (int) rotation);
-            } else if (gamepad1.left_stick_y < 0.0) {
+            if (gamepad1.left_stick_y < 0.0) {
                 lDrive.setTargetPosition(lDrive.getCurrentPosition() - (int) rotation);
+            } else if (gamepad1.left_stick_y > 0.0) {
+                lDrive.setTargetPosition(lDrive.getCurrentPosition() + (int) rotation);
             }
-            if (gamepad1.right_stick_y > 0.0) {
-                rDrive.setTargetPosition(rDrive.getCurrentPosition() + (int) rotation);
-            } else if (gamepad1.right_stick_y < 0.0) {
+            if (gamepad1.right_stick_y < 0.0) {
                 rDrive.setTargetPosition(rDrive.getCurrentPosition() - (int) rotation);
+            } else if (gamepad1.right_stick_y > 0.0) {
+                rDrive.setTargetPosition(rDrive.getCurrentPosition() + (int) rotation);
             }
 
             //Finger controls
@@ -176,11 +186,27 @@ public class DriverOp extends OpMode {
 
     public void controllerTwo() {
         {
+
+            if(gamepad2.x && !xPressed){
+                xPressed = true;
+                armSpeed+= 0.1;
+            }
+            else if(!gamepad2.x && xPressed){
+                xPressed = false;
+            }
+            if(gamepad2.x && !bPressed){
+                xPressed = true;
+                armSpeed-= 0.1;
+            }
+            else if(!gamepad2.x && bPressed){
+                bPressed = false;
+            }
+
             if(gamepad2.right_stick_y != 0.0) {
-                armControlls(0.3, true);
+                armControlls(armSpeed, true);
             }
             else{
-                armControlls(0.3, false);
+                armControlls(armSpeed, false);
             }
 
             //Arm In and Out
