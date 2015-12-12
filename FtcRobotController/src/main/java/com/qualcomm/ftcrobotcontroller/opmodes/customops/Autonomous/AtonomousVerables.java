@@ -36,6 +36,7 @@ public class AtonomousVerables extends OpMode {
     public int[] debugArray;
     public int[] autoRightCorner;
     public int[] autoLeftCorner;
+
     public void init(){
 
     }
