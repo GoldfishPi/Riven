@@ -122,8 +122,8 @@ public class DriverOp extends OpMode {
         armOutInital = armOut.getCurrentPosition() + 100000;
         armInInital = armIn.getCurrentPosition() + 100000;
         setMotorToRunToPos(arm);
-        setMotorToRunToPos(lDrive);
-        setMotorToRunToPos(rDrive);
+        lDrive.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        rDrive.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
 
     }
 
@@ -151,15 +151,17 @@ public class DriverOp extends OpMode {
                 rDrive.setPower(gamepad1.right_stick_y);
             }
 
-            if (gamepad1.left_stick_y < 0.0) {
-                lDrive.setTargetPosition(lDrive.getCurrentPosition() - (int) rotation);
-            } else if (gamepad1.left_stick_y > 0.0) {
-                lDrive.setTargetPosition(lDrive.getCurrentPosition() + (int) rotation);
+            if(gamepad1.right_stick_y != 0){
+                rDrive.setPower(-gamepad1.right_stick_y);
             }
-            if (gamepad1.right_stick_y < 0.0) {
-                rDrive.setTargetPosition(rDrive.getCurrentPosition() - (int) rotation);
-            } else if (gamepad1.right_stick_y > 0.0) {
-                rDrive.setTargetPosition(rDrive.getCurrentPosition() + (int) rotation);
+            else {
+                rDrive.setPower(0.0);
+            }
+            if(gamepad1.left_stick_y != 0){
+                lDrive.setPower(-gamepad1.left_stick_y);
+            }
+            else{
+                lDrive.setPower(0.0);
             }
 
             //Finger controls
