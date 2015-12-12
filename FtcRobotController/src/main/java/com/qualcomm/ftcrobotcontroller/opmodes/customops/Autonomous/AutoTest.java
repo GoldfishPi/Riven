@@ -1,4 +1,4 @@
-package com.qualcomm.ftcrobotcontroller.opmodes.customops.Atomonous;
+package com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;

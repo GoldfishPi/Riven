@@ -1,4 +1,4 @@
-package com.qualcomm.ftcrobotcontroller.opmodes.customops.Atomonous;
+package com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -39,7 +39,7 @@ public class siver extends OpMode {
     //powers
     private double lowPower = 0.3;
 
-    private AtonomusOp crap = new AtonomusOp();
+    private AutonomousOp crap = new AutonomousOp();
 
 
     @Override

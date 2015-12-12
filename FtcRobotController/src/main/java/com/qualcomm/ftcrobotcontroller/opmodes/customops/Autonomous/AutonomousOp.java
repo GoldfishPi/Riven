@@ -1,4 +1,4 @@
-package com.qualcomm.ftcrobotcontroller.opmodes.customops.Atomonous;
+package com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous;
 
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.TeleOp.DriverOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -27,39 +27,32 @@ import com.qualcomm.robotcore.util.Range;
 * End) Stop all
  */
 
-public class AtonomusOp extends OpMode {
-
-
-
-
-
-
-
+public class AutonomousOp extends OpMode {
     //-------------------------------
     // motor declearations
     //-------------------------------
 
-    private DcMotor lDrive;
-    private DcMotor rDrive;
+    public DcMotor lDrive;
+    public DcMotor rDrive;
 
-    private DcMotor lFinger;
-    private DcMotor rFinger;
+    public DcMotor lFinger;
+    public DcMotor rFinger;
 
-    private DcMotor armOut;
-    private DcMotor armIn;
-    
-    private DcMotor arm;
+    public DcMotor armOut;
+    public DcMotor armIn;
 
-    private int leftEncoderTarget;
-    private int rightEncoderTarget;
-    double lDrivePower;
-    double rDrivePower;
+    public DcMotor arm;
 
-    double wheelBase = 15.75;
-    double wheelCircumfrance;
-    double dInsideWheelDistance;
-    double dOutsideWheelDistance;
-    double[] adRotatingRobotDrive = new double[5];
+    public int leftEncoderTarget;
+    public int rightEncoderTarget;
+    public double lDrivePower;
+    public double rDrivePower;
+
+    public double wheelBase = 15.75;
+    public double wheelCircumfrance;
+    public double dInsideWheelDistance;
+    public double dOutsideWheelDistance;
+    public double[] adRotatingRobotDrive = new double[5];
 
     public int stateMachineIndex = 0;
     public int[] stateMachineArray = new int[100];
@@ -71,7 +64,7 @@ public class AtonomusOp extends OpMode {
 
 
 
-    final int
+    public final int
             STATE_TURN_45_RIGHT = 0,
             STATE_DRIVE_STRAIGHT_CORNER_TO_GOAL = 2,
             STATE_STOP = 1,
@@ -90,23 +83,19 @@ public class AtonomusOp extends OpMode {
             stateExtnedArm = 0,
             stateRetractArm = 0;
 
-
-
-
-
-
     public DriverOp driverOp = new DriverOp(); //imports
 
 
-    public AtonomusOp() {
+    public AutonomousOp() {
 
     }
 
-
-
     @Override
     public void init() {
+        autonomousInit();
+    }
 
+    public void autonomousInit() {
         lDrive = hardwareMap.dcMotor.get("lDrive");
         rDrive = hardwareMap.dcMotor.get("rDrive");
         lDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -122,10 +111,12 @@ public class AtonomusOp extends OpMode {
         arm = hardwareMap.dcMotor.get("arm");
     }
 
+    @Override
+    public void init_loop(){
+        autonomousInitLoop();
+    }
 
-
-     @Override
-    public void init_loop() {
+    public void autonomousInitLoop() {
          stateWait = 0;
          stateMachineIndex = 0;
          debugArray = new int[100];
@@ -156,9 +147,12 @@ public class AtonomusOp extends OpMode {
          rDrive.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
      }
 
-
     @Override
     public void loop() {
+        autonomousloop();
+    }
+
+    public void autonomousloop() {
         telemetry.addData("Left position", lDrive.getCurrentPosition());
         telemetry.addData("right position", rDrive.getCurrentPosition());
 
@@ -212,6 +206,51 @@ public class AtonomusOp extends OpMode {
 
                 System.out.print("Waiting...\n");
                 break;
+
+            case STATE_TURN_45_LEFT:
+            if (stateWait == 0){
+                System.out.print("Start TURN_45_LEFT\n");
+
+                stateWait = 1;
+
+                leftEncoderTarget  = (int) lDrive.getCurrentPosition();
+                rightEncoderTarget = (int) rDrive.getCurrentPosition();
+
+                System.out.print(String.valueOf(adRotatingRobotDrive[1]));
+                System.out.print(String.valueOf(adRotatingRobotDrive[0]));
+
+                lDrivePower = -1.0;
+                rDrivePower = (-1.0 * adRotatingRobotDrive[2]);
+
+                lDrive.setTargetPosition(leftEncoderTarget);
+                rDrive.setTargetPosition(rightEncoderTarget);
+
+                lDrive.setPower(Range.clip(lDrivePower, -1.0, 1.0));
+                rDrive.setPower(Range.clip(rDrivePower, -1.0, 1.0));
+            }
+
+            if ((lDrive.getCurrentPosition() >= leftEncoderTarget - 15)) {
+                lDrivePower = 0.0;
+                lDrive.setPower(lDrivePower);
+            }
+
+            if ((rDrive.getCurrentPosition() >= rightEncoderTarget - 15)) {
+                rDrivePower = 0.0;
+                rDrive.setPower(rDrivePower);
+            }
+
+            if ((lDrivePower == 0.0) && (rDrivePower == 0.0)) {
+                System.out.print("45 LEFT Complete\n");
+                lDrivePower = 0.0;
+                rDrivePower = 0.0;
+                lDrive.setPower(lDrivePower);
+                rDrive.setPower(rDrivePower);
+
+                stateWait = 0;
+                stateMachineIndex ++;
+            }
+
+            System.out.print("Waiting...\n");
 
             case STATE_DRIVE_STRAIGHT_CORNER_TO_GOAL:
                 if ( stateDriveStraightConerToGoal == 0) {

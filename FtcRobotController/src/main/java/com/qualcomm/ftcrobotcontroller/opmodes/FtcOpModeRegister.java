@@ -32,8 +32,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
 import com.qualcomm.ftcrobotcontroller.opmodes.Junk.NullOp;
-import com.qualcomm.ftcrobotcontroller.opmodes.customops.Atomonous.AtonomusOp;
-import com.qualcomm.ftcrobotcontroller.opmodes.customops.Atomonous.siver;
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousOp;
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.AutonomousMountainRight.AutonomousMountainRight;
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.siver;
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.AutonomousMountainLeft.AutonomousMountainLeft;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.TeleOp.ArmTest;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.TeleOp.DriverOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
@@ -61,7 +63,9 @@ public class FtcOpModeRegister implements OpModeRegister {
      */
 
     manager.register("ARMTEST", ArmTest.class);
-    manager.register("Atonomus", AtonomusOp.class);
+    manager.register("Autonomous", AutonomousOp.class);
+    manager.register("Autonomous Mountain Left", AutonomousMountainLeft.class);
+    manager.register("Autonomous Mountain Right", AutonomousMountainRight.class);
     manager.register("Driver Op", DriverOp.class);
     manager.register("test drive", ArmTest.class);
     manager.register("motor test", siver.class);
