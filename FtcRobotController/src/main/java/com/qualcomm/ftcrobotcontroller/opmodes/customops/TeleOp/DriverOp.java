@@ -120,12 +120,13 @@ public class DriverOp extends OpMode {
 
     @Override
     public void loop() {
-
-        System.out.println("lDrive : "+lDrive.getCurrentPosition());
-        System.out.println("rDrive : "+rDrive.getCurrentPosition());
-        System.out.println("Arm : "+arm.getCurrentPosition());
-        System.out.println("armIn : "+armIn.getCurrentPosition());
-        System.out.println("armOut : "+armOut.getCurrentPosition());
+        if (gamepad1.b) {
+            System.out.println("lDrive : " + lDrive.getCurrentPosition());
+            System.out.println("rDrive : " + rDrive.getCurrentPosition());
+            System.out.println("Arm : " + arm.getCurrentPosition());
+            System.out.println("armIn : " + armIn.getCurrentPosition());
+            System.out.println("armOut : " + armOut.getCurrentPosition());
+        }
         controllerOne();
         controllerTwo();
         setMotorToRunToPos(arm);

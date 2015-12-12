@@ -33,9 +33,9 @@ package com.qualcomm.ftcrobotcontroller.opmodes;
 
 import com.qualcomm.ftcrobotcontroller.opmodes.Junk.NullOp;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousOp;
-import com.qualcomm.ftcrobotcontroller.opmodes.customops.AutonomousMountainRight.AutonomousMountainRight;
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousMountainRight;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.siver;
-import com.qualcomm.ftcrobotcontroller.opmodes.customops.AutonomousMountainLeft.AutonomousMountainLeft;
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousMountainLeft;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.TeleOp.ArmTest;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.TeleOp.DriverOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;

@@ -1,0 +1,5 @@
+For controlls controller one controlls the drive and de fingers while controller two munipulates the
+arm and gills
+
+During the summer on the off season we tought everyone java, so if any of our programers get hit by
+a bus we still have people who can program.
