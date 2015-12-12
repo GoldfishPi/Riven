@@ -1,5 +1,8 @@
-For controlls controller one controlls the drive and de fingers while controller two munipulates the
-arm and gills
+    Hi im Erik i was tasked with creating the controlls for the robot and teaching java. For
+controlls controller one controlls the drive and de fingers while controller two munipulates thearm and gills.
 
-During the summer on the off season we tought everyone java, so if any of our programers get hit by
-a bus we still have people who can program.
+    Further more during the summer on the off season everyone tried to learn java, so if any of our programmers
+dont show up to a meeting we have people who can make and test code.
+
+    In out reach, we had one member who mentored the 4-H FLL team, and we volenteered at
+a 4H ftc exsibit to talk about our robot
