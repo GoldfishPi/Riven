@@ -27,29 +27,10 @@ import com.qualcomm.robotcore.util.Range;
 * End) Stop all
  */
 
-public class AutonomousOp extends AtonomousVerables {
+public class AutonomousOp extends AutonomousVariables {
     //-------------------------------
     // motor declearations come from atonomous veriables class
     //-------------------------------
-
-    public final int
-            STATE_TURN_45_RIGHT = 0,
-            STATE_DRIVE_STRAIGHT_CORNER_TO_GOAL = 2,
-            STATE_STOP = 1,
-            STATE_TURN_45_LEFT = 3,
-            STATE_RAISE_ARM = 4,
-            STATE_EXTEND_ARM = 5,
-            STATE_RETRACT_ARM = 6;
-
-
-    public int
-            stateWait,
-            stateDriveStraightConerToGoal = 0,
-            stateStop = 0,
-            stateTurn45Left = 0,
-            stateRaiseArm = 0,
-            stateExtnedArm = 0,
-            stateRetractArm = 0;
 
     public DriverOp driverOp = new DriverOp(); //imports
 
@@ -64,8 +45,8 @@ public class AutonomousOp extends AtonomousVerables {
     }
 
     public void autonomousInit() {
-        lDrive = hardwareMap.dcMotor.get("lDrive");
-        rDrive = hardwareMap.dcMotor.get("rDrive");
+        lDrive = getHardware("lDrive");
+        rDrive = getHardware("rDrive");
         lDrive.setDirection(DcMotor.Direction.REVERSE);
         rDrive.setDirection(DcMotor.Direction.FORWARD);
 
@@ -77,6 +58,35 @@ public class AutonomousOp extends AtonomousVerables {
         armIn.setDirection(DcMotor.Direction.REVERSE);
 
         arm = hardwareMap.dcMotor.get("arm");
+
+        stateWait = 0;
+        stateMachineIndex = 0;
+        debugArray = new int[100];
+        debugArray[0] = STATE_TURN_45_RIGHT;
+        debugArray[1] = STATE_TURN_45_RIGHT;
+        debugArray[2] = STATE_TURN_45_RIGHT;
+        debugArray[3] = STATE_TURN_45_RIGHT;
+
+        debugArray[4] = STATE_STOP;
+
+        for (int i = 0; i < 100; i++) {
+            stateMachineArray[i] = debugArray[i];
+        }
+
+        leftEncoderTarget = lDrive.getCurrentPosition();
+        rightEncoderTarget= rDrive.getCurrentPosition();
+
+        lDrivePower = 0.0;
+        rDrivePower = 0.0;
+
+        lDrive.setPower(Range.clip(lDrivePower, -1.0, 1.0));
+        rDrive.setPower(Range.clip(rDrivePower, -1.0, 1.0));
+
+        lDrive.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
+        rDrive.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
+
+        lDrive.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
+        rDrive.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
     }
 
     @Override
@@ -85,34 +95,6 @@ public class AutonomousOp extends AtonomousVerables {
     }
 
     public void autonomousInitLoop() {
-         stateWait = 0;
-         stateMachineIndex = 0;
-         debugArray = new int[100];
-         debugArray[0] = STATE_TURN_45_RIGHT;
-         debugArray[1] = STATE_TURN_45_RIGHT;
-         debugArray[2] = STATE_TURN_45_RIGHT;
-         debugArray[3] = STATE_TURN_45_RIGHT;
-
-         debugArray[4] = STATE_STOP;
-
-         for (int i = 0; i < 100; i++) {
-             stateMachineArray[i] = debugArray[i];
-         }
-
-         leftEncoderTarget = lDrive.getCurrentPosition();
-         rightEncoderTarget= rDrive.getCurrentPosition();
-
-         lDrivePower = 0.0;
-         rDrivePower = 0.0;
-
-         lDrive.setPower(Range.clip(lDrivePower, -1.0, 1.0));
-         rDrive.setPower(Range.clip(rDrivePower, -1.0, 1.0));
-
-         lDrive.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
-         rDrive.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
-
-         lDrive.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
-         rDrive.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
      }
 
     @Override
@@ -121,11 +103,7 @@ public class AutonomousOp extends AtonomousVerables {
     }
 
     public void autonomousloop() {
-        telemetry.addData("Left position", lDrive.getCurrentPosition());
-        telemetry.addData("right position", rDrive.getCurrentPosition());
-
-        telemetry.addData("left target", leftEncoderTarget);
-        telemetry.addData("right target", rightEncoderTarget);
+        setTelemetry();
 
         switch (stateMachineArray[stateMachineIndex]) {
             case STATE_TURN_45_RIGHT:
@@ -172,7 +150,6 @@ public class AutonomousOp extends AtonomousVerables {
                     stateMachineIndex ++;
                 }
 
-                System.out.print("Waiting...\n");
                 break;
 
             case STATE_TURN_45_LEFT:
@@ -266,7 +243,6 @@ public class AutonomousOp extends AtonomousVerables {
                 }
 
             case STATE_STOP:
-                System.out.println("STOP STATE");
                 break;
 
             default:
