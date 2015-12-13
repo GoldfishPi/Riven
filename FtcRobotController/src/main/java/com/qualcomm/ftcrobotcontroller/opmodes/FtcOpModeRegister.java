@@ -63,7 +63,7 @@ public class FtcOpModeRegister implements OpModeRegister {
      */
 
     manager.register("ARMTEST", ArmTest.class);
-    manager.register("Autonomous", AutonomousOp.class);
+    manager.register("Autonomous [DEBUG ONLY]", AutonomousOp.class);
     manager.register("Autonomous Mountain Left", AutonomousMountainLeft.class);
     manager.register("Autonomous Mountain Right", AutonomousMountainRight.class);
     manager.register("Driver Op", DriverOp.class);

@@ -13,6 +13,8 @@ public class AutonomousVariables extends OpMode {
 
     public DriverOp driverOp = new DriverOp(); //imports
 
+    public String currentMachineState;
+
     public DcMotor lDrive;
     public DcMotor rDrive;
 
@@ -41,14 +43,17 @@ public class AutonomousVariables extends OpMode {
     public int[] autoRightCorner;
     public int[] autoLeftCorner;
 
+    String currentState;
+
     public final int
-            STATE_TURN_45_RIGHT = 0,
-            STATE_DRIVE_STRAIGHT_CORNER_TO_GOAL = 2,
+            STATE_TURN_45_RIGHT                = 0,
             STATE_STOP = 1,
+            STATE_DRIVE_STRAIGHT_CORNER_TO_GOAL = 2,
             STATE_TURN_45_LEFT = 3,
             STATE_RAISE_ARM = 4,
             STATE_EXTEND_ARM = 5,
-            STATE_RETRACT_ARM = 6;
+            STATE_RETRACT_ARM = 6,
+            STATE_STRAIGHT_PARK = 7;
 
 
     public int
@@ -69,11 +74,21 @@ public class AutonomousVariables extends OpMode {
     }
 
     public void setTelemetry() {
+        telemetry.addData("State", currentMachineState);
         telemetry.addData("Left position", lDrive.getCurrentPosition());
         telemetry.addData("right position", rDrive.getCurrentPosition());
 
         telemetry.addData("left target", leftEncoderTarget);
         telemetry.addData("right target", rightEncoderTarget);
+
+        System.out.println("left pos: " + lDrive.getCurrentPosition());
+        System.out.println("Right pos: " + rDrive.getCurrentPosition());
+        System.out.println();
+        System.out.println("left  target: " + rightEncoderTarget);
+        System.out.println("Right target: " + rightEncoderTarget);
+        System.out.println();
+
+
     }
 
     public DcMotor getHardware(String string) {
