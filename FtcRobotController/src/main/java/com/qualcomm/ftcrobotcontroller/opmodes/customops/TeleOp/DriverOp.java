@@ -8,6 +8,7 @@ import com.qualcomm.ftcrobotcontroller.R;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
+import com.qualcomm.robotcore.util.Range;
 
 /**
  * Created by goldfishpi on 11/21/15.
@@ -190,20 +191,21 @@ public class DriverOp extends OpMode {
     public void controllerTwo() {
         {
 
-            if(gamepad2.x && !xPressed){
+            if(gamepad2.x && !xPressed && armSpeed < 1.100){
                 xPressed = true;
-                armSpeed+= 0.1;
+                armSpeed += 0.100;
             }
             else if(!gamepad2.x && xPressed){
                 xPressed = false;
             }
-            if(gamepad2.b && !bPressed){
+            if(gamepad2.b && !bPressed && armSpeed > -1.100){
                 bPressed = true;
-                armSpeed -= 0.1;
+                armSpeed -= 0.100;
             }
             else if(!gamepad2.b && bPressed){
                 bPressed = false;
             }
+
 
             if(gamepad2.right_stick_y != 0.0) {
                 armControlls(armSpeed, true);
@@ -301,7 +303,7 @@ public class DriverOp extends OpMode {
     public void armControlls(double speed, boolean running) {
 
         if (running) {
-            arm.setPower(speed);
+            arm.setPower(Range.clip(speed, -1.0, 1.0));
         } else if (!running) {
             if (arm.getCurrentPosition() > arm.getTargetPosition()) {
                 arm.setPower(-0.1);
