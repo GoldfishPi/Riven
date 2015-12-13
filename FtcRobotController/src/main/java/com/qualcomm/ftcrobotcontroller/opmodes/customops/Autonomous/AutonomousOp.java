@@ -198,7 +198,7 @@ public class AutonomousOp extends AutonomousVariables {
                 if ( stateDriveStraightConerToGoal == 0) {
                     resetEncodersAuto(rDrive);
                     resetEncodersAuto(lDrive);
-                    driveStraight(straightRobotCalculation((double) (12.5)));
+//                    driveStraight(straightRobotCalculation((double) (12.5)));
 
                 }
                 else if(moveComplete()){

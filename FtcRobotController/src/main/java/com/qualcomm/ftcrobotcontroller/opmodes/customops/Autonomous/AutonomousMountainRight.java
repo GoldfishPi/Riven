@@ -113,11 +113,8 @@ public class AutonomousMountainRight extends AutonomousVariables {
 
                     stateWait = 1;
 
-                    leftEncoderTarget  = 20586 + 300;                                    // Drive distance
-                    rightEncoderTarget = 0;
-
-                    System.out.print(String.valueOf(adRotatingRobotDrive[1]));
-                    System.out.print(String.valueOf(adRotatingRobotDrive[0]));
+                    leftEncoderTarget  = lDrive.getCurrentPosition() + 2240;                                    // Drive distance
+                    rightEncoderTarget = rDrive.getCurrentPosition();
 
                     lDrivePower = 1.0;
                     rDrivePower = 0.0;
@@ -146,6 +143,9 @@ public class AutonomousMountainRight extends AutonomousVariables {
                     lDrive.setPower(lDrivePower);
                     rDrive.setPower(rDrivePower);
 
+                    resetEncodersAuto(lDrive);
+                    resetEncodersAuto(rDrive);
+
                     stateWait = 0;
                     stateMachineIndex ++;
                 }
@@ -157,8 +157,11 @@ public class AutonomousMountainRight extends AutonomousVariables {
                     currentMachineState = "(R)Straight park";
 
                     System.out.println("(R) STATE STRAIGHT PARK start");
-                    leftEncoderTarget = lDrive.getCurrentPosition() + 300;         // Drive distance
-                    rightEncoderTarget= rDrive.getCurrentPosition() + 300;         // Drive distance
+
+                    stateWait = 1;
+
+                    leftEncoderTarget = lDrive.getCurrentPosition() + 3500;         // Drive distance
+                    rightEncoderTarget= rDrive.getCurrentPosition() + 3500;         // Drive distance
 
                     lDrive.setTargetPosition(leftEncoderTarget);
                     rDrive.setTargetPosition(rightEncoderTarget);
@@ -187,18 +190,24 @@ public class AutonomousMountainRight extends AutonomousVariables {
                     lDrive.setPower(lDrivePower);
                     rDrive.setPower(rDrivePower);
 
+                    resetEncodersAuto(lDrive);
+                    resetEncodersAuto(rDrive);
+
                     stateWait = 0;
                     stateMachineIndex ++;
                 }
                 break;
 
             case STATE_DRIVE_STRAIGHT_CORNER_TO_GOAL:
-                if ( stateDriveStraightConerToGoal == 0) {
+                if ( stateWait == 0) {
+
+                    stateWait = 1;
+
                     currentMachineState = "(R) Drive Straight";
 
                     System.out.println("(R) STATE STRAIGHT start");
-                    leftEncoderTarget = 18768;                                     // Drive distance
-                    rightEncoderTarget= 18768;                                     // Drive distance
+                    leftEncoderTarget = lDrive.getCurrentPosition() + 18768;                                     // Drive distance
+                    rightEncoderTarget= lDrive.getCurrentPosition() + 18768;                                     // Drive distance
 
                     lDrive.setTargetPosition(leftEncoderTarget);
                     rDrive.setTargetPosition(rightEncoderTarget);
@@ -227,13 +236,21 @@ public class AutonomousMountainRight extends AutonomousVariables {
                     lDrive.setPower(lDrivePower);
                     rDrive.setPower(rDrivePower);
 
+                    resetEncodersAuto(lDrive);
+                    resetEncodersAuto(rDrive);
+
                     stateWait = 0;
                     stateMachineIndex ++;
                 }
                 break;
 
+            case STATE_STOP:
+
+                currentMachineState = "(R) STOP";
+                break;
+
             default:
-                currentMachineState = "Right Autonomous active";
+                currentMachineState = "!DEFAULT!";
                 break;
         }
     }

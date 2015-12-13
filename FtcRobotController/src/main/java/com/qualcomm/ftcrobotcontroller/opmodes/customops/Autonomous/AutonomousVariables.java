@@ -168,16 +168,9 @@ public class AutonomousVariables extends OpMode {
         return countIn >= 20;
     }
 
-
-    public void driveStraight(int encoderValue){
-        resetEncodersAuto(lDrive);
-        resetEncodersAuto(rDrive);
-        setEncoderTarget(encoderValue, encoderValue);
-        setDriveSpeed(0.5, 0.5);
-    }
-
     public void resetEncodersAuto(DcMotor motor){
         motor.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
+        motor.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
     }
 
     public void turnRobotCalculation( double dRadius, double dDegreeTurn ){
