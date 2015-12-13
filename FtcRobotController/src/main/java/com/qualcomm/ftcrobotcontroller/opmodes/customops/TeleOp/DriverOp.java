@@ -197,11 +197,11 @@ public class DriverOp extends OpMode {
             else if(!gamepad2.x && xPressed){
                 xPressed = false;
             }
-            if(gamepad2.x && !bPressed){
-                xPressed = true;
-                armSpeed-= 0.1;
+            if(gamepad2.b && !bPressed){
+                bPressed = true;
+                armSpeed -= 0.1;
             }
-            else if(!gamepad2.x && bPressed){
+            else if(!gamepad2.b && bPressed){
                 bPressed = false;
             }
 
