@@ -1,4 +1,4 @@
-/* opyright (c) 2014, 2015 Qualcomm Technologies Inc
+/* Copyright (c) 2014, 2015 Qualcomm Technologies Inc
 
 All rights reserved.
 
@@ -40,11 +40,8 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.hardware.usb.UsbManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.PowerManager;
-import android.os.PowerManager.WakeLock;
 import android.preference.PreferenceManager;
 import android.view.Gravity;
 import android.view.Menu;
@@ -105,9 +102,6 @@ public class FtcRobotControllerActivity extends Activity {
   protected FtcRobotControllerService controllerService;
 
   protected FtcEventLoop eventLoop;
-
-  // Testing out a WakeLock to have screen off but app running
-//  protected WakeLock deviceWakeLock;
 
   protected class RobotRestarter implements Restarter {
 
@@ -180,11 +174,6 @@ public class FtcRobotControllerActivity extends Activity {
     hittingMenuButtonBrightensScreen();
 
     if (USE_DEVICE_EMULATION) { HardwareFactory.enableDeviceEmulation(); }
-
-    // Tryout wake lock, inorder to have screen off
-//    PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
-//    WakeLock deviceWakeLock   = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "TimecraftersTag");
-//    deviceWakeLock.acquire();
   }
 
   @Override
@@ -202,11 +191,11 @@ public class FtcRobotControllerActivity extends Activity {
     callback.wifiDirectUpdate(WifiDirectAssistant.Event.DISCONNECTED);
 
     entireScreenLayout.setOnTouchListener(new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            dimmer.handleDimTimer();
-            return false;
-        }
+      @Override
+      public boolean onTouch(View v, MotionEvent event) {
+        dimmer.handleDimTimer();
+        return false;
+      }
     });
 
   }
@@ -228,16 +217,13 @@ public class FtcRobotControllerActivity extends Activity {
     if (controllerService != null) unbindService(connection);
 
     RobotLog.cancelWriteLogcatToDisk(this);
-
-    // Wake lock released
-//     deviceWakeLock.release();
   }
 
   @Override
   public void onWindowFocusChanged(boolean hasFocus){
     super.onWindowFocusChanged(hasFocus);
     // When the window loses focus (e.g., the action overflow is shown),
-    // cancel any pending hide action. When the window gains focus,  rWinch.setDirection(DcMotor.Direction.REVERSE);
+    // cancel any pending hide action. When the window gains focus,
     // hide the system UI.
     if (hasFocus) {
       if (ImmersiveMode.apiOver19()){
@@ -255,8 +241,6 @@ public class FtcRobotControllerActivity extends Activity {
     getMenuInflater().inflate(R.menu.ftc_robot_controller, menu);
     return true;
   }
-
-
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
@@ -285,21 +269,20 @@ public class FtcRobotControllerActivity extends Activity {
         viewLogsIntent.putExtra(LaunchActivityConstantsList.VIEW_LOGS_ACTIVITY_FILENAME, RobotLog.getLogFilename(this));
         startActivity(viewLogsIntent);
         return true;
-      case R.id.Score:
-          Intent getNameScreenIntent = new Intent(this, ScoreScreen.class);
-          startActivity(getNameScreenIntent);
-          getNameScreenIntent.putExtra("callingActivity", "FtcRobotControllerActivity");
+      case R.id.action_scores:
+        Intent getNameScreenIntent = new Intent(this, ScoreScreen.class);
+        startActivity(getNameScreenIntent);
+        getNameScreenIntent.putExtra("callingActivity", "FtcRobotControllerActivity");
 
-          startActivityForResult(getNameScreenIntent, 1);
+        startActivityForResult(getNameScreenIntent, 1);
         return true;
 
-        case R.id.action_universe:
-            Intent getNameScreenIntentUniverse = new Intent(this, universeScreen.class);
-            startActivity(getNameScreenIntentUniverse);
-            getNameScreenIntentUniverse.putExtra("callingActivity", "FtcRobotControllerActivity");
+      case R.id.action_universe:
+        Intent getNameScreenIntentUniverse = new Intent(this, universeScreen.class);
+        startActivity(getNameScreenIntentUniverse);
+        getNameScreenIntentUniverse.putExtra("callingActivity", "FtcRobotControllerActivity");
 
-            startActivityForResult(getNameScreenIntentUniverse, 1);
-
+        startActivityForResult(getNameScreenIntentUniverse, 1);
       default:
         return super.onOptionsItemSelected(item);
     }
@@ -406,23 +389,10 @@ public class FtcRobotControllerActivity extends Activity {
 
   public void showToast(final Toast toast) {
     runOnUiThread(new Runnable() {
-        @Override
-        public void run() {
-            toast.show();
-        }
+      @Override
+      public void run() {
+        toast.show();
+      }
     });
   }
-
-  public void OnTcButton(View v) {
-
-      Intent intent = new Intent();
-      intent.setAction(Intent.ACTION_VIEW);
-      intent.addCategory(Intent.CATEGORY_BROWSABLE);
-      intent.setData(Uri.parse("http://timecrafters.ddns.net/"));
-      startActivity(intent);
-
-
-  }
-
-
 }

@@ -68,8 +68,5 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <string name="pref_change_wifi_channel">Change Wifi Channel</string>
   <string name="pref_launch_configure">pref_launch_configure</string>
   <string name="pref_launch_autoconfigure">pref_launch_autoconfigure</string>
-  <string name="gfpBio">  GoldfishPi is the programmer for time crafters. C5 is the lead 3d designer.
-    Bridge is a mechanical builder. Tyler is a builder who takes intrest in programing.Pickles is a
-    builder.   </string>
 
 </resources>
