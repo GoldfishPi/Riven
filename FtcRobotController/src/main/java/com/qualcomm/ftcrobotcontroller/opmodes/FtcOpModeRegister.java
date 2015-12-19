@@ -35,6 +35,7 @@ package com.qualcomm.ftcrobotcontroller.opmodes;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousMountainRight;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousMountainLeft;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.TeleOp.DriverOp;
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.MotorTest.MotorTest;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeRegister;
@@ -60,9 +61,9 @@ public class FtcOpModeRegister implements OpModeRegister {
      * If two or more op modes are registered with the same name, the app will display an error.
      */
 
-  manager.register("DriverOp", DriverOp.class);
-  manager.register("Autonomous Mountain Left", AutonomousMountainLeft.class);
-  manager.register("Autonomous Mountain Right", AutonomousMountainRight.class);
-
+    manager.register("DriverOp", DriverOp.class);
+    manager.register("Autonomous Mountain Left", AutonomousMountainLeft.class);
+    manager.register("Autonomous Mountain Right", AutonomousMountainRight.class);
+    manager.register("[DEBUG ONLY] Dangerous Motor Test [DEBUG ONLY]", MotorTest.class);
   }
 }

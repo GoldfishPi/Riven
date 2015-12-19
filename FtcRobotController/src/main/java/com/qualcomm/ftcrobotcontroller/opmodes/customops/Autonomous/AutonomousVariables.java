@@ -21,6 +21,9 @@ public class AutonomousVariables extends OpMode {
     public DcMotor lFinger;
     public DcMotor rFinger;
 
+    public DcMotor lGill;
+    public DcMotor rGill;
+
     public DcMotor armOut;
     public DcMotor armIn;
 
