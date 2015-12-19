@@ -42,19 +42,19 @@ public class AutonomousOp extends AutonomousVariables {
     }
 
     public void autonomousInit() {
-        lDrive = getHardware("lDrive");
-        rDrive = getHardware("rDrive");
+        lDrive = getMotor("lDrive");
+        rDrive = getMotor("rDrive");
         lDrive.setDirection(DcMotor.Direction.FORWARD);
         rDrive.setDirection(DcMotor.Direction.REVERSE);
 
-        lFinger = getHardware("lFinger");
-        rFinger = getHardware("rFinger");
+        lFinger = getMotor("lFinger");
+        rFinger = getMotor("rFinger");
 
-        armOut = getHardware("armOut");
-        armIn  = getHardware("armIn");
+        armOut = getMotor("armOut");
+        armIn  = getMotor("armIn");
         armIn.setDirection(DcMotor.Direction.REVERSE);
 
-        arm = getHardware("arm");
+        arm = getMotor("arm");
 
         stateWait = 0;
         stateMachineIndex = 0;

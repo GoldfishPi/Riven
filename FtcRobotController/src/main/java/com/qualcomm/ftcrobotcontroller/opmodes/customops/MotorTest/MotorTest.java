@@ -21,19 +21,21 @@ public class MotorTest extends AutonomousVariables {
     }
 
     public void autonomousInit() {
-        lDrive = getHardware("lDrive");
-        rDrive = getHardware("rDrive");
+        lDrive = getMotor("lDrive");
+        rDrive = getMotor("rDrive");
 
-        lFinger = getHardware("lFinger");
-        rFinger = getHardware("rFinger");
+        lFinger = getMotor("lFinger");
+        rFinger = getMotor("rFinger");
 
-        armOut = getHardware("armOut");
-        armIn  = getHardware("armIn");
+        armOut = getMotor("armOut");
+        armIn  = getMotor("armIn");
 
-        arm = getHardware("arm");
+        arm = getMotor("arm");
 
-        lGill = getHardware("lGill");
-        rGill = getHardware("rGill");
+        lGill = getMotor("lGill");
+        rGill = getMotor("rGill");
+
+        theDumper = getServo("theDumper");
 
         lDrivePower = 0.05;
         rDrivePower = 0.05;
@@ -58,5 +60,6 @@ public class MotorTest extends AutonomousVariables {
         armOut.setPower(lDrivePower);
         lGill.setPower(lDrivePower);
         rGill.setPower(lDrivePower);
+        theDumper.setPosition(lDrivePower);
     }
 }

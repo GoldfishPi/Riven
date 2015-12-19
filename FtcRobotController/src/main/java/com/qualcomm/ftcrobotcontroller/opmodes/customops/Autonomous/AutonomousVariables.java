@@ -4,6 +4,7 @@ import com.qualcomm.ftcrobotcontroller.opmodes.customops.TeleOp.DriverOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 /**
@@ -23,6 +24,8 @@ public class AutonomousVariables extends OpMode {
 
     public DcMotor lGill;
     public DcMotor rGill;
+
+    public Servo theDumper;
 
     public DcMotor armOut;
     public DcMotor armIn;
@@ -94,9 +97,10 @@ public class AutonomousVariables extends OpMode {
 
     }
 
-    public DcMotor getHardware(String string) {
+    public DcMotor getMotor(String string) {
         return hardwareMap.dcMotor.get(string);
     }
+    public Servo getServo(String string) { return hardwareMap.servo.get(string); }
 
     //-------------------------------------//
     //functions here...                    //

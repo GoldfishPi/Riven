@@ -36,6 +36,7 @@ import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousMo
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousMountainLeft;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.TeleOp.DriverOp;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.MotorTest.MotorTest;
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.MotorTest.ServoTest;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeRegister;
@@ -65,5 +66,6 @@ public class FtcOpModeRegister implements OpModeRegister {
     manager.register("Autonomous Mountain Left", AutonomousMountainLeft.class);
     manager.register("Autonomous Mountain Right", AutonomousMountainRight.class);
     manager.register("[DEBUG ONLY] Dangerous Motor Test [DEBUG ONLY]", MotorTest.class);
+    manager.register("[DEBUG ONLY] Dangerous Servo Test [DEBUG ONLY]", ServoTest.class);
   }
 }

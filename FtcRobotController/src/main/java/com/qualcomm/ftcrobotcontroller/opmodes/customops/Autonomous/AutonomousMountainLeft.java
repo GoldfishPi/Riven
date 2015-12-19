@@ -42,16 +42,16 @@ public class AutonomousMountainLeft extends AutonomousVariables {
     }
 
     public void autonomousInit() {
-        lDrive = getHardware("lDrive");
-        rDrive = getHardware("rDrive");
+        lDrive = getMotor("lDrive");
+        rDrive = getMotor("rDrive");
         lDrive.setDirection(DcMotor.Direction.REVERSE);
         rDrive.setDirection(DcMotor.Direction.FORWARD);
 
-        lFinger = getHardware("lFinger");
-        rFinger = getHardware("rFinger");
+        lFinger = getMotor("lFinger");
+        rFinger = getMotor("rFinger");
 
-        armOut = getHardware("armOut");
-        armIn  = getHardware("armIn");
+        armOut = getMotor("armOut");
+        armIn  = getMotor("armIn");
         armIn.setDirection(DcMotor.Direction.REVERSE);
 
         arm = hardwareMap.dcMotor.get("arm");
