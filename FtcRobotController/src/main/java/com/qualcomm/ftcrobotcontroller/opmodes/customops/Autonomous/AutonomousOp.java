@@ -50,9 +50,8 @@ public class AutonomousOp extends AutonomousVariables {
         lFinger = getMotor("lFinger");
         rFinger = getMotor("rFinger");
 
-        armOut = getMotor("armOut");
-        armIn  = getMotor("armIn");
-        armIn.setDirection(DcMotor.Direction.REVERSE);
+        armExtender = getMotor("armExtender");
+        armExtender.setDirection(DcMotor.Direction.REVERSE);
 
         arm = getMotor("arm");
 
@@ -220,8 +219,7 @@ public class AutonomousOp extends AutonomousVariables {
 
             case STATE_EXTEND_ARM:
                 if (stateExtnedArm == 0){
-                    resetEncodersAuto(armOut);
-                    resetEncodersAuto(armIn);
+                    resetEncodersAuto(armExtender);
                     extendArm();
                 }
                 else if (extendFinished()){
@@ -231,8 +229,7 @@ public class AutonomousOp extends AutonomousVariables {
 
             case STATE_RETRACT_ARM:
                 if(stateRetractArm == 0){
-                    resetEncodersAuto(armOut);
-                    resetEncodersAuto(armIn);
+                    resetEncodersAuto(armExtender);
                     retractArm();
                 }
                 else if(retractDone()){

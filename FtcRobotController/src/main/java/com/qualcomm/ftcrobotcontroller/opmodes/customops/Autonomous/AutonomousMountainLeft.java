@@ -50,11 +50,10 @@ public class AutonomousMountainLeft extends AutonomousVariables {
         lFinger = getMotor("lFinger");
         rFinger = getMotor("rFinger");
 
-        armOut = getMotor("armOut");
-        armIn  = getMotor("armIn");
-        armIn.setDirection(DcMotor.Direction.REVERSE);
+        armExtender  = getMotor("armExtender");
+        armExtender.setDirection(DcMotor.Direction.REVERSE);
 
-        arm = hardwareMap.dcMotor.get("arm");
+        arm = getMotor("arm");
 
         stateWait = 0;
         stateMachineIndex = 0;

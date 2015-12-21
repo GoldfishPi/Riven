@@ -53,9 +53,8 @@ public class AutonomousMountainRight extends AutonomousVariables {
         lFinger = getMotor("lFinger");
         rFinger = getMotor("rFinger");
 
-        armOut = getMotor("armOut");
-        armIn  = getMotor("armIn");
-        armIn.setDirection(DcMotor.Direction.REVERSE);
+        armExtender = getMotor("armExtender");
+        armExtender.setDirection(DcMotor.Direction.REVERSE);
 
         arm = hardwareMap.dcMotor.get("arm");
 

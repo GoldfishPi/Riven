@@ -27,8 +27,7 @@ public class AutonomousVariables extends OpMode {
 
     public Servo theDumper;
 
-    public DcMotor armOut;
-    public DcMotor armIn;
+    public DcMotor armExtender;
 
     public DcMotor arm;
 
