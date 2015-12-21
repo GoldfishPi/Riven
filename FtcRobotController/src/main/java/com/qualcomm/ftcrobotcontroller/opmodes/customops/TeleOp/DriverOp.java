@@ -118,8 +118,8 @@ public class DriverOp extends OpMode {
         resetEncoders(arm);
 
         setMotorToRunToPos(arm);
-        lDrive.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
-        rDrive.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        lDrive.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        rDrive.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
 
     }
 
@@ -142,7 +142,7 @@ public class DriverOp extends OpMode {
         {
 
             //Drive controls
-            if (lDrive.getChannelMode() == DcMotorController.RunMode.RUN_TO_POSITION && rDrive.getChannelMode() == DcMotorController.RunMode.RUN_TO_POSITION) {
+            if (lDrive.getMode() == DcMotorController.RunMode.RUN_TO_POSITION && rDrive.getMode() == DcMotorController.RunMode.RUN_TO_POSITION) {
                 lDrive.setPower(gamepad1.left_stick_y);
                 rDrive.setPower(gamepad1.right_stick_y);
             }

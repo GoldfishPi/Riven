@@ -187,11 +187,11 @@ public class FtcRobotControllerActivity extends Activity {
 
     // save 4MB of logcat to the SD card
     RobotLog.writeLogcatToDisk(this, 4 * 1024);
-
     Intent intent = new Intent(this, FtcRobotControllerService.class);
     bindService(intent, connection, Context.BIND_AUTO_CREATE);
 
     utility.updateHeader(Utility.NO_FILE, R.string.pref_hardware_config_filename, R.id.active_filename, R.id.included_header);
+
 
     callback.wifiDirectUpdate(WifiDirectAssistant.Event.DISCONNECTED);
 
