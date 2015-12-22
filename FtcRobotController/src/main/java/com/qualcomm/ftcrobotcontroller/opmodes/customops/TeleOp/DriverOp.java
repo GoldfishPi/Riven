@@ -8,6 +8,7 @@ import com.qualcomm.ftcrobotcontroller.R;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 /**
@@ -27,6 +28,8 @@ public class DriverOp extends OpMode {
     private DcMotor armExtender;
 
     private DcMotor arm;
+
+    private Servo lovePonny;
 
     boolean evening = false;
 
@@ -81,6 +84,8 @@ public class DriverOp extends OpMode {
         rGill = hardwareMap.dcMotor.get("rGill");
 
         armExtender = hardwareMap.dcMotor.get("armExtender");
+
+        lovePonny = hardwareMap.servo.get("theDumper");
 
         arm = hardwareMap.dcMotor.get("arm");
 
@@ -137,12 +142,20 @@ public class DriverOp extends OpMode {
         setMotorToRunToPos(arm);
     }
 
-    public void controllerOne()
+    public void controllerOne()//Living organism velocity extender and phasing osselation nutralizing neon eliptical yeilder
     {
         {
 
+            if(gamepad1.a){
+                lovePonny.setPosition(0);
+            }
+            if(gamepad1.y){
+                lovePonny.setPosition(180);
+            }
+
             //Drive controls
-            if (lDrive.getMode() == DcMotorController.RunMode.RUN_TO_POSITION && rDrive.getMode() == DcMotorController.RunMode.RUN_TO_POSITION) {
+            if (lDrive.getMode() == DcMotorController.RunMode.RUN_TO_POSITION && rDrive.getMode() ==
+            DcMotorController.RunMode.RUN_TO_POSITION) {
                 lDrive.setPower(gamepad1.left_stick_y);
                 rDrive.setPower(gamepad1.right_stick_y);
             }
@@ -184,6 +197,10 @@ public class DriverOp extends OpMode {
 
     public void controllerTwo() {
         {
+
+            if(!gamepad2.dpad_right){
+                arm.setPower(0.0);
+            }
 
             if(gamepad2.x && !xPressed && armSpeed < 1.100){
                 xPressed = true;
@@ -264,15 +281,15 @@ public class DriverOp extends OpMode {
     }
 
     public void armControlls(double speed, boolean running) {
-
+        double armPower = 0.1;
         if (running) {
             arm.setPower(Range.clip(speed, -1.0, 1.0));
         } else if (!running) {
             if (arm.getCurrentPosition() > arm.getTargetPosition()) {
-                arm.setPower(-0.1);
+                arm.setPower(-armPower);
             }
             else if(arm.getCurrentPosition() < arm.getTargetPosition()){
-                arm.setPower(0.1);
+                arm.setPower(armPower);
             }
             else {
                 arm.setPower(0.0);
