@@ -370,12 +370,12 @@ public class AutonomousMountainLeft extends AutonomousVariables {
                     currentMachineState = "(L) Straight Reposition";
                 }
 
-                if (getEncoderValue(lDrive) >= leftEncoderTarget - 15) {
+                if (getEncoderValue(lDrive) <= leftEncoderTarget - 15) {
                     lDrivePower = 0.0;
                     lDrive.setPower(lDrivePower);
                 }
 
-                if (getEncoderValue(rDrive) >= rightEncoderTarget - 15) {
+                if (getEncoderValue(rDrive) <= rightEncoderTarget - 15) {
                     rDrivePower = 0.0;
                     rDrive.setPower(rDrivePower);
                 }
