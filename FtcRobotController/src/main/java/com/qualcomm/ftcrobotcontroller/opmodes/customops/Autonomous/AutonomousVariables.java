@@ -31,10 +31,14 @@ public class AutonomousVariables extends OpMode {
 
     public DcMotor arm;
 
+    public double armSpeed;
+    public int armLocation;
     public int leftEncoderTarget;
     public int rightEncoderTarget;
     public double lDrivePower;
     public double rDrivePower;
+    public double theDumperPosition;
+    public int theDumperTick;
 
     public double wheelBase = 15.75;
     public double wheelCircumfrance;
@@ -51,14 +55,19 @@ public class AutonomousVariables extends OpMode {
     String currentState;
 
     public final int
-            STATE_TURN_45_RIGHT                = 0,
-            STATE_STOP = 1,
+            STATE_TURN_45_RIGHT                 = 0,
+            STATE_STOP                          = 1,
             STATE_DRIVE_STRAIGHT_CORNER_TO_GOAL = 2,
-            STATE_TURN_45_LEFT = 3,
-            STATE_RAISE_ARM = 4,
-            STATE_EXTEND_ARM = 5,
-            STATE_RETRACT_ARM = 6,
-            STATE_STRAIGHT_PARK = 7;
+            STATE_TURN_45_LEFT                  = 3,
+            STATE_RAISE_ARM                     = 4,
+            STATE_LOWER_ARM                     = 5,
+            STATE_EXTEND_ARM                    = 6,
+            STATE_RETRACT_ARM                   = 7,
+            STATE_STRAIGHT_PARK                 = 8,
+            STATE_STRAIGHT_POSITION             = 9,
+            STATE_DUMP_GUYS                     = 10,
+            STATE_UNDUMP_GUYS                   = 11,
+            STATE_STRAIGHT_REPOSITION           = 12;
 
 
     public int
@@ -80,18 +89,21 @@ public class AutonomousVariables extends OpMode {
 
     public void setTelemetry() {
         telemetry.addData("State", currentMachineState);
-        telemetry.addData("Left position", lDrive.getCurrentPosition());
-        telemetry.addData("right position", rDrive.getCurrentPosition());
+        telemetry.addData("Left position", getEncoderValue(lDrive));
+        telemetry.addData("right position", getEncoderValue(rDrive));
 
         telemetry.addData("left target", leftEncoderTarget);
         telemetry.addData("right target", rightEncoderTarget);
 
-        System.out.println("left pos: " + lDrive.getCurrentPosition());
-        System.out.println("Right pos: " + rDrive.getCurrentPosition());
-        System.out.println();
-        System.out.println("left  target: " + rightEncoderTarget);
-        System.out.println("Right target: " + rightEncoderTarget);
-        System.out.println();
+        telemetry.addData("theDumper position", theDumperPosition);
+        telemetry.addData("Arm", getEncoderValue(arm));
+
+//        System.out.println("left pos: " + getEncoderValue(lDrive));
+//        System.out.println("Right pos: " + getEncoderValue(rDrive));
+//        System.out.println();
+//        System.out.println("left  target: " + rightEncoderTarget);
+//        System.out.println("Right target: " + rightEncoderTarget);
+//        System.out.println();
 
 
     }
@@ -101,6 +113,13 @@ public class AutonomousVariables extends OpMode {
     }
     public Servo getServo(String string) { return hardwareMap.servo.get(string); }
 
+    public int getEncoderValue(DcMotor motor) {
+        return Math.abs(motor.getCurrentPosition());
+    }
+
+    public double getEncoderValue(Servo servo) {
+        return Math.abs(servo.getPosition());
+    }
     //-------------------------------------//
     //functions here...                    //
     //-------------------------------------//
@@ -135,8 +154,8 @@ public class AutonomousVariables extends OpMode {
 
 
     boolean moveComplete() {
-        return ((Math.abs(lDrive.getCurrentPosition() - leftEncoderTarget) < 10) &&
-                (Math.abs(rDrive.getCurrentPosition() - rightEncoderTarget) < 10));
+        return ((Math.abs(getEncoderValue(lDrive) - leftEncoderTarget) < 10) &&
+                (Math.abs(getEncoderValue(rDrive) - rightEncoderTarget) < 10));
     }
 
     public void driveTurn45Left(int left, int right) {
@@ -175,8 +194,8 @@ public class AutonomousVariables extends OpMode {
     }
 
     public void resetEncodersAuto(DcMotor motor){
-        motor.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
-        motor.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
+        motor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
+        motor.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
     }
 
     public void turnRobotCalculation( double dRadius, double dDegreeTurn ){
@@ -196,32 +215,5 @@ public class AutonomousVariables extends OpMode {
     public int straightRobotCalculation(Double dDistance){
         wheelCircumfrance = 4 * Math.PI;
         return (int) (dDistance * (80 / 40) * 280);
-    }
-
-    public void driveEqual(String Direction) {
-        if ("forward".equals(Direction)) {
-            if (rDrive.getCurrentPosition() > lDrive.getCurrentPosition()) {
-                rDrive.setPower(0.1);
-                lDrive.setPower(1.0);
-            } else if (lDrive.getCurrentPosition() > rDrive.getCurrentPosition()) {
-                rDrive.setPower(1.0);
-                lDrive.setPower(0.1);
-            } else {
-                rDrive.setPower(0.1);
-                lDrive.setPower(0.1);
-            }
-        }
-        if (Direction .equals("backwards")) {
-            if (rDrive.getCurrentPosition() > lDrive.getCurrentPosition()) {
-                rDrive.setPower(-1.0);
-                lDrive.setPower(-0.1);
-            } else if (lDrive.getCurrentPosition() > rDrive.getCurrentPosition()) {
-                rDrive.setPower(-0.1);
-                lDrive.setPower(-1.0);
-            } else {
-                rDrive.setPower(-0.1);
-                lDrive.setPower(-0.1);
-            }
-        }
     }
 }

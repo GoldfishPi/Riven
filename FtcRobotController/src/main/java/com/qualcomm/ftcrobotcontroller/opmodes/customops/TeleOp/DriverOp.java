@@ -147,10 +147,10 @@ public class DriverOp extends OpMode {
         {
 
             if(gamepad1.a){
-                lovePonny.setPosition(0);
+                lovePonny.setPosition(lovePonny.MIN_POSITION);
             }
             if(gamepad1.y){
-                lovePonny.setPosition(180);
+                lovePonny.setPosition(lovePonny.MAX_POSITION);
             }
 
             //Drive controls
@@ -241,6 +241,14 @@ public class DriverOp extends OpMode {
                 aPressed = false;
             }
 
+            if(!aPressed && !yPressed){
+                extendEqual("STOP", 0.0);
+            }
+            if(gamepad2.dpad_right){
+                extendEqual("STOP", 0.0);
+            }
+
+
             //gill controls
             if (gamepad2.left_trigger != 0.0) {
                 lGill.setPower(0.5);
@@ -276,6 +284,8 @@ public class DriverOp extends OpMode {
         if (direction == "in") {
             armExtender.setTargetPosition(armExtender.getCurrentPosition()-50);
         }
+
+        if(direction == "STOP")
 
         armExtender.setPower(gamepad2.left_stick_y);
     }
