@@ -47,7 +47,6 @@ public class DriverOp extends OpMode {
         lDrive = hardwareMap.dcMotor.get("lDrive");
         rDrive = hardwareMap.dcMotor.get("rDrive");
 
-
         lFinger = hardwareMap.dcMotor.get("lFinger");
         rFinger = hardwareMap.dcMotor.get("rFinger");
 
@@ -75,8 +74,6 @@ public class DriverOp extends OpMode {
         resetEncoders(armExtender);
 
         resetEncoders(arm);
-
-
 
     }
 
@@ -133,19 +130,16 @@ public class DriverOp extends OpMode {
 
             if(gamepad1.right_stick_y != 0){
                 rDrive.setPower(-gamepad1.right_stick_y);
-            }
-            else {
+            } else {
                 rDrive.setPower(0.0);
             }
             if(gamepad1.left_stick_y != 0){
                 lDrive.setPower(-gamepad1.left_stick_y);
-            }
-            else{
+            } else{
                 lDrive.setPower(0.0);
             }
 
             //Finger controls
-
             if (gamepad1.left_trigger != 0.0) {
                 lFinger.setPower(0.3);
             } else if (gamepad1.left_bumper) {
@@ -160,7 +154,6 @@ public class DriverOp extends OpMode {
             } else {
                 rFinger.setPower(0.0);
             }
-
 
         }
     }
@@ -272,7 +265,6 @@ public class DriverOp extends OpMode {
             }
         }
 
-
         //Arm up and down
         if (gamepad2.right_stick_y > 0.0) {
             arm.setTargetPosition(arm.getCurrentPosition() + 112);
@@ -281,7 +273,6 @@ public class DriverOp extends OpMode {
         }
 
     }
-
 
     public void resetEncoders(DcMotor motor) {
 

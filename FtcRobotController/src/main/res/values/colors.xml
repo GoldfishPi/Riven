@@ -43,5 +43,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <color name="white">#FFFFFF</color>
   <color name="black">#000000</color>
   <color name="transparent_color">#00000000</color>
-  <color name="pink">#3040ef</color>
+  <color name="pink">#ff52bf</color>
+  <color name="random">#000000</color>
 </resources>
