@@ -67,7 +67,10 @@ public class AutonomousVariables extends OpMode {
             STATE_STRAIGHT_POSITION             = 9,
             STATE_DUMP_GUYS                     = 10,
             STATE_UNDUMP_GUYS                   = 11,
-            STATE_STRAIGHT_REPOSITION           = 12;
+            STATE_STRAIGHT_REPOSITION           = 12,
+            STATE_REVERSE_90_DEGREE_LEFT        = 13,
+            STATE_STRAIGHT_TO_NEAR_BLUE_LEFT    = 14,
+            STATE_TURN_45_NEAR_BLUE_LEFT        = 15;
 
 
     public int
@@ -114,11 +117,11 @@ public class AutonomousVariables extends OpMode {
     public Servo getServo(String string) { return hardwareMap.servo.get(string); }
 
     public int getEncoderValue(DcMotor motor) {
-        return Math.abs(motor.getCurrentPosition());
+        return motor.getCurrentPosition();
     }
 
     public double getEncoderValue(Servo servo) {
-        return Math.abs(servo.getPosition());
+        return servo.getPosition();
     }
     //-------------------------------------//
     //functions here...                    //
