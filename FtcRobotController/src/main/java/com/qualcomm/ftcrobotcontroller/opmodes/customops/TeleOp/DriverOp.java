@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.BatteryChecker;
+import com.qualcomm.robotcore.util.Range;
 
 /**
  * Created by goldfishpi on 11/21/15.
@@ -202,9 +203,11 @@ public class DriverOp extends OpMode {
 
 
             if(gamepad2.right_stick_y != 0.0) {
-
+                armControlls(true, 0);
             }
             else{
+
+                armControlls(false, 0);
             }
 
             //Arm In and Out
@@ -267,8 +270,8 @@ public class DriverOp extends OpMode {
         armExtender.setPower(gamepad2.left_stick_y);
     }
 
-    public void armControlls() {
-        /*double armPower = 0.1;
+    public void armControlls(boolean running, int speed) {
+        double armPower = 0.1;
 
         if (running) {
             arm.setPower(Range.clip(speed, -1.0, 1.0));
@@ -280,7 +283,7 @@ public class DriverOp extends OpMode {
             } else {
                 arm.setPower(0.0);
             }
-        }*/
+        }
 
 
 
