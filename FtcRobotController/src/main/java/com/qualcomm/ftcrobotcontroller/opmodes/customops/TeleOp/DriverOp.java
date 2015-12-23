@@ -1,10 +1,5 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.customops.TeleOp;
 
-import android.media.MediaPlayer;
-import android.provider.MediaStore;
-
-import com.qualcomm.ftcrobotcontroller.R;
-
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
@@ -31,36 +26,12 @@ public class DriverOp extends OpMode {
 
     private Servo lovePonny;
 
-    boolean evening = false;
-
-    String forward = "forward";
-    String backward = "backward";
-
-    private boolean encoderInit = true;
-
-    private int armOutInital;
-    private int armOutFinal;
-
-    private int armInInital;
-    private int armInFinal;
-
-    private int armOutDelta;
-    private int armInDelta;
-
-    private double rotation = 280 * 3;
-
-    private int lastTargetPosition;
-
-    boolean rFast;
-    boolean lFast;
-
     private boolean yPressed = false;
     private boolean aPressed = false;
 
     private boolean xPressed = false;
     private boolean bPressed = false;
 
-    boolean armRatchet = false;
 
     public double armSpeed = 0.3;
 
@@ -265,17 +236,10 @@ public class DriverOp extends OpMode {
             } else {
                 rGill.setPower(0.0);
             }
-
-
         }
     }
 
     public void extendEqual(String direction, double speed) {
-
-        double ratio = 1;
-        double driveSpeed = speed;
-        double slowSpeed = 0.0;
-        int lbm = 200;
 
         if (direction == "out") {
             armExtender.setTargetPosition(armExtender.getCurrentPosition()+50);
@@ -285,7 +249,9 @@ public class DriverOp extends OpMode {
             armExtender.setTargetPosition(armExtender.getCurrentPosition()-50);
         }
 
-        if(direction == "STOP")
+        if(direction == "STOP"){
+            armExtender.setPower(0.0);
+        }
 
         armExtender.setPower(gamepad2.left_stick_y);
     }
