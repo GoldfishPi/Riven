@@ -118,11 +118,11 @@ public class DriverOp extends OpMode {
 
         }
 
-        if(batteryChecker.getBatteryLevel() < 100){
-
-            final ToneGenerator tg = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
-            tg.startTone(ToneGenerator.TONE_PROP_BEEP);
-        }
+//        if(batteryChecker.getBatteryLevel() < 100){
+//
+//            final ToneGenerator tg = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
+//            tg.startTone(ToneGenerator.TONE_PROP_BEEP);
+//        }
 
         controllerOne();
         controllerTwo();

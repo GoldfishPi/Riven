@@ -54,28 +54,25 @@ public class AutonomousMountainRight extends AutonomousVariables {
         stateMachineIndex = 0;
         debugArray = new int[100];
         // Field Debug Array:
-//        debugArray[0] = STATE_DRIVE_STRAIGHT_CORNER_TO_GOAL;
-//        debugArray[1] = STATE_TURN_45_RIGHT;
-//        debugArray[2] = STATE_STRAIGHT_PARK;
-//        debugArray[3] = STATE_RAISE_ARM;
-//        debugArray[3] = STATE_STRAIGHT_POSITION;
-//        debugArray[4] = STATE_DUMP_GUYS;
-//        debugArray[5] = STATE_UNDUMP_GUYS;
-//        debugArray[6] = STATE_STRAIGHT_REPOSITION;
-//        debugArray[8] = STATE_LOWER_ARM;
-//        debugArray[7] = STATE_REVERSE_90_DEGREE_RIGHT;
-//        debugArray[8] = STATE_REVERSE_90_DEGREE_RIGHT;
+        debugArray[0] = STATE_DRIVE_STRAIGHT_CORNER_TO_GOAL;
+        debugArray[1] = STATE_TURN_45_RIGHT;
+        debugArray[2] = STATE_STRAIGHT_PARK;
+        debugArray[3] = STATE_RAISE_ARM;
+        debugArray[4] = STATE_STRAIGHT_POSITION;
+        debugArray[5] = STATE_DUMP_GUYS;
+        debugArray[6] = STATE_UNDUMP_GUYS;
+        debugArray[7] = STATE_STRAIGHT_REPOSITION;
+        debugArray[8] = STATE_LOWER_ARM;
+        debugArray[9] = STATE_REVERSE_90_DEGREE_RIGHT;
+        debugArray[10] = STATE_REVERSE_90_DEGREE_RIGHT;
 //        debugArray[10]= STATE_STOP;
 
         // Testing Debug Array:
-        debugArray[0] = STATE_STRAIGHT_REPOSITION;
-        debugArray[1] = STATE_REVERSE_90_DEGREE_RIGHT;
-        debugArray[2] = STATE_REVERSE_90_DEGREE_RIGHT;
-        debugArray[3] = STATE_STRAIGHT_TO_NEAR_BLUE;
-        debugArray[4] = STATE_TURN_45_LEFT;
-        debugArray[5] = STATE_TURN_45_LEFT;
-        debugArray[6] = STATE_STRAIGHT_TO_NEAR_BLUE;
-        debugArray[7] = STATE_STOP;
+        debugArray[11]  = STATE_STRAIGHT_TO_NEAR_BLUE;
+        debugArray[12] = STATE_TURN_45_LEFT;
+        debugArray[13] = STATE_TURN_45_LEFT;
+        debugArray[14] = STATE_STRAIGHT_TO_NEAR_BLUE;
+        debugArray[15] = STATE_STOP;
 
         for (int i = 0; i < 100; i++) {
             stateMachineArray[i] = debugArray[i];
@@ -95,6 +92,8 @@ public class AutonomousMountainRight extends AutonomousVariables {
 
         lDrive.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
         rDrive.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
+
+//        stateMachineIndex = 1;
     }
 
     @Override
