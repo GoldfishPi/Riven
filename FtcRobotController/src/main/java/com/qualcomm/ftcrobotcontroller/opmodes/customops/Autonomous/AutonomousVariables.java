@@ -69,8 +69,9 @@ public class AutonomousVariables extends OpMode {
             STATE_UNDUMP_GUYS                   = 11,
             STATE_STRAIGHT_REPOSITION           = 12,
             STATE_REVERSE_90_DEGREE_LEFT        = 13,
-            STATE_STRAIGHT_TO_NEAR_BLUE_LEFT    = 14,
-            STATE_TURN_45_NEAR_BLUE_LEFT        = 15;
+            STATE_STRAIGHT_TO_NEAR_BLUE         = 14,
+            STATE_TURN_45_NEAR_BLUE_LEFT        = 15,
+            STATE_REVERSE_90_DEGREE_RIGHT       = 16;
 
 
     public int

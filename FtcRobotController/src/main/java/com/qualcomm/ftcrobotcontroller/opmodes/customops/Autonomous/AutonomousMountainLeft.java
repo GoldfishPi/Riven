@@ -54,26 +54,26 @@ public class AutonomousMountainLeft extends AutonomousVariables {
         stateMachineIndex = 0;
         debugArray = new int[100];
         // Field Debug Array:
-//        debugArray[0] = STATE_DRIVE_STRAIGHT_CORNER_TO_GOAL;
-//        debugArray[1] = STATE_TURN_45_LEFT;
-//        debugArray[2] = STATE_STRAIGHT_PARK;
+        debugArray[0] = STATE_DRIVE_STRAIGHT_CORNER_TO_GOAL;
+        debugArray[1] = STATE_TURN_45_LEFT;
+        debugArray[2] = STATE_STRAIGHT_PARK;
 //        debugArray[3] = STATE_RAISE_ARM;
-//        debugArray[4] = STATE_STRAIGHT_POSITION;
-//        debugArray[5] = STATE_DUMP_GUYS;
-//        debugArray[6] = STATE_UNDUMP_GUYS;
-//        debugArray[7] = STATE_STRAIGHT_REPOSITION;
+        debugArray[3] = STATE_STRAIGHT_POSITION;
+        debugArray[4] = STATE_DUMP_GUYS;
+        debugArray[5] = STATE_UNDUMP_GUYS;
+        debugArray[6] = STATE_STRAIGHT_REPOSITION;
 //        debugArray[8] = STATE_LOWER_ARM;
-//        debugArray[9] = STATE_REVERSE_90_DEGREE_LEFT;
+        debugArray[7] = STATE_REVERSE_90_DEGREE_LEFT;
 //        debugArray[10]= STATE_STOP;
 
         // Testing Debug Array:
-        debugArray[0] = STATE_STRAIGHT_REPOSITION;
-        debugArray[1] = STATE_REVERSE_90_DEGREE_LEFT;
-        debugArray[2] = STATE_STRAIGHT_TO_NEAR_BLUE_LEFT;
-        debugArray[3] = STATE_TURN_45_RIGHT;
-        debugArray[4] = STATE_TURN_45_RIGHT;
-        debugArray[5] = STATE_STRAIGHT_TO_NEAR_BLUE_LEFT;
-        debugArray[6] = STATE_STOP;
+//        debugArray[8] = STATE_STRAIGHT_REPOSITION;
+//        debugArray[9] = STATE_REVERSE_90_DEGREE_LEFT;
+        debugArray[8] = STATE_STRAIGHT_TO_NEAR_BLUE;
+        debugArray[9] = STATE_TURN_45_RIGHT;
+        debugArray[10] = STATE_TURN_45_RIGHT;
+        debugArray[11] = STATE_STRAIGHT_TO_NEAR_BLUE;
+        debugArray[12] = STATE_STOP;
 
         for (int i = 0; i < 100; i++) {
             stateMachineArray[i] = debugArray[i];
@@ -153,6 +153,9 @@ public class AutonomousMountainLeft extends AutonomousVariables {
                     lDrive.setPower(lDrivePower);
                     rDrive.setPower(rDrivePower);
 
+                    resetEncodersAuto(lDrive);
+                    resetEncodersAuto(rDrive);
+
                     stateWait = 0;
                     stateMachineIndex++;
                 }
@@ -167,7 +170,7 @@ public class AutonomousMountainLeft extends AutonomousVariables {
 
                     stateWait = 1;
 
-                    leftEncoderTarget = getEncoderValue(lDrive) + 2440;                                    // Drive distance
+                    leftEncoderTarget = getEncoderValue(lDrive) + 2340;                                    // Drive distance
                     rightEncoderTarget = getEncoderValue(rDrive);
 
                     lDrivePower = 1.0;
@@ -196,6 +199,9 @@ public class AutonomousMountainLeft extends AutonomousVariables {
                     rDrivePower = 0.0;
                     lDrive.setPower(lDrivePower);
                     rDrive.setPower(rDrivePower);
+
+                    resetEncodersAuto(lDrive);
+                    resetEncodersAuto(rDrive);
 
                     stateWait = 0;
                     stateMachineIndex++;
@@ -241,6 +247,9 @@ public class AutonomousMountainLeft extends AutonomousVariables {
                     lDrive.setPower(lDrivePower);
                     rDrive.setPower(rDrivePower);
 
+                    resetEncodersAuto(lDrive);
+                    resetEncodersAuto(rDrive);
+
                     stateWait = 0;
                     stateMachineIndex++;
                 }
@@ -284,6 +293,9 @@ public class AutonomousMountainLeft extends AutonomousVariables {
                     lDrive.setPower(lDrivePower);
                     rDrive.setPower(rDrivePower);
 
+                    resetEncodersAuto(lDrive);
+                    resetEncodersAuto(rDrive);
+
                     stateWait = 0;
                     stateMachineIndex++;
                 }
@@ -323,6 +335,9 @@ public class AutonomousMountainLeft extends AutonomousVariables {
                     rDrivePower = 0.0;
                     lDrive.setPower(lDrivePower);
                     rDrive.setPower(rDrivePower);
+
+                    resetEncodersAuto(lDrive);
+                    resetEncodersAuto(rDrive);
 
                     stateWait = 0;
                     stateMachineIndex++;
@@ -444,6 +459,9 @@ public class AutonomousMountainLeft extends AutonomousVariables {
                     lDrive.setPower(lDrivePower);
                     rDrive.setPower(rDrivePower);
 
+                    resetEncodersAuto(lDrive);
+                    resetEncodersAuto(rDrive);
+
                     stateWait = 0;
                     stateMachineIndex++;
                 }
@@ -473,12 +491,15 @@ public class AutonomousMountainLeft extends AutonomousVariables {
                     lDrive.setPower(lDrivePower);
                     rDrive.setPower(rDrivePower);
 
+                    resetEncodersAuto(lDrive);
+                    resetEncodersAuto(rDrive);
+
                     stateWait = 0;
                     stateMachineIndex++;
                 }
                 break;
 
-            case STATE_STRAIGHT_TO_NEAR_BLUE_LEFT:
+            case STATE_STRAIGHT_TO_NEAR_BLUE:
 
                 if (stateWait == 0) {
                     stateWait = 1;
@@ -513,6 +534,9 @@ public class AutonomousMountainLeft extends AutonomousVariables {
                     rDrivePower = 0.0;
                     lDrive.setPower(lDrivePower);
                     rDrive.setPower(rDrivePower);
+
+                    resetEncodersAuto(lDrive);
+                    resetEncodersAuto(rDrive);
 
                     stateWait = 0;
                     stateMachineIndex++;
