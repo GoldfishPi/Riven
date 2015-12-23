@@ -1,10 +1,16 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.customops.TeleOp;
 
+import android.media.AudioManager;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.media.ToneGenerator;
+import android.net.Uri;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.util.BatteryChecker;
 
 /**
  * Created by goldfishpi on 11/21/15.
@@ -24,6 +30,8 @@ public class DriverOp extends OpMode {
 
     private DcMotor arm;
 
+    private BatteryChecker batteryChecker;
+
     private Servo lovePonny;
 
     private boolean yPressed = false;
@@ -35,7 +43,9 @@ public class DriverOp extends OpMode {
 
     public double armSpeed = 0.3;
 
+    public double[] armPositions = {0.0, 150};
 
+    int currentArmPosition;
 
     public DriverOp() {
 
@@ -99,12 +109,20 @@ public class DriverOp extends OpMode {
     @Override
     public void loop() {
         telemetry.addData("ArmSpeed", armSpeed);
+        telemetry.addData("Arm Encoders", arm.getCurrentPosition());
         if (gamepad1.b) {
             System.out.println("lDrive : " + lDrive.getCurrentPosition());
             System.out.println("rDrive : " + rDrive.getCurrentPosition());
             System.out.println("Arm : " + arm.getCurrentPosition());
 
         }
+
+        if(batteryChecker.getBatteryLevel() < 100){
+
+            final ToneGenerator tg = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
+            tg.startTone(ToneGenerator.TONE_PROP_BEEP);
+        }
+
         controllerOne();
         controllerTwo();
         setMotorToRunToPos(arm);
@@ -184,10 +202,9 @@ public class DriverOp extends OpMode {
 
 
             if(gamepad2.right_stick_y != 0.0) {
-                armControlls(armSpeed, true);
+
             }
             else{
-                armControlls(armSpeed, false);
             }
 
             //Arm In and Out
@@ -250,8 +267,8 @@ public class DriverOp extends OpMode {
         armExtender.setPower(gamepad2.left_stick_y);
     }
 
-    public void armControlls(double speed, boolean running) {
-        double armPower = 0.1;
+    public void armControlls() {
+        /*double armPower = 0.1;
 
         if (running) {
             arm.setPower(Range.clip(speed, -1.0, 1.0));
@@ -263,7 +280,9 @@ public class DriverOp extends OpMode {
             } else {
                 arm.setPower(0.0);
             }
-        }
+        }*/
+
+
 
 
         //Arm up and down
