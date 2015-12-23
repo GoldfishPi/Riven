@@ -115,10 +115,10 @@ public class DriverOp extends OpMode {
         {
 
             if(gamepad1.a){
-                lovePonny.setPosition(lovePonny.MIN_POSITION);
+                lovePonny.setPosition(Servo.MIN_POSITION);
             }
             if(gamepad1.y){
-                lovePonny.setPosition(lovePonny.MAX_POSITION);
+                lovePonny.setPosition(Servo.MAX_POSITION);
             }
 
             //Drive controls
@@ -164,6 +164,7 @@ public class DriverOp extends OpMode {
 
             if(!gamepad2.dpad_right){
                 arm.setPower(0.0);
+                arm.setTargetPosition(0);
             }
 
             if(gamepad2.x && !xPressed && armSpeed < 1.100){
@@ -251,20 +252,20 @@ public class DriverOp extends OpMode {
 
     public void armControlls(double speed, boolean running) {
         double armPower = 0.1;
-        if(!gamepad2.dpad_left) {
-            if (running) {
-                arm.setPower(Range.clip(speed, -1.0, 1.0));
-            } else if (!running) {
-                if (arm.getCurrentPosition() > arm.getTargetPosition()) {
-                    arm.setPower(-armPower);
-                } else if (arm.getCurrentPosition() < arm.getTargetPosition()) {
-                    arm.setPower(armPower);
-                } else {
-                    arm.setPower(0.0);
-                }
-            }
 
+        if (running) {
+            arm.setPower(Range.clip(speed, -1.0, 1.0));
+            } else if (!running) {
+            if (arm.getCurrentPosition() > arm.getTargetPosition()) {
+                arm.setPower(-armPower);
+            } else if (arm.getCurrentPosition() < arm.getTargetPosition()) {
+                arm.setPower(armPower);
+            } else {
+                arm.setPower(0.0);
+            }
         }
+
+
         //Arm up and down
         if (gamepad2.right_stick_y > 0.0) {
             arm.setTargetPosition(arm.getCurrentPosition() + 112);
