@@ -33,6 +33,8 @@ public class DriverOp extends OpMode {
 
     private BatteryChecker batteryChecker;
 
+    final ToneGenerator tg = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
+
     private Servo lovePonny;
 
     private boolean yPressed = false;
@@ -54,6 +56,7 @@ public class DriverOp extends OpMode {
 
     @Override
     public void init() {
+//        batteryChecker.startBatteryMonitoring();
 
         lDrive = hardwareMap.dcMotor.get("lDrive");
         rDrive = hardwareMap.dcMotor.get("rDrive");
@@ -90,7 +93,6 @@ public class DriverOp extends OpMode {
 
     @Override
     public void stop() {
-
     }
 
     @Override
@@ -118,10 +120,8 @@ public class DriverOp extends OpMode {
 
         }
 
-//        if(batteryChecker.getBatteryLevel() < 100){
-//
-//            final ToneGenerator tg = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
-//            tg.startTone(ToneGenerator.TONE_PROP_BEEP);
+//        if(batteryChecker.getBatteryLevel() < 100.0){
+//            tg.startTone(ToneGenerator.TONE_SUP_ERROR);
 //        }
 
         controllerOne();
@@ -129,7 +129,7 @@ public class DriverOp extends OpMode {
         setMotorToRunToPos(arm);
     }
 
-    public void controllerOne()//Living organism velocity extender and phasing osselation nutralizing neon eliptical yeilder
+    public void controllerOne()//Living organism velocity extender and phasing oscillation neutralizing neon elliptical yielder
     {
         {
 
@@ -142,6 +142,7 @@ public class DriverOp extends OpMode {
 
             //Drive controls
             if (lDrive.getMode() == DcMotorController.RunMode.RUN_TO_POSITION && rDrive.getMode() ==
+
             DcMotorController.RunMode.RUN_TO_POSITION) {
                 lDrive.setPower(gamepad1.left_stick_y);
                 rDrive.setPower(gamepad1.right_stick_y);
