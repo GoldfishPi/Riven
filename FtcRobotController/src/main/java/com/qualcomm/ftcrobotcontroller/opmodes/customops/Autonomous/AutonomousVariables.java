@@ -7,8 +7,6 @@ import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
-import java.lang.reflect.Array;
-
 /**
  * Created by goldfishpi on 12/12/15.
  */
@@ -231,21 +229,13 @@ public class AutonomousVariables extends OpMode {
             stateMachineArray[i] = debugArray[i];
         }
 
-        leftEncoderTarget = getEncoderValue(lDrive);
-        rightEncoderTarget= getEncoderValue(rDrive);
-
-        lDrivePower = 0.0;
-        rDrivePower = 0.0;
-
-        lDrive.setPower(Range.clip(lDrivePower, -1.0, 1.0));
-        rDrive.setPower(Range.clip(rDrivePower, -1.0, 1.0));
+        setEncoderTarget(0, 0);
+        setDrivePower(0.0, 0.0);
 
         resetEncodersAuto(lDrive);
         resetEncodersAuto(rDrive);
 
         resetEncodersAuto(arm);
-
-//        stateMachineIndex = 1;
     }
 
     public void autonomousInitLoop() {
@@ -412,7 +402,7 @@ public class AutonomousVariables extends OpMode {
                 if (stateWait == 0) {
 
                     stateWait = 1;
-c
+
                     setEncoderTarget(-475, -475);
                     setDrivePower(-0.3, -0.3);
 
@@ -489,7 +479,7 @@ c
                     currentMachineState = "Straight to Corner";
                 }
 
-                positiveDriveCheck();();
+                positiveDriveCheck();
                 break;
 
             case STATE_STOP:
