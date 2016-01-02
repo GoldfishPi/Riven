@@ -1,13 +1,15 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous;
 
-import com.qualcomm.ftcrobotcontroller.opmodes.customops.TeleOp.DriverOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
+import java.lang.reflect.Array;
+
 /*
-* created by c5 and GoldfishPi
+* created by C5, Cyberarm and GoldfishPi
 * Contact details: timecrafters8962@gmail.com
 * */
 
@@ -37,218 +39,28 @@ public class AutonomousMountainRight extends AutonomousVariables {
     }
 
     @Override
-    public void init() {
-        autonomousInit();
-    }
-
-    public void autonomousInit() {
-//        resetEncodersAuto(lDrive);
-//        resetEncodersAuto(rDrive);
-
-        lDrive = getHardware("lDrive");
-        rDrive = getHardware("rDrive");
-        lDrive.setDirection(DcMotor.Direction.REVERSE);
-        rDrive.setDirection(DcMotor.Direction.FORWARD);
-
-        lFinger = getHardware("lFinger");
-        rFinger = getHardware("rFinger");
-
-        armOut = getHardware("armOut");
-        armIn  = getHardware("armIn");
-        armIn.setDirection(DcMotor.Direction.REVERSE);
-
-        arm = hardwareMap.dcMotor.get("arm");
-
-        stateWait = 0;
-        stateMachineIndex = 0;
-        debugArray = new int[100];
+    public void setupAutonomous() {
         debugArray[0] = STATE_DRIVE_STRAIGHT_CORNER_TO_GOAL;
         debugArray[1] = STATE_TURN_45_RIGHT;
         debugArray[2] = STATE_STRAIGHT_PARK;
+        debugArray[3] = STATE_RAISE_ARM;
+        debugArray[4] = STATE_STRAIGHT_POSITION;
+        debugArray[5] = STATE_DUMP_GUYS;
+        debugArray[6] = STATE_UNDUMP_GUYS;
+        debugArray[7] = STATE_STRAIGHT_REPOSITION;
+        debugArray[8] = STATE_LOWER_ARM;
+        debugArray[9] = STATE_REVERSE_90_DEGREE_RIGHT;
+        debugArray[10]= STATE_REVERSE_90_DEGREE_RIGHT;
 
-        debugArray[3] = STATE_STOP;
-
-        for (int i = 0; i < 100; i++) {
-            stateMachineArray[i] = debugArray[i];
-        }
-
-        leftEncoderTarget = lDrive.getCurrentPosition();
-        rightEncoderTarget= rDrive.getCurrentPosition();
-
-        lDrivePower = 0.0;
-        rDrivePower = 0.0;
-
-        lDrive.setPower(Range.clip(lDrivePower, -1.0, 1.0));
-        rDrive.setPower(Range.clip(rDrivePower, -1.0, 1.0));
-
-        lDrive.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
-        rDrive.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
-
-        lDrive.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
-        rDrive.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
-    }
-
-    @Override
-    public void init_loop(){
-        autonomousInitLoop();
-    }
-
-    public void autonomousInitLoop() {
-        resetEncodersAuto(lDrive);
-        resetEncodersAuto(rDrive);
-    }
-
-    @Override
-    public void loop() {
-        autonomousloop();
-    }
-
-    public void autonomousloop() {
-        setTelemetry();
-
-        switch (stateMachineArray[stateMachineIndex]) {
-            case STATE_TURN_45_RIGHT:
-                if (stateWait == 0){
-                    currentMachineState = "(R) Turn 45";
-
-                    System.out.println("(R) Start TURN_45");
-
-                    stateWait = 1;
-
-                    leftEncoderTarget  = lDrive.getCurrentPosition() + 2240;                                    // Drive distance
-                    rightEncoderTarget = rDrive.getCurrentPosition();
-
-                    lDrivePower = 1.0;
-                    rDrivePower = 0.0;
-
-                    lDrive.setTargetPosition(leftEncoderTarget);
-                    rDrive.setTargetPosition(rightEncoderTarget);
-
-                    lDrive.setPower(Range.clip(lDrivePower, -1.0, 1.0));
-                    rDrive.setPower(Range.clip(rDrivePower, -1.0, 1.0));
-                }
-
-                if ((lDrive.getCurrentPosition() >= leftEncoderTarget - 15)) {
-                    lDrivePower = 0.0;
-                    lDrive.setPower(lDrivePower);
-                }
-
-                if ((rDrive.getCurrentPosition() >= rightEncoderTarget - 15)) {
-                    rDrivePower = 0.0;
-                    rDrive.setPower(rDrivePower);
-                }
-
-                if ((lDrivePower <= 0.1) && (rDrivePower <= 0.1)) {
-                    System.out.print("(R) 45 Complete\n");
-                    lDrivePower = 0.0;
-                    rDrivePower = 0.0;
-                    lDrive.setPower(lDrivePower);
-                    rDrive.setPower(rDrivePower);
-
-                    stateWait = 0;
-                    stateMachineIndex ++;
-                }
-
-                break;
-
-            case STATE_STRAIGHT_PARK:
-                if ( stateWait == 0) {
-                    currentMachineState = "(R) Straight park";
-
-                    System.out.println("(R) STATE STRAIGHT PARK start");
-
-                    stateWait = 1;
-
-                    leftEncoderTarget = lDrive.getCurrentPosition() + 3500;         // Drive distance
-                    rightEncoderTarget= rDrive.getCurrentPosition() + 3500;         // Drive distance
-
-                    lDrive.setTargetPosition(leftEncoderTarget);
-                    rDrive.setTargetPosition(rightEncoderTarget);
-
-                    lDrivePower = 1.0;
-                    rDrivePower = 1.0;
-
-                    lDrive.setPower(lDrivePower);
-                    rDrive.setPower(rDrivePower);
-                }
-
-                if ((lDrive.getCurrentPosition() >= leftEncoderTarget - 15)) {
-                    lDrivePower = 0.0;
-                    lDrive.setPower(lDrivePower);
-                }
-
-                if ((rDrive.getCurrentPosition() >= rightEncoderTarget - 15)) {
-                    rDrivePower = 0.0;
-                    rDrive.setPower(rDrivePower);
-                }
-
-                if ((lDrivePower <= 0.1) && (rDrivePower <= 0.1)) {
-                    System.out.print("(R) Drive straight park Complete\n");
-                    lDrivePower = 0.0;
-                    rDrivePower = 0.0;
-                    lDrive.setPower(lDrivePower);
-                    rDrive.setPower(rDrivePower);
-
-                    stateWait = 0;
-                    stateMachineIndex ++;
-                }
-                break;
-
-            case STATE_DRIVE_STRAIGHT_CORNER_TO_GOAL:
-                if ( stateWait == 0) {
-
-                    stateWait = 1;
-
-                    currentMachineState = "(R) Drive Straight";
-
-                    System.out.println("(R) STATE STRAIGHT start");
-                    leftEncoderTarget = lDrive.getCurrentPosition() + 18768;                                     // Drive distance
-                    rightEncoderTarget= rDrive.getCurrentPosition() + 18768;                                     // Drive distance
-
-                    lDrive.setTargetPosition(leftEncoderTarget);
-                    rDrive.setTargetPosition(rightEncoderTarget);
-
-                    lDrivePower = 1.0;
-                    rDrivePower = 1.0;
-
-                    lDrive.setPower(lDrivePower);
-                    rDrive.setPower(rDrivePower);
-                }
-
-                if ((lDrive.getCurrentPosition() >= leftEncoderTarget - 15)) {
-                    lDrivePower = 0.0;
-                    lDrive.setPower(lDrivePower);
-                }
-
-                if ((rDrive.getCurrentPosition() >= rightEncoderTarget - 15)) {
-                    rDrivePower = 0.0;
-                    rDrive.setPower(rDrivePower);
-                }
-
-                if ((lDrivePower <= 0.1) && (rDrivePower <= 0.1)) {
-                    System.out.print("(R) Drive straight Complete\n");
-                    lDrivePower = 0.0;
-                    rDrivePower = 0.0;
-                    lDrive.setPower(lDrivePower);
-                    rDrive.setPower(rDrivePower);
-
-                    stateWait = 0;
-                    stateMachineIndex ++;
-                }
-                break;
-
-            case STATE_STOP:
-
-                currentMachineState = "(R) STOP";
-                break;
-
-            default:
-                currentMachineState = "!DEFAULT!";
-                break;
-        }
-    }
-
-    @Override
-    public void stop() {
+        debugArray[11] = STATE_STRAIGHT_TO_SIDE;
+        debugArray[12] = STATE_TURN_45_LEFT;
+        debugArray[13] = STATE_TURN_45_LEFT;
+        debugArray[14] = STATE_STRAIGHT_TO_MOUNTAIN;
+        debugArray[15] = STATE_TURN_45_LEFT;
+        debugArray[16] = STATE_TURN_45_LEFT;
+        debugArray[17] = STATE_STRAIGHT_TO_FAR;
+        debugArray[18] = STATE_TURN_45_LEFT;
+        debugArray[19] = STATE_STRAIGHT_TO_CORNER;
+        debugArray[20] = STATE_STOP;
     }
 }

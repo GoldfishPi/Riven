@@ -33,46 +33,53 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
+
   <item
     android:id="@+id/action_settings"
     android:orderInCategory="99"
     android:showAsAction="never"
+    android:background="@color/pink"
     android:title="@string/settings_menu_item"/>
   <item
     android:id="@+id/action_restart_robot"
     android:orderInCategory="100"
     android:showAsAction="never"
+    android:background="@color/pink"
     android:title="@string/restart_robot_menu_item"/>
 
   <item
     android:id="@+id/action_view_logs"
     android:orderInCategory="101"
     android:showAsAction="never"
+    android:background="@color/pink"
     android:title="@string/view_logs_menu_item"/>
 
   <item
     android:id="@+id/action_about"
     android:orderInCategory="999"
     android:icon="@android:drawable/ic_menu_info_details"
+    android:background="@color/pink"
     android:title="@string/about_menu_item"/>
 
   <item
-      android:id="@+id/Score"
+      android:id="@+id/action_scores"
       android:orderInCategory="1000"
       android:icon="@android:drawable/ic_menu_info_details"
+      android:background="@color/pink"
       android:title="@string/scores"/>
+
+  <item
+      android:id="@+id/action_universe"
+      android:orderInCategory="1000"
+      android:icon="@android:drawable/ic_menu_info_details"
+      android:background="@color/pink"
+      android:title="Universe Chooser"/>
 
   <item
     android:id="@+id/action_exit_app"
     android:orderInCategory="1000"
     android:icon="@android:drawable/ic_menu_info_details"
+    android:background="@color/pink"
     android:title="@string/action_exit_app"/>
-
-  <item
-    android:id="@+id/action_universe"
-    android:orderInCategory="1000"
-    android:icon="@android:drawable/ic_menu_info_details"
-    android:title="Universe Chooser"/>
-
 
 </menu>

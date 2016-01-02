@@ -4,6 +4,7 @@ import com.qualcomm.ftcrobotcontroller.opmodes.customops.TeleOp.DriverOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 /**
@@ -11,7 +12,7 @@ import com.qualcomm.robotcore.util.Range;
  */
 public class AutonomousVariables extends OpMode {
 
-    public DriverOp driverOp = new DriverOp(); //imports
+    public DriverOp driverOp = new DriverOp();
 
     public String currentMachineState;
 
@@ -21,15 +22,23 @@ public class AutonomousVariables extends OpMode {
     public DcMotor lFinger;
     public DcMotor rFinger;
 
-    public DcMotor armOut;
-    public DcMotor armIn;
+    public DcMotor lGill;
+    public DcMotor rGill;
+
+    public Servo theDumper;
+
+    public DcMotor armExtender;
 
     public DcMotor arm;
 
+    public double armSpeed;
+    public int armLocation;
     public int leftEncoderTarget;
     public int rightEncoderTarget;
     public double lDrivePower;
     public double rDrivePower;
+    public double theDumperPosition;
+    public int theDumperTick;
 
     public double wheelBase = 15.75;
     public double wheelCircumfrance;
@@ -40,20 +49,29 @@ public class AutonomousVariables extends OpMode {
     public int stateMachineIndex = 0;
     public int[] stateMachineArray = new int[100];
     public int[] debugArray;
-    public int[] autoRightCorner;
-    public int[] autoLeftCorner;
 
     String currentState;
 
     public final int
-            STATE_TURN_45_RIGHT                = 0,
-            STATE_STOP = 1,
+            STATE_TURN_45_RIGHT                 = 0,
+            STATE_STOP                          = 1,
             STATE_DRIVE_STRAIGHT_CORNER_TO_GOAL = 2,
-            STATE_TURN_45_LEFT = 3,
-            STATE_RAISE_ARM = 4,
-            STATE_EXTEND_ARM = 5,
-            STATE_RETRACT_ARM = 6,
-            STATE_STRAIGHT_PARK = 7;
+            STATE_TURN_45_LEFT                  = 3,
+            STATE_RAISE_ARM                     = 4,
+            STATE_LOWER_ARM                     = 5,
+            STATE_EXTEND_ARM                    = 6,
+            STATE_RETRACT_ARM                   = 7,
+            STATE_STRAIGHT_PARK                 = 8,
+            STATE_STRAIGHT_POSITION             = 9,
+            STATE_DUMP_GUYS                     = 10,
+            STATE_UNDUMP_GUYS                   = 11,
+            STATE_STRAIGHT_REPOSITION           = 12,
+            STATE_REVERSE_90_DEGREE_LEFT        = 13,
+            STATE_STRAIGHT_TO_SIDE              = 14,
+            STATE_STRAIGHT_TO_MOUNTAIN          = 15,
+            STATE_REVERSE_90_DEGREE_RIGHT       = 16,
+            STATE_STRAIGHT_TO_FAR               = 17,
+            STATE_STRAIGHT_TO_CORNER            = 18;
 
 
     public int
@@ -65,157 +83,413 @@ public class AutonomousVariables extends OpMode {
             stateExtnedArm = 0,
             stateRetractArm = 0;
 
-    public void init(){
+    public DcMotor getMotor(String string) {
+        return hardwareMap.dcMotor.get(string);
+    }
+    public Servo getServo(String string) { return hardwareMap.servo.get(string); }
 
+    public int getEncoderValue(DcMotor motor) {
+        return motor.getCurrentPosition();
     }
 
-    public void loop(){
+    public double getEncoderValue(Servo servo) {
+        return servo.getPosition();
+    }
 
+    void setEncoderTarget(int leftEncoder, int rightEncoder) {
+        leftEncoderTarget  = getEncoderValue(lDrive) + leftEncoder;
+        rightEncoderTarget = getEncoderValue(rDrive) + rightEncoder;
+
+        lDrive.setTargetPosition(leftEncoderTarget);
+        rDrive.setTargetPosition(rightEncoderTarget);
+    }
+
+    void setDrivePower(double leftPower, double rightPower) {
+        lDrivePower = Range.clip(leftPower, -1.0, 1.0);
+        rDrivePower = Range.clip(rightPower, -1.0, 1.0);
+        lDrive.setPower(lDrivePower);
+        rDrive.setPower(rDrivePower);
+    }
+
+    public void resetEncodersAuto(DcMotor motor){
+        motor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
+        motor.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
+    }
+
+    // Clean up state machine (a lot, hopefully)
+
+    // Checks that the wheels are where they should be, tells the state machine to proceed
+    public void positiveDriveCheck() {
+        if (getEncoderValue(lDrive) >= leftEncoderTarget - 15) {
+            lDrivePower = 0.0;
+            lDrive.setPower(lDrivePower);
+        }
+
+
+        if (getEncoderValue(rDrive) >= rightEncoderTarget - 15) {
+            rDrivePower = 0.0;
+            rDrive.setPower(rDrivePower);
+        }
+
+
+        if ((lDrivePower <= 0.1) && (rDrivePower <= 0.1)) {
+            lDrivePower = 0.0;
+            rDrivePower = 0.0;
+            lDrive.setPower(lDrivePower);
+            rDrive.setPower(rDrivePower);
+
+            resetEncodersAuto(lDrive);
+            resetEncodersAuto(rDrive);
+
+            stateWait = 0;
+            stateMachineIndex++;
+        }
+    }
+
+    // Checks that the wheels are where they should be, tells the state machine to proceed
+    public void negativeDriveCheck() {
+        if (getEncoderValue(lDrive) <= leftEncoderTarget + 15) {
+            lDrivePower = 0.0;
+            lDrive.setPower(lDrivePower);
+        }
+
+
+        if (getEncoderValue(rDrive) <= rightEncoderTarget + 15) {
+            rDrivePower = 0.0;
+            rDrive.setPower(rDrivePower);
+        }
+
+
+        if ((lDrivePower >= -0.1) && (rDrivePower >= -0.1)) {
+            lDrivePower = 0.0;
+            rDrivePower = 0.0;
+            lDrive.setPower(lDrivePower);
+            rDrive.setPower(rDrivePower);
+
+            resetEncodersAuto(lDrive);
+            resetEncodersAuto(rDrive);
+
+            stateWait = 0;
+            stateMachineIndex++;
+        }
     }
 
     public void setTelemetry() {
         telemetry.addData("State", currentMachineState);
-        telemetry.addData("Left position", lDrive.getCurrentPosition());
-        telemetry.addData("right position", rDrive.getCurrentPosition());
+        telemetry.addData("Left Position", getEncoderValue(lDrive));
+        telemetry.addData("right Position", getEncoderValue(rDrive));
 
-        telemetry.addData("left target", leftEncoderTarget);
-        telemetry.addData("right target", rightEncoderTarget);
+        telemetry.addData("left Target", leftEncoderTarget);
+        telemetry.addData("right Target", rightEncoderTarget);
 
-        System.out.println("left pos: " + lDrive.getCurrentPosition());
-        System.out.println("Right pos: " + rDrive.getCurrentPosition());
-        System.out.println();
-        System.out.println("left  target: " + rightEncoderTarget);
-        System.out.println("Right target: " + rightEncoderTarget);
-        System.out.println();
+        telemetry.addData("theDumper Position", theDumperPosition);
+        telemetry.addData("Arm Position", getEncoderValue(arm));
 
 
     }
 
-    public DcMotor getHardware(String string) {
-        return hardwareMap.dcMotor.get(string);
+    public void setupAutonomous() {
     }
 
-    //-------------------------------------//
-    //functions here...                    //
-    //-------------------------------------//
-
-    void setEncoderTarget(int leftEncoder, int rightEncoder) {
-        lDrive.setTargetPosition(leftEncoderTarget = leftEncoder);
-        rDrive.setTargetPosition(rightEncoderTarget = rightEncoder);
+    @Override
+    public void init() {
+        autonomousInit();
     }
 
-    void setDrivePower(double leftPower, double rightPower) {
-        lDrive.setPower(Range.clip(leftPower, -1, 1));
-        rDrive.setPower(Range.clip(rightPower, -1, 1));
+    @Override
+    public void init_loop(){
+        autonomousInitLoop();
     }
 
-    void setDriveSpeed(double leftSpeed, double rightSpeed) {
-        setDrivePower(leftSpeed, rightSpeed);
+    @Override
+    public void loop() {
+        autonomousloop();
     }
 
-    public void useConstantPower() {
-        setDriveMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
+    @Override
+    public void stop() {
     }
 
-    public void setDriveMode(DcMotorController.RunMode mode) {
-        if (lDrive.getChannelMode() != mode) {
-            lDrive.setChannelMode(mode);
+    public void autonomousInit() {
+        lDrive = getMotor("lDrive");
+        rDrive = getMotor("rDrive");
+        lDrive.setDirection(DcMotor.Direction.REVERSE);
+        rDrive.setDirection(DcMotor.Direction.FORWARD);
+
+        theDumper = getServo("theDumper");
+        arm       = getMotor("arm");
+
+        stateWait = 0;
+        stateMachineIndex = 0;
+        debugArray = new int[100];
+
+        setupAutonomous(); // Add states to debugArray before setting stateMachineArray
+
+        for (int i = 0; i < 100; i++) {
+            stateMachineArray[i] = debugArray[i];
         }
 
-        if (rDrive.getChannelMode() != mode) {
-            rDrive.setChannelMode(mode);
-        }
-    }
-
-
-    boolean moveComplete() {
-        return ((Math.abs(lDrive.getCurrentPosition() - leftEncoderTarget) < 10) &&
-                (Math.abs(rDrive.getCurrentPosition() - rightEncoderTarget) < 10));
-    }
-
-    public void driveTurn45Left(int left, int right) {
+        setEncoderTarget(0, 0);
+        setDrivePower(0.0, 0.0);
 
         resetEncodersAuto(lDrive);
         resetEncodersAuto(rDrive);
-        setEncoderTarget(left, right);
-        setDriveSpeed(0.5, 5.0);
+
+        resetEncodersAuto(arm);
     }
 
-    private int count = 0;
-
-    public void extendArm(){
-        count = 0;
-        while (count < 20){
-            driverOp.extendEqual("out", 0.5);
-            count++;
-        }
+    public void autonomousInitLoop() {
+        resetEncodersAuto(lDrive);
+        resetEncodersAuto(rDrive);
+        resetEncodersAuto(arm);
+        theDumperTick = 0;
+        theDumperPosition = Servo.MIN_POSITION;
     }
 
-    boolean extendFinished(){
-        return count >= 20;
-    }
-    private int countIn = 0;
+    public void autonomousloop() {
+        setTelemetry();
+        theDumper.setPosition(theDumperPosition);
 
-    public void retractArm(){
-        countIn = 0;
-        while(countIn < 20) {
-            driverOp.extendEqual("in", -0.5);
-            countIn ++;
-        }
-    }
+        switch (stateMachineArray[stateMachineIndex]) {
+            case STATE_TURN_45_LEFT:
+                if (stateWait == 0) {
 
-    boolean retractDone(){
-        return countIn >= 20;
-    }
+                    currentMachineState = "Turn 45 Left";
+                    stateWait = 1;
 
-    public void resetEncodersAuto(DcMotor motor){
-        motor.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
-        motor.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
-    }
+                    setEncoderTarget(0, 2340);                                    // Drive distance
+                    setDrivePower(0.0, 1.0);
+//                    rightEncoderTarget = getEncoderValue(rDrive) + 2340;
+                }
 
-    public void turnRobotCalculation( double dRadius, double dDegreeTurn ){
+                positiveDriveCheck();
 
-        dOutsideWheelDistance = dDegreeTurn * Math.PI * dRadius / 180;
-        dInsideWheelDistance = dDegreeTurn * Math.PI * (dRadius + wheelBase);
+                break;
 
-        wheelCircumfrance = 4 * Math.PI;
+            case STATE_TURN_45_RIGHT:
+                if (stateWait == 0) {
+                    currentMachineState = "Turn 45 Right";
 
-        adRotatingRobotDrive[0] = 3.0 * dDegreeTurn * dRadius * (1.0); // dInsideWheelDistance * (80 / 40 * wheelCircumfrance) * 280;
 
-        adRotatingRobotDrive[1] = 3.0 * dDegreeTurn * (dRadius + wheelBase) * (1.0); // dOutsideWheelDistance * (80 / 40 * wheelCircumfrance) * 280;
+                    stateWait = 1;
 
-        adRotatingRobotDrive[2] =   adRotatingRobotDrive[0] /  adRotatingRobotDrive[1];
-    }
+                    setEncoderTarget(2340, 0);
+                    setDrivePower(1.0, 0.0);
+                }
 
-    public int straightRobotCalculation(Double dDistance){
-        wheelCircumfrance = 4 * Math.PI;
-        return (int) (dDistance * (80 / 40) * 280);
-    }
+                positiveDriveCheck();
 
-    public void driveEqual(String Direction) {
-        if ("forward".equals(Direction)) {
-            if (rDrive.getCurrentPosition() > lDrive.getCurrentPosition()) {
-                rDrive.setPower(0.1);
-                lDrive.setPower(1.0);
-            } else if (lDrive.getCurrentPosition() > rDrive.getCurrentPosition()) {
-                rDrive.setPower(1.0);
-                lDrive.setPower(0.1);
-            } else {
-                rDrive.setPower(0.1);
-                lDrive.setPower(0.1);
-            }
-        }
-        if (Direction .equals("backwards")) {
-            if (rDrive.getCurrentPosition() > lDrive.getCurrentPosition()) {
-                rDrive.setPower(-1.0);
-                lDrive.setPower(-0.1);
-            } else if (lDrive.getCurrentPosition() > rDrive.getCurrentPosition()) {
-                rDrive.setPower(-0.1);
-                lDrive.setPower(-1.0);
-            } else {
-                rDrive.setPower(-0.1);
-                lDrive.setPower(-0.1);
-            }
+                break;
+
+            case STATE_STRAIGHT_PARK:
+                if (stateWait == 0) {
+
+                    currentMachineState = "Straight park";
+                    stateWait = 1;
+
+                    setEncoderTarget(3500, 3500);
+                    setDrivePower(1.0, 1.0);
+                }
+
+                positiveDriveCheck();
+                break;
+
+            case STATE_DRIVE_STRAIGHT_CORNER_TO_GOAL:
+                if (stateWait == 0) {
+
+                    stateWait = 1;
+                    currentMachineState = "Drive Straight";
+
+                    setEncoderTarget(18768, 18768);
+                    setDrivePower(1.0, 1.0);
+                }
+
+                positiveDriveCheck();
+                break;
+
+            case STATE_STRAIGHT_POSITION:
+                if (stateWait == 0) {
+
+                    stateWait = 1;
+                    currentMachineState = "Straight Position";
+
+                    setEncoderTarget(475, 475);
+                    setDrivePower(0.3, 0.3);
+                }
+
+                positiveDriveCheck();
+                break;
+
+            case STATE_RAISE_ARM:
+
+                if (stateWait == 0) {
+                    stateWait = 1;
+                    resetEncodersAuto(arm);
+                    currentMachineState = "Raise arm";
+                    armSpeed = 0.3;
+                    armLocation = getEncoderValue(arm);
+                    arm.setTargetPosition(armLocation + 300);
+                    arm.setPower(armSpeed);
+                }
+
+                if (getEncoderValue(arm) >= getEncoderValue(arm) - 15) {
+                    stateWait = 0;
+                    stateMachineIndex++;
+                }
+
+                break;
+
+            case STATE_DUMP_GUYS:
+                if (stateWait == 0) {
+
+                    stateWait = 1;
+                    currentMachineState = "Dump Guys";
+                    theDumperPosition = Servo.MAX_POSITION;
+                    theDumper.setPosition(theDumperPosition);
+                }
+
+                theDumperTick += 1;
+
+                if (theDumperTick >= 120) {
+                    theDumperTick = 0;
+
+                    stateWait = 0;
+                    stateMachineIndex++;
+                }
+                break;
+
+
+            case STATE_UNDUMP_GUYS:
+                if (stateWait == 0) {
+
+                    stateWait = 1;
+                    currentMachineState = "(R) Undump Guys";
+                    theDumperPosition = Servo.MIN_POSITION;
+                    theDumper.setPosition(theDumperPosition);
+                }
+
+                theDumperTick += 1;
+
+                if (theDumperTick >= 120) {
+                    theDumperTick = 0;
+                    stateWait = 0;
+
+                    stateMachineIndex++;
+                }
+                break;
+
+            case STATE_LOWER_ARM:
+
+                if (stateWait == 0) {
+                    stateWait = 1;
+                    resetEncodersAuto(arm);
+                    currentMachineState = "Lower arm";
+                    armSpeed = -0.3;
+                    armLocation = getEncoderValue(arm);
+                    arm.setTargetPosition(armLocation - 200);
+                    arm.setPower(armSpeed);
+                }
+
+                if (getEncoderValue(arm) <= getEncoderValue(arm) + 15) {
+                    stateWait = 0;
+                    arm.setPower(0.0);
+                    stateMachineIndex++;
+                }
+
+                break;
+
+            case STATE_STRAIGHT_REPOSITION:
+                if (stateWait == 0) {
+
+                    stateWait = 1;
+
+                    setEncoderTarget(-475, -475);
+                    setDrivePower(-0.3, -0.3);
+
+                    currentMachineState = "Straight Reposition";
+                }
+
+                negativeDriveCheck();
+                break;
+
+            case STATE_REVERSE_90_DEGREE_RIGHT:
+
+                if (stateWait == 0) {
+                    stateWait = 1;
+
+                    setEncoderTarget(-4480, 0);
+                    setDrivePower(-1.0, 0.0);
+
+                    currentMachineState = "Reverse 90 Degree Right";
+                }
+
+                negativeDriveCheck(); // MAY CAUSE BUG?
+                break;
+
+            case STATE_STRAIGHT_TO_SIDE:
+
+                if (stateWait == 0) {
+                    stateWait = 1;
+
+                    setEncoderTarget(3400, 3400);
+                    setDrivePower(1.0, 1.0);
+
+                    currentMachineState = "Straight to Side";
+                }
+
+                positiveDriveCheck();
+                break;
+
+            case STATE_STRAIGHT_TO_MOUNTAIN:
+
+                if (stateWait == 0) {
+                    stateWait = 1;
+
+                    setEncoderTarget(9120, 9120);
+                    setDrivePower(1.0, 1.0);
+
+                    currentMachineState = "Straight to Mountain";
+                }
+
+                positiveDriveCheck();
+                break;
+
+            case STATE_STRAIGHT_TO_FAR:
+
+                if (stateWait == 0) {
+                    stateWait = 1;
+
+                    setEncoderTarget(8000, 8000);
+                    setDrivePower(1.0, 1.0);
+
+                    currentMachineState = "Straight to Far";
+                }
+
+                positiveDriveCheck();
+                break;
+
+            case STATE_STRAIGHT_TO_CORNER:
+
+                if (stateWait == 0) {
+                    stateWait = 1;
+
+                    setEncoderTarget(5200, 5200);
+                    setDrivePower(1.0, 1.0);
+
+                    currentMachineState = "Straight to Corner";
+                }
+
+                positiveDriveCheck();
+                break;
+
+            case STATE_STOP:
+
+                currentMachineState = "STOP";
+                break;
+
+            default:
+                currentMachineState = "!DEFAULT!";
+                break;
         }
     }
 }

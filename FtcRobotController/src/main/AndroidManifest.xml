@@ -2,12 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
           package="com.qualcomm.ftcrobotcontroller"
-          android:versionCode="4"
-          android:versionName="1.2">
+          android:versionCode="5"
+          android:versionName="1.25">
 
-  <uses-permission
-      android:name="android.permission.INTERNET"
-      android:required="true"/>
+
   <uses-permission
     android:name="android.permission.ACCESS_WIFI_STATE"
     android:required="true" />
@@ -32,7 +30,6 @@
   <uses-permission
     android:name="android.permission.WRITE_SETTINGS"
     android:required="true" />
-  <uses-permission android:name="android.permission.WAKE_LOCK" />
 
   <uses-feature android:name="android.hardware.usb.accessory" />
 
@@ -88,11 +85,15 @@
         <category android:name="android.intent.category.DEFAULT" />
       </intent-filter>
     </activity>
-    
+
     <activity android:name=".ScoreScreen"
         android:label="Bio"
         android:theme="@style/AppTheme"/>
-    
+
+
+    <activity android:name=".universeScreen"
+        android:label="Universe Chooser"
+        android:theme="@style/AppTheme"/>
   </application>
 
 </manifest>
