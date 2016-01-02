@@ -85,32 +85,6 @@ public class AutonomousVariables extends OpMode {
             stateExtnedArm = 0,
             stateRetractArm = 0;
 
-    @Override
-    public void init() {
-        autonomousInit();
-    }
-
-    public void setTelemetry() {
-        telemetry.addData("State", currentMachineState);
-        telemetry.addData("Left position", getEncoderValue(lDrive));
-        telemetry.addData("right position", getEncoderValue(rDrive));
-
-        telemetry.addData("left target", leftEncoderTarget);
-        telemetry.addData("right target", rightEncoderTarget);
-
-        telemetry.addData("theDumper position", theDumperPosition);
-        telemetry.addData("Arm", getEncoderValue(arm));
-
-//        System.out.println("left pos: " + getEncoderValue(lDrive));
-//        System.out.println("Right pos: " + getEncoderValue(rDrive));
-//        System.out.println();
-//        System.out.println("left  target: " + rightEncoderTarget);
-//        System.out.println("Right target: " + rightEncoderTarget);
-//        System.out.println();
-
-
-    }
-
     public DcMotor getMotor(String string) {
         return hardwareMap.dcMotor.get(string);
     }
@@ -123,77 +97,20 @@ public class AutonomousVariables extends OpMode {
     public double getEncoderValue(Servo servo) {
         return servo.getPosition();
     }
-    //-------------------------------------//
-    //functions here...                    //
-    //-------------------------------------//
 
     void setEncoderTarget(int leftEncoder, int rightEncoder) {
-        lDrive.setTargetPosition(leftEncoderTarget = leftEncoder);
-        rDrive.setTargetPosition(rightEncoderTarget = rightEncoder);
+        leftEncoderTarget  = getEncoderValue(lDrive) + leftEncoder;
+        rightEncoderTarget = getEncoderValue(rDrive) + rightEncoder;
+
+        lDrive.setTargetPosition(leftEncoderTarget);
+        rDrive.setTargetPosition(rightEncoderTarget);
     }
 
     void setDrivePower(double leftPower, double rightPower) {
-        lDrive.setPower(Range.clip(leftPower, -1, 1));
-        rDrive.setPower(Range.clip(rightPower, -1, 1));
-    }
-
-    void setDriveSpeed(double leftSpeed, double rightSpeed) {
-        setDrivePower(leftSpeed, rightSpeed);
-    }
-
-    public void useConstantPower() {
-        setDriveMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
-    }
-
-    public void setDriveMode(DcMotorController.RunMode mode) {
-        if (lDrive.getChannelMode() != mode) {
-            lDrive.setChannelMode(mode);
-        }
-
-        if (rDrive.getChannelMode() != mode) {
-            rDrive.setChannelMode(mode);
-        }
-    }
-
-
-    boolean moveComplete() {
-        return ((Math.abs(getEncoderValue(lDrive) - leftEncoderTarget) < 10) &&
-                (Math.abs(getEncoderValue(rDrive) - rightEncoderTarget) < 10));
-    }
-
-    public void driveTurn45Left(int left, int right) {
-
-        resetEncodersAuto(lDrive);
-        resetEncodersAuto(rDrive);
-        setEncoderTarget(left, right);
-        setDriveSpeed(0.5, 5.0);
-    }
-
-    private int count = 0;
-
-    public void extendArm(){
-        count = 0;
-        while (count < 20){
-            driverOp.extendEqual("out", 0.5);
-            count++;
-        }
-    }
-
-    boolean extendFinished(){
-        return count >= 20;
-    }
-    private int countIn = 0;
-
-    public void retractArm(){
-        countIn = 0;
-        while(countIn < 20) {
-            driverOp.extendEqual("in", -0.5);
-            countIn ++;
-        }
-    }
-
-    boolean retractDone(){
-        return countIn >= 20;
+        lDrivePower = Range.clip(leftPower, -1.0, 1.0);
+        rDrivePower = Range.clip(rightPower, -1.0, 1.0);
+        lDrive.setPower(lDrivePower);
+        rDrive.setPower(rDrivePower);
     }
 
     public void resetEncodersAuto(DcMotor motor){
@@ -201,28 +118,85 @@ public class AutonomousVariables extends OpMode {
         motor.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
     }
 
-    public void turnRobotCalculation( double dRadius, double dDegreeTurn ){
+    // Clean up state machine (a lot, hopefully)
 
-        dOutsideWheelDistance = dDegreeTurn * Math.PI * dRadius / 180;
-        dInsideWheelDistance = dDegreeTurn * Math.PI * (dRadius + wheelBase);
+    // Checks that the wheels are where they should be, tells the state machine to proceed
+    public void positiveDriveCheck() {
+        if (getEncoderValue(lDrive) >= leftEncoderTarget - 15) {
+            lDrivePower = 0.0;
+            lDrive.setPower(lDrivePower);
+        }
 
-        wheelCircumfrance = 4 * Math.PI;
 
-        adRotatingRobotDrive[0] = 3.0 * dDegreeTurn * dRadius * (1.0); // dInsideWheelDistance * (80 / 40 * wheelCircumfrance) * 280;
+        if (getEncoderValue(rDrive) >= rightEncoderTarget - 15) {
+            rDrivePower = 0.0;
+            rDrive.setPower(rDrivePower);
+        }
 
-        adRotatingRobotDrive[1] = 3.0 * dDegreeTurn * (dRadius + wheelBase) * (1.0); // dOutsideWheelDistance * (80 / 40 * wheelCircumfrance) * 280;
 
-        adRotatingRobotDrive[2] =   adRotatingRobotDrive[0] /  adRotatingRobotDrive[1];
+        if ((lDrivePower <= 0.1) && (rDrivePower <= 0.1)) {
+            lDrivePower = 0.0;
+            rDrivePower = 0.0;
+            lDrive.setPower(lDrivePower);
+            rDrive.setPower(rDrivePower);
+
+            resetEncodersAuto(lDrive);
+            resetEncodersAuto(rDrive);
+
+            stateWait = 0;
+            stateMachineIndex++;
+        }
     }
 
-    public int straightRobotCalculation(Double dDistance){
-        wheelCircumfrance = 4 * Math.PI;
-        return (int) (dDistance * (80 / 40) * 280);
+    // Checks that the wheels are where they should be, tells the state machine to proceed
+    public void negativeDriveCheck() {
+        if (getEncoderValue(lDrive) <= leftEncoderTarget + 15) {
+            lDrivePower = 0.0;
+            lDrive.setPower(lDrivePower);
+        }
+
+
+        if (getEncoderValue(rDrive) <= rightEncoderTarget + 15) {
+            rDrivePower = 0.0;
+            rDrive.setPower(rDrivePower);
+        }
+
+
+        if ((lDrivePower >= -0.1) && (rDrivePower >= -0.1)) {
+            lDrivePower = 0.0;
+            rDrivePower = 0.0;
+            lDrive.setPower(lDrivePower);
+            rDrive.setPower(rDrivePower);
+
+            resetEncodersAuto(lDrive);
+            resetEncodersAuto(rDrive);
+
+            stateWait = 0;
+            stateMachineIndex++;
+        }
+    }
+
+    public void setTelemetry() {
+        telemetry.addData("State", currentMachineState);
+        telemetry.addData("Left Position", getEncoderValue(lDrive));
+        telemetry.addData("right Position", getEncoderValue(rDrive));
+
+        telemetry.addData("left Target", leftEncoderTarget);
+        telemetry.addData("right Target", rightEncoderTarget);
+
+        telemetry.addData("theDumper Position", theDumperPosition);
+        telemetry.addData("Arm Position", getEncoderValue(arm));
+
+
     }
 
     public void setupAutonomous() {
     }
 
+    @Override
+    public void init() {
+        autonomousInit();
+    }
 
     @Override
     public void init_loop(){
@@ -251,7 +225,7 @@ public class AutonomousVariables extends OpMode {
         stateMachineIndex = 0;
         debugArray = new int[100];
 
-        setupAutonomous();
+        setupAutonomous(); // Add states to debugArray before setting stateMachineArray
 
         for (int i = 0; i < 100; i++) {
             stateMachineArray[i] = debugArray[i];
@@ -293,41 +267,12 @@ public class AutonomousVariables extends OpMode {
                     currentMachineState = "Turn 45 Left";
                     stateWait = 1;
 
-                    leftEncoderTarget = getEncoderValue(lDrive);                                    // Drive distance
-                    rightEncoderTarget = getEncoderValue(rDrive) + 2340;
-
-                    lDrivePower = 0.0;
-                    rDrivePower = 1.0;
-
-                    lDrive.setTargetPosition(leftEncoderTarget);
-                    rDrive.setTargetPosition(rightEncoderTarget);
-
-                    lDrive.setPower(Range.clip(lDrivePower, -1.0, 1.0));
-                    rDrive.setPower(Range.clip(rDrivePower, -1.0, 1.0));
+                    setEncoderTarget(0, 2340);                                    // Drive distance
+                    setDrivePower(0.0, 1.0);
+//                    rightEncoderTarget = getEncoderValue(rDrive) + 2340;
                 }
 
-                if ((getEncoderValue(lDrive) >= leftEncoderTarget - 15)) {
-                    lDrivePower = 0.0;
-                    lDrive.setPower(lDrivePower);
-                }
-
-                if ((getEncoderValue(rDrive) >= rightEncoderTarget - 15)) {
-                    rDrivePower = 0.0;
-                    rDrive.setPower(rDrivePower);
-                }
-
-                if ((lDrivePower <= 0.1) && (rDrivePower <= 0.1)) {
-                    lDrivePower = 0.0;
-                    rDrivePower = 0.0;
-                    lDrive.setPower(lDrivePower);
-                    rDrive.setPower(rDrivePower);
-
-                    resetEncodersAuto(lDrive);
-                    resetEncodersAuto(rDrive);
-
-                    stateWait = 0;
-                    stateMachineIndex++;
-                }
+                positiveDriveCheck();
 
                 break;
 
@@ -338,130 +283,38 @@ public class AutonomousVariables extends OpMode {
 
                     stateWait = 1;
 
-                    leftEncoderTarget = getEncoderValue(lDrive) + 2340;                                    // Drive distance
-                    rightEncoderTarget = getEncoderValue(rDrive);
-
-                    lDrivePower = 1.0;
-                    rDrivePower = 0.0;
-
-                    lDrive.setTargetPosition(leftEncoderTarget);
-                    rDrive.setTargetPosition(rightEncoderTarget);
-
-                    lDrive.setPower(Range.clip(lDrivePower, -1.0, 1.0));
-                    rDrive.setPower(Range.clip(rDrivePower, -1.0, 1.0));
+                    setEncoderTarget(2340, 0);
+                    setDrivePower(1.0, 0.0);
                 }
 
-                if ((getEncoderValue(lDrive) >= leftEncoderTarget - 15)) {
-                    lDrivePower = 0.0;
-                    lDrive.setPower(lDrivePower);
-                }
-
-                if ((getEncoderValue(rDrive) >= rightEncoderTarget - 15)) {
-                    rDrivePower = 0.0;
-                    rDrive.setPower(rDrivePower);
-                }
-
-                if ((lDrivePower <= 0.1) && (rDrivePower <= 0.1)) {
-                    lDrivePower = 0.0;
-                    rDrivePower = 0.0;
-                    lDrive.setPower(lDrivePower);
-                    rDrive.setPower(rDrivePower);
-
-                    resetEncodersAuto(lDrive);
-                    resetEncodersAuto(rDrive);
-
-                    stateWait = 0;
-                    stateMachineIndex++;
-                }
+                positiveDriveCheck();
 
                 break;
 
             case STATE_STRAIGHT_PARK:
                 if (stateWait == 0) {
+
                     currentMachineState = "Straight park";
-
-
                     stateWait = 1;
 
-                    leftEncoderTarget  = getEncoderValue(lDrive) + 3500;        // Drive distance
-                    rightEncoderTarget = getEncoderValue(rDrive) + 3500;        // Drive distance
-
-                    lDrive.setTargetPosition(leftEncoderTarget);
-                    rDrive.setTargetPosition(rightEncoderTarget);
-
-                    lDrivePower = 1.0;
-                    rDrivePower = 1.0;
-
-                    lDrive.setPower(lDrivePower);
-                    rDrive.setPower(rDrivePower);
+                    setEncoderTarget(3500, 3500);
+                    setDrivePower(1.0, 1.0);
                 }
 
-                if ((getEncoderValue(lDrive) >= leftEncoderTarget - 15)) {
-                    lDrivePower = 0.0;
-                    lDrive.setPower(lDrivePower);
-                }
-
-                if ((getEncoderValue(rDrive) >= rightEncoderTarget - 15)) {
-                    rDrivePower = 0.0;
-                    rDrive.setPower(rDrivePower);
-                }
-
-                if ((lDrivePower <= 0.1) && (rDrivePower <= 0.1)) {
-                    lDrivePower = 0.0;
-                    rDrivePower = 0.0;
-                    lDrive.setPower(lDrivePower);
-                    rDrive.setPower(rDrivePower);
-
-                    resetEncodersAuto(lDrive);
-                    resetEncodersAuto(rDrive);
-
-                    stateWait = 0;
-                    stateMachineIndex++;
-                }
+                positiveDriveCheck();
                 break;
 
             case STATE_DRIVE_STRAIGHT_CORNER_TO_GOAL:
                 if (stateWait == 0) {
 
                     stateWait = 1;
-
                     currentMachineState = "Drive Straight";
 
-                    leftEncoderTarget  = getEncoderValue(lDrive) + 18768;                                     // Drive distance
-                    rightEncoderTarget = getEncoderValue(rDrive) + 18768;                                     // Drive distance
-
-                    lDrive.setTargetPosition(leftEncoderTarget);
-                    rDrive.setTargetPosition(rightEncoderTarget);
-
-                    lDrivePower = 1.0;
-                    rDrivePower = 1.0;
-
-                    lDrive.setPower(lDrivePower);
-                    rDrive.setPower(rDrivePower);
+                    setEncoderTarget(18768, 18768);
+                    setDrivePower(1.0, 1.0);
                 }
 
-                if ((getEncoderValue(lDrive) >= leftEncoderTarget - 15)) {
-                    lDrivePower = 0.0;
-                    lDrive.setPower(lDrivePower);
-                }
-
-                if ((getEncoderValue(rDrive) >= rightEncoderTarget - 15)) {
-                    rDrivePower = 0.0;
-                    rDrive.setPower(rDrivePower);
-                }
-
-                if ((lDrivePower <= 0.1) && (rDrivePower <= 0.1)) {
-                    lDrivePower = 0.0;
-                    rDrivePower = 0.0;
-                    lDrive.setPower(lDrivePower);
-                    rDrive.setPower(rDrivePower);
-
-                    resetEncodersAuto(lDrive);
-                    resetEncodersAuto(rDrive);
-
-                    stateWait = 0;
-                    stateMachineIndex++;
-                }
+                positiveDriveCheck();
                 break;
 
             case STATE_STRAIGHT_POSITION:
@@ -470,40 +323,11 @@ public class AutonomousVariables extends OpMode {
                     stateWait = 1;
                     currentMachineState = "Straight Position";
 
-                    lDrivePower = 0.3;
-                    rDrivePower = 0.3;
-                    lDrive.setPower(lDrivePower);
-                    rDrive.setPower(rDrivePower);
-
-                    leftEncoderTarget  = getEncoderValue(lDrive) + 475;
-                    rightEncoderTarget = getEncoderValue(rDrive) + 475;
-
-                    lDrive.setTargetPosition(leftEncoderTarget);
-                    rDrive.setTargetPosition(rightEncoderTarget);
+                    setEncoderTarget(475, 475);
+                    setDrivePower(0.3, 0.3);
                 }
 
-                if (getEncoderValue(lDrive) >= leftEncoderTarget - 15) {
-                    lDrivePower = 0.0;
-                    lDrive.setPower(lDrivePower);
-                }
-
-                if (getEncoderValue(rDrive) >= rightEncoderTarget - 15) {
-                    rDrivePower = 0.0;
-                    rDrive.setPower(rDrivePower);
-                }
-
-                if ((lDrivePower <= 0.1) && (rDrivePower <= 0.1)) {
-                    lDrivePower = 0.0;
-                    rDrivePower = 0.0;
-                    lDrive.setPower(lDrivePower);
-                    rDrive.setPower(rDrivePower);
-
-                    resetEncodersAuto(lDrive);
-                    resetEncodersAuto(rDrive);
-
-                    stateWait = 0;
-                    stateMachineIndex++;
-                }
+                positiveDriveCheck();
                 break;
 
             case STATE_RAISE_ARM:
@@ -588,250 +412,84 @@ public class AutonomousVariables extends OpMode {
                 if (stateWait == 0) {
 
                     stateWait = 1;
-                    leftEncoderTarget  = getEncoderValue(lDrive) - 475;
-                    rightEncoderTarget = getEncoderValue(rDrive) - 475;
-
-                    lDrivePower = -0.3;
-                    rDrivePower = -0.3;
-                    lDrive.setPower(lDrivePower);
-                    rDrive.setPower(rDrivePower);
-
-                    lDrive.setTargetPosition(leftEncoderTarget);
-                    rDrive.setTargetPosition(rightEncoderTarget);
+c
+                    setEncoderTarget(-475, -475);
+                    setDrivePower(-0.3, -0.3);
 
                     currentMachineState = "Straight Reposition";
                 }
 
-                if (getEncoderValue(lDrive) <= leftEncoderTarget + 15) {
-                    lDrivePower = 0.0;
-                    lDrive.setPower(lDrivePower);
-                }
-
-                if (getEncoderValue(rDrive) <= rightEncoderTarget + 15) {
-                    rDrivePower = 0.0;
-                    rDrive.setPower(rDrivePower);
-                }
-
-                if ((lDrivePower >= -0.1) && (rDrivePower >= -0.1)) {
-                    lDrivePower = 0.0;
-                    rDrivePower = 0.0;
-                    lDrive.setPower(lDrivePower);
-                    rDrive.setPower(rDrivePower);
-
-                    resetEncodersAuto(lDrive);
-                    resetEncodersAuto(rDrive);
-
-                    stateWait = 0;
-                    stateMachineIndex++;
-                }
+                negativeDriveCheck();
                 break;
 
             case STATE_REVERSE_90_DEGREE_RIGHT:
 
                 if (stateWait == 0) {
                     stateWait = 1;
-                    leftEncoderTarget = getEncoderValue(lDrive) - (2240 * 2);
-                    rightEncoderTarget= getEncoderValue(rDrive);
-                    lDrivePower = -1.0;
-                    rDrivePower = 0.0;
-                    lDrive.setPower(lDrivePower);
-                    rDrive.setPower(rDrivePower);
 
-                    lDrive.setTargetPosition(leftEncoderTarget);
-                    rDrive.setTargetPosition(rightEncoderTarget);
+                    setEncoderTarget(-4480, 0);
+                    setDrivePower(-1.0, 0.0);
 
                     currentMachineState = "Reverse 90 Degree Right";
                 }
 
-                if (getEncoderValue(lDrive) <= leftEncoderTarget + 15) {
-                    lDrivePower = 0.0;
-                    rDrivePower = 0.0;
-
-                    lDrive.setPower(lDrivePower);
-                    rDrive.setPower(rDrivePower);
-
-                    resetEncodersAuto(lDrive);
-                    resetEncodersAuto(rDrive);
-
-                    stateWait = 0;
-                    stateMachineIndex++;
-                }
+                negativeDriveCheck(); // MAY CAUSE BUG?
                 break;
 
             case STATE_STRAIGHT_TO_SIDE:
 
                 if (stateWait == 0) {
                     stateWait = 1;
-                    leftEncoderTarget = getEncoderValue(lDrive) + 3400;
-                    rightEncoderTarget= getEncoderValue(rDrive) + 3400;
 
-                    lDrivePower = 1.0;
-                    rDrivePower = 1.0;
-                    lDrive.setPower(lDrivePower);
-                    rDrive.setPower(rDrivePower);
-
-                    lDrive.setTargetPosition(leftEncoderTarget);
-                    rDrive.setTargetPosition(rightEncoderTarget);
+                    setEncoderTarget(3400, 3400);
+                    setDrivePower(1.0, 1.0);
 
                     currentMachineState = "Straight to Side";
                 }
 
-                if (getEncoderValue(lDrive) >= leftEncoderTarget - 15) {
-                    lDrivePower = 0.0;
-                    lDrive.setPower(lDrivePower);
-                }
-
-
-                if (getEncoderValue(rDrive) >= rightEncoderTarget - 15) {
-                    rDrivePower = 0.0;
-                    rDrive.setPower(rDrivePower);
-                }
-
-
-                if ((lDrivePower <= 0.1) && (rDrivePower <= 0.1)) {
-                    lDrivePower = 0.0;
-                    rDrivePower = 0.0;
-                    lDrive.setPower(lDrivePower);
-                    rDrive.setPower(rDrivePower);
-
-                    resetEncodersAuto(lDrive);
-                    resetEncodersAuto(rDrive);
-
-                    stateWait = 0;
-                    stateMachineIndex++;
-                }
+                positiveDriveCheck();
                 break;
 
             case STATE_STRAIGHT_TO_MOUNTAIN:
 
                 if (stateWait == 0) {
                     stateWait = 1;
-                    leftEncoderTarget = getEncoderValue(lDrive) + 9120;
-                    rightEncoderTarget= getEncoderValue(rDrive) + 9120;
 
-                    lDrivePower = 1.0;
-                    rDrivePower = 1.0;
-                    lDrive.setPower(lDrivePower);
-                    rDrive.setPower(rDrivePower);
-
-                    lDrive.setTargetPosition(leftEncoderTarget);
-                    rDrive.setTargetPosition(rightEncoderTarget);
+                    setEncoderTarget(9120, 9120);
+                    setDrivePower(1.0, 1.0);
 
                     currentMachineState = "Straight to Mountain";
                 }
 
-                if (getEncoderValue(lDrive) >= leftEncoderTarget - 15) {
-                    lDrivePower = 0.0;
-                    lDrive.setPower(lDrivePower);
-                }
-
-
-                if (getEncoderValue(rDrive) >= rightEncoderTarget - 15) {
-                    rDrivePower = 0.0;
-                    rDrive.setPower(rDrivePower);
-                }
-
-
-                if ((lDrivePower <= 0.1) && (rDrivePower <= 0.1)) {
-                    lDrivePower = 0.0;
-                    rDrivePower = 0.0;
-                    lDrive.setPower(lDrivePower);
-                    rDrive.setPower(rDrivePower);
-
-                    resetEncodersAuto(lDrive);
-                    resetEncodersAuto(rDrive);
-
-                    stateWait = 0;
-                    stateMachineIndex++;
-                }
+                positiveDriveCheck();
                 break;
 
             case STATE_STRAIGHT_TO_FAR:
 
                 if (stateWait == 0) {
                     stateWait = 1;
-                    leftEncoderTarget = getEncoderValue(lDrive) + 8000;
-                    rightEncoderTarget= getEncoderValue(rDrive) + 8000;
 
-                    lDrivePower = 1.0;
-                    rDrivePower = 1.0;
-                    lDrive.setPower(lDrivePower);
-                    rDrive.setPower(rDrivePower);
-
-                    lDrive.setTargetPosition(leftEncoderTarget);
-                    rDrive.setTargetPosition(rightEncoderTarget);
+                    setEncoderTarget(8000, 8000);
+                    setDrivePower(1.0, 1.0);
 
                     currentMachineState = "Straight to Far";
                 }
 
-                if (getEncoderValue(lDrive) >= leftEncoderTarget - 15) {
-                    lDrivePower = 0.0;
-                    lDrive.setPower(lDrivePower);
-                }
-
-
-                if (getEncoderValue(rDrive) >= rightEncoderTarget - 15) {
-                    rDrivePower = 0.0;
-                    rDrive.setPower(rDrivePower);
-                }
-
-
-                if ((lDrivePower <= 0.1) && (rDrivePower <= 0.1)) {
-                    lDrivePower = 0.0;
-                    rDrivePower = 0.0;
-                    lDrive.setPower(lDrivePower);
-                    rDrive.setPower(rDrivePower);
-
-                    resetEncodersAuto(lDrive);
-                    resetEncodersAuto(rDrive);
-
-                    stateWait = 0;
-                    stateMachineIndex++;
-                }
+                positiveDriveCheck();
                 break;
 
             case STATE_STRAIGHT_TO_CORNER:
 
                 if (stateWait == 0) {
                     stateWait = 1;
-                    leftEncoderTarget = getEncoderValue(lDrive) + 5200;
-                    rightEncoderTarget= getEncoderValue(rDrive) + 5200;
 
-                    lDrivePower = 1.0;
-                    rDrivePower = 1.0;
-                    lDrive.setPower(lDrivePower);
-                    rDrive.setPower(rDrivePower);
-
-                    lDrive.setTargetPosition(leftEncoderTarget);
-                    rDrive.setTargetPosition(rightEncoderTarget);
+                    setEncoderTarget(5200, 5200);
+                    setDrivePower(1.0, 1.0);
 
                     currentMachineState = "Straight to Corner";
                 }
 
-                if (getEncoderValue(lDrive) >= leftEncoderTarget - 15) {
-                    lDrivePower = 0.0;
-                    lDrive.setPower(lDrivePower);
-                }
-
-
-                if (getEncoderValue(rDrive) >= rightEncoderTarget - 15) {
-                    rDrivePower = 0.0;
-                    rDrive.setPower(rDrivePower);
-                }
-
-
-                if ((lDrivePower <= 0.1) && (rDrivePower <= 0.1)) {
-                    lDrivePower = 0.0;
-                    rDrivePower = 0.0;
-                    lDrive.setPower(lDrivePower);
-                    rDrive.setPower(rDrivePower);
-
-                    resetEncodersAuto(lDrive);
-                    resetEncodersAuto(rDrive);
-
-                    stateWait = 0;
-                    stateMachineIndex++;
-                }
+                positiveDriveCheck();();
                 break;
 
             case STATE_STOP:
