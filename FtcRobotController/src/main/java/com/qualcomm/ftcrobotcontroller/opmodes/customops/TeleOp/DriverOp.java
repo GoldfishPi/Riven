@@ -43,12 +43,9 @@ public class DriverOp extends OpMode {
     private boolean xPressed = false;
     private boolean bPressed = false;
 
-
     public double armSpeed = 0.3;
 
     public double[] armPositions = {0.0, 150};
-
-    int currentArmPosition;
 
     public DriverOp() {
 
