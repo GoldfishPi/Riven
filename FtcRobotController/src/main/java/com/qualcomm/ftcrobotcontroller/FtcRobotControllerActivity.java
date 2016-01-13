@@ -283,11 +283,13 @@ public class FtcRobotControllerActivity extends Activity {
         return true;
 
       case R.id.action_universe:
-        Intent getNameScreenIntentUniverse = new Intent(this, universeScreen.class);
+        /*Intent getNameScreenIntentUniverse = new Intent(this, universeScreen.class);
         startActivity(getNameScreenIntentUniverse);
         getNameScreenIntentUniverse.putExtra("callingActivity", "FtcRobotControllerActivity");
 
-        startActivityForResult(getNameScreenIntentUniverse, 1);
+        startActivityForResult(getNameScreenIntentUniverse, 1);*/
+        Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.terrace.libgdx.android.AndroidLauncher");
+        startActivity(launchIntent);
       default:
         return super.onOptionsItemSelected(item);
     }
