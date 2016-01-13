@@ -244,11 +244,11 @@ public class AutonomousVariables extends OpMode {
         resetEncodersAuto(arm);
         theDumperTick = 0;
         theDumperPosition = Servo.MIN_POSITION;
+        theDumper.setPosition(theDumperPosition);
     }
 
     public void autonomousloop() {
         setTelemetry();
-        theDumper.setPosition(theDumperPosition);
 
         switch (stateMachineArray[stateMachineIndex]) {
             case STATE_TURN_45_LEFT:
