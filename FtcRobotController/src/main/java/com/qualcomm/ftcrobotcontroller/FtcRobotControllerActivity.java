@@ -288,7 +288,7 @@ public class FtcRobotControllerActivity extends Activity {
         getNameScreenIntentUniverse.putExtra("callingActivity", "FtcRobotControllerActivity");
 
         startActivityForResult(getNameScreenIntentUniverse, 1);*/
-        Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.terrace.libgdx.android.AndroidLauncher");
+        Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.terrace.libgdx");
         startActivity(launchIntent);
       default:
         return super.onOptionsItemSelected(item);
