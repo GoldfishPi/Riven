@@ -426,6 +426,21 @@ public class AutonomousVariables extends OpMode {
                 negativeDriveCheck(); // MAY CAUSE BUG?
                 break;
 
+
+            case STATE_REVERSE_90_DEGREE_LEFT:
+
+                if (stateWait == 0) {
+                    stateWait = 1;
+
+                    setEncoderTarget(0, -4480);
+                    setDrivePower(0.0, -1.0);
+
+                    currentMachineState = "Reverse 90 Degree Left";
+                }
+
+                negativeDriveCheck();
+                break;
+
             case STATE_STRAIGHT_TO_SIDE:
 
                 if (stateWait == 0) {
@@ -488,7 +503,7 @@ public class AutonomousVariables extends OpMode {
                 break;
 
             default:
-                currentMachineState = "!DEFAULT!";
+                currentMachineState = "!NO ACTIVE STATE!";
                 break;
         }
     }
