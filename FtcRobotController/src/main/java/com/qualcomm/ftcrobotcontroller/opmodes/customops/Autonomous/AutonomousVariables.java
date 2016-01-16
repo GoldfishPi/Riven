@@ -47,6 +47,7 @@ public class AutonomousVariables extends OpMode {
     public double[] adRotatingRobotDrive = new double[5];
 
     public int stateMachineIndex = 0;
+    public int debugArrayIndex   = 0;
     public int[] stateMachineArray = new int[100];
     public int[] debugArray;
 
@@ -71,7 +72,13 @@ public class AutonomousVariables extends OpMode {
             STATE_STRAIGHT_TO_MOUNTAIN          = 15,
             STATE_REVERSE_90_DEGREE_RIGHT       = 16,
             STATE_STRAIGHT_TO_FAR               = 17,
-            STATE_STRAIGHT_TO_CORNER            = 18;
+            STATE_STRAIGHT_TO_CORNER            = 18,
+            STATE_REVERSE_135_DEGREE_RIGHT      = 19,
+            STATE_REVERSE_135_DEGREE_LEFT       = 20,
+            STATE_135_DEGREE_RIGHT              = 21,
+            STATE_135_DEGREE_LEFT               = 22,
+            STATE_TURN_90_DEGREE_RIGHT          = 23,
+            STATE_TURN_90_DEGREE_LEFT           = 24;
 
 
     public int
@@ -182,13 +189,18 @@ public class AutonomousVariables extends OpMode {
         telemetry.addData("left Target", leftEncoderTarget);
         telemetry.addData("right Target", rightEncoderTarget);
 
-        telemetry.addData("theDumper Position", theDumperPosition);
-        telemetry.addData("Arm Position", getEncoderValue(arm));
+//        telemetry.addData("theDumper Position", theDumperPosition);
+//        telemetry.addData("Arm Position", getEncoderValue(arm));
 
 
     }
 
     public void setupAutonomous() {
+    }
+
+    public void addState(int state) {
+        debugArray[debugArrayIndex] = state;
+        debugArrayIndex++;
     }
 
     @Override
@@ -216,11 +228,12 @@ public class AutonomousVariables extends OpMode {
         lDrive.setDirection(DcMotor.Direction.REVERSE);
         rDrive.setDirection(DcMotor.Direction.FORWARD);
 
-        theDumper = getServo("theDumper");
-        arm       = getMotor("arm");
+//        theDumper = getServo("theDumper");
+//        arm       = getMotor("arm");
 
         stateWait = 0;
         stateMachineIndex = 0;
+        debugArrayIndex   = 0;
         debugArray = new int[100];
 
         setupAutonomous(); // Add states to debugArray before setting stateMachineArray
@@ -235,16 +248,16 @@ public class AutonomousVariables extends OpMode {
         resetEncodersAuto(lDrive);
         resetEncodersAuto(rDrive);
 
-        resetEncodersAuto(arm);
+//        resetEncodersAuto(arm);
     }
 
     public void autonomousInitLoop() {
         resetEncodersAuto(lDrive);
         resetEncodersAuto(rDrive);
-        resetEncodersAuto(arm);
+//        resetEncodersAuto(arm);
         theDumperTick = 0;
-        theDumperPosition = Servo.MIN_POSITION;
-        theDumper.setPosition(theDumperPosition);
+//        theDumperPosition = Servo.MIN_POSITION;
+//        theDumper.setPosition(theDumperPosition);
     }
 
     public void autonomousloop() {
@@ -423,9 +436,8 @@ public class AutonomousVariables extends OpMode {
                     currentMachineState = "Reverse 90 Degree Right";
                 }
 
-                negativeDriveCheck(); // MAY CAUSE BUG?
+                negativeDriveCheck();
                 break;
-
 
             case STATE_REVERSE_90_DEGREE_LEFT:
 
@@ -439,6 +451,90 @@ public class AutonomousVariables extends OpMode {
                 }
 
                 negativeDriveCheck();
+                break;
+
+            case STATE_REVERSE_135_DEGREE_RIGHT:
+
+                if (stateWait == 0) {
+                    stateWait = 1;
+
+                    setEncoderTarget(-6720, 0);
+                    setDrivePower(-1.0, 0.0);
+
+                    currentMachineState = "Reverse 135 Degree Right";
+                }
+
+                negativeDriveCheck(); // MAY CAUSE BUG?
+                break;
+
+            case STATE_REVERSE_135_DEGREE_LEFT:
+
+                if (stateWait == 0) {
+                    stateWait = 1;
+
+                    setEncoderTarget(0, -6720);
+                    setDrivePower(0.0, -1.0);
+
+                    currentMachineState = "Reverse 135 Degree Left";
+                }
+
+                negativeDriveCheck();
+                break;
+
+            case STATE_TURN_90_DEGREE_RIGHT:
+
+                if (stateWait == 0) {
+                    stateWait = 1;
+
+                    setEncoderTarget(4480, 0);
+                    setDrivePower(1.0, 0.0);
+
+                    currentMachineState = "90 Degree Right";
+                }
+
+                positiveDriveCheck(); // MAY CAUSE BUG?
+                break;
+
+            case STATE_TURN_90_DEGREE_LEFT:
+
+                if (stateWait == 0) {
+                    stateWait = 1;
+
+                    setEncoderTarget(0, 4480);
+                    setDrivePower(0.0, 1.0);
+
+                    currentMachineState = "90 Degree Left";
+                }
+
+                positiveDriveCheck();
+                break;
+
+            case STATE_135_DEGREE_RIGHT:
+
+                if (stateWait == 0) {
+                    stateWait = 1;
+
+                    setEncoderTarget(6720, 0);
+                    setDrivePower(1.0, 0.0);
+
+                    currentMachineState = "135 Degree Right";
+                }
+
+                positiveDriveCheck(); // MAY CAUSE BUG?
+                break;
+
+            case STATE_135_DEGREE_LEFT:
+
+                if (stateWait == 0) {
+                    stateWait = 1;
+
+                    setEncoderTarget(0, 6720);
+                    setDrivePower(0.0, 1.0);
+
+                    currentMachineState = "135 Degree Left";
+                }
+
+                positiveDriveCheck();
                 break;
 
             case STATE_STRAIGHT_TO_SIDE:

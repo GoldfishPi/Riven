@@ -38,27 +38,24 @@ public class AutonomousMountainLeft extends AutonomousVariables {
 
     @Override
     public void setupAutonomous() {
-        debugArray[0] = STATE_DRIVE_STRAIGHT_CORNER_TO_GOAL;
-        debugArray[1] = STATE_TURN_45_LEFT;
-        debugArray[2] = STATE_STRAIGHT_PARK;
-        debugArray[3] = STATE_RAISE_ARM;
-        debugArray[4] = STATE_STRAIGHT_POSITION;
-        debugArray[5] = STATE_DUMP_GUYS;
-        debugArray[6] = STATE_UNDUMP_GUYS;
-        debugArray[7] = STATE_STRAIGHT_REPOSITION;
-        debugArray[8] = STATE_LOWER_ARM;
-        debugArray[9] = STATE_REVERSE_90_DEGREE_LEFT;
-        debugArray[10]= STATE_REVERSE_90_DEGREE_LEFT;
+        addState(STATE_DRIVE_STRAIGHT_CORNER_TO_GOAL);
+        addState(STATE_TURN_45_LEFT);
+        addState(STATE_STRAIGHT_PARK);
+//        addState(STATE_RAISE_ARM);
+        addState(STATE_STRAIGHT_POSITION);
+//        addState(STATE_DUMP_GUYS);
+//        addState(STATE_UNDUMP_GUYS);
+        addState(STATE_STRAIGHT_REPOSITION);
+//        addState(STATE_LOWER_ARM);
+        addState(STATE_REVERSE_135_DEGREE_LEFT);
 
-        debugArray[11] = STATE_STRAIGHT_TO_SIDE;
-        debugArray[12] = STATE_TURN_45_RIGHT;
-        debugArray[13] = STATE_TURN_45_RIGHT;
-        debugArray[14] = STATE_STRAIGHT_TO_MOUNTAIN;
-        debugArray[15] = STATE_TURN_45_RIGHT;
-        debugArray[16] = STATE_TURN_45_RIGHT;
-        debugArray[17] = STATE_STRAIGHT_TO_FAR;
-        debugArray[18] = STATE_TURN_45_RIGHT;
-        debugArray[19] = STATE_STRAIGHT_TO_CORNER;
-        debugArray[20] = STATE_STOP;
+        addState(STATE_STRAIGHT_TO_SIDE);
+        addState(STATE_TURN_45_RIGHT);
+        addState(STATE_STRAIGHT_TO_MOUNTAIN);
+        addState(STATE_TURN_90_DEGREE_RIGHT);
+        addState(STATE_TURN_90_DEGREE_RIGHT);
+        addState(STATE_STRAIGHT_TO_FAR);
+        addState(STATE_STRAIGHT_TO_CORNER);
+        addState(STATE_STOP);
     }
 }
