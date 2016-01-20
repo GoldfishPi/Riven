@@ -7,6 +7,9 @@ import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
+import java.lang.reflect.Array;
+import java.util.Map;
+
 /**
  * Created by goldfishpi on 12/12/15.
  */
@@ -48,8 +51,14 @@ public class AutonomousVariables extends OpMode {
 
     public int stateMachineIndex = 0;
     public int debugArrayIndex   = 0;
+    public int actionIndex       = 0;
+    public double[][] actionArray;
     public int[] stateMachineArray = new int[100];
     public int[] debugArray;
+
+    public boolean lockMachine = false;
+    public int currentWaitTicks = 0;
+    public int targetWaitTicks  = 10;
 
     String currentState;
 
@@ -78,7 +87,15 @@ public class AutonomousVariables extends OpMode {
             STATE_135_DEGREE_RIGHT              = 21,
             STATE_135_DEGREE_LEFT               = 22,
             STATE_TURN_90_DEGREE_RIGHT          = 23,
-            STATE_TURN_90_DEGREE_LEFT           = 24;
+            STATE_TURN_90_DEGREE_LEFT           = 24,
+
+            // States for testing new approach to autonomous construction
+            FORWARD_TURN  = 25, // use for dual-motor turns, with +/- angle as only action input
+            REVERSE_TURN  = 26,
+            DRIVE_FORWARD = 27,
+            DRIVE_BACKWARD= 28,
+            STATE_WAIT    = 29,
+            THE_DUMPER    = 30;
 
 
     public int
@@ -126,7 +143,9 @@ public class AutonomousVariables extends OpMode {
     // Clean up state machine (a lot, hopefully)
 
     // Checks that the wheels are where they should be, tells the state machine to proceed
-    public void positiveDriveCheck() {
+    public boolean positiveDriveCheck() {
+        boolean checkFinal = false;
+
         if (getEncoderValue(lDrive) >= leftEncoderTarget - 15) {
             lDrivePower = 0.0;
             lDrive.setPower(lDrivePower);
@@ -140,6 +159,8 @@ public class AutonomousVariables extends OpMode {
 
 
         if ((lDrivePower <= 0.1) && (rDrivePower <= 0.1)) {
+            checkFinal = true;
+
             lDrivePower = 0.0;
             rDrivePower = 0.0;
             lDrive.setPower(lDrivePower);
@@ -149,12 +170,16 @@ public class AutonomousVariables extends OpMode {
             resetEncodersAuto(rDrive);
 
             stateWait = 0;
+            lockMachine = false;
             stateMachineIndex++;
         }
+
+        return checkFinal;
     }
 
     // Checks that the wheels are where they should be, tells the state machine to proceed
-    public void negativeDriveCheck() {
+    public boolean negativeDriveCheck() {
+        boolean checkFinal = false;
         if (getEncoderValue(lDrive) <= leftEncoderTarget + 15) {
             lDrivePower = 0.0;
             lDrive.setPower(lDrivePower);
@@ -175,19 +200,23 @@ public class AutonomousVariables extends OpMode {
 
             resetEncodersAuto(lDrive);
             resetEncodersAuto(rDrive);
+            checkFinal = true;
 
             stateWait = 0;
+            lockMachine = false;
             stateMachineIndex++;
         }
+
+        return checkFinal;
     }
 
     public void setTelemetry() {
         telemetry.addData("State", currentMachineState);
-        telemetry.addData("Left Position", getEncoderValue(lDrive));
-        telemetry.addData("right Position", getEncoderValue(rDrive));
-
-        telemetry.addData("left Target", leftEncoderTarget);
-        telemetry.addData("right Target", rightEncoderTarget);
+//        telemetry.addData("Left Position", getEncoderValue(lDrive));
+//        telemetry.addData("right Position", getEncoderValue(rDrive));
+//
+//        telemetry.addData("left Target", leftEncoderTarget);
+//        telemetry.addData("right Target", rightEncoderTarget);
 
 //        telemetry.addData("theDumper Position", theDumperPosition);
 //        telemetry.addData("Arm Position", getEncoderValue(arm));
@@ -201,6 +230,33 @@ public class AutonomousVariables extends OpMode {
     public void addState(int state) {
         debugArray[debugArrayIndex] = state;
         debugArrayIndex++;
+    }
+
+    public void addDriveAction(int state, int leftDrive, int rightDrive, double leftPower, double rightPower) {
+        debugArray[debugArrayIndex] = state;
+        debugArrayIndex++;
+
+        double[] array = {leftDrive, rightDrive, leftPower, rightPower};
+        actionArray[actionIndex] = array;
+        actionIndex++;
+    }
+
+    public void addServoAction(int state, double position) {
+        debugArray[debugArrayIndex] = state;
+        debugArrayIndex++;
+
+        double[] array = new double[1];
+        array[0] = position;
+        actionArray[actionIndex] = array;
+        actionIndex++;
+    }
+
+    public void addWaitAction(double ticks) {
+        debugArray[debugArrayIndex] = STATE_WAIT;
+        debugArrayIndex++;
+
+        actionArray[actionIndex][0] = ticks;
+        actionIndex++;
     }
 
     @Override
@@ -223,37 +279,41 @@ public class AutonomousVariables extends OpMode {
     }
 
     public void autonomousInit() {
-        lDrive = getMotor("lDrive");
-        rDrive = getMotor("rDrive");
-        lDrive.setDirection(DcMotor.Direction.REVERSE);
-        rDrive.setDirection(DcMotor.Direction.FORWARD);
+//        lDrive = getMotor("lDrive");
+//        rDrive = getMotor("rDrive");
+//        lDrive.setDirection(DcMotor.Direction.REVERSE);
+//        rDrive.setDirection(DcMotor.Direction.FORWARD);
 
 //        theDumper = getServo("theDumper");
 //        arm       = getMotor("arm");
 
         stateWait = 0;
+        lockMachine = false;
         stateMachineIndex = 0;
+        actionIndex       = 0;
         debugArrayIndex   = 0;
         debugArray = new int[100];
+        actionArray= new double[100][4];
 
         setupAutonomous(); // Add states to debugArray before setting stateMachineArray
+        actionIndex = 0; // Reset to 0 after setup
 
         for (int i = 0; i < 100; i++) {
             stateMachineArray[i] = debugArray[i];
         }
 
-        setEncoderTarget(0, 0);
-        setDrivePower(0.0, 0.0);
-
-        resetEncodersAuto(lDrive);
-        resetEncodersAuto(rDrive);
+//        setEncoderTarget(0, 0);
+//        setDrivePower(0.0, 0.0);
+//
+//        resetEncodersAuto(lDrive);
+//        resetEncodersAuto(rDrive);
 
 //        resetEncodersAuto(arm);
     }
 
     public void autonomousInitLoop() {
-        resetEncodersAuto(lDrive);
-        resetEncodersAuto(rDrive);
+//        resetEncodersAuto(lDrive);
+//        resetEncodersAuto(rDrive);
 //        resetEncodersAuto(arm);
         theDumperTick = 0;
 //        theDumperPosition = Servo.MIN_POSITION;
@@ -264,6 +324,68 @@ public class AutonomousVariables extends OpMode {
         setTelemetry();
 
         switch (stateMachineArray[stateMachineIndex]) {
+            // BEGIN - CONCEPT 14
+            case DRIVE_FORWARD:
+                if (!lockMachine) {
+                    lockMachine = true;
+                    currentMachineState = "Drive Forward";
+                    System.out.println("LeftTarget: "+(int)actionArray[actionIndex][0]+" RightTarget: "+(int)actionArray[actionIndex][1]);
+                    System.out.println("LeftPower: "+actionArray[actionIndex][2]+" RightPower: "+actionArray[actionIndex][3]);
+
+                    setEncoderTarget((int) actionArray[actionIndex][0], (int) actionArray[actionIndex][1]);
+                    setDrivePower(actionArray[actionIndex][2], actionArray[actionIndex][3]);
+                }
+
+                if (positiveDriveCheck()) { actionIndex++; }
+                break;
+
+            case DRIVE_BACKWARD:
+                if (!lockMachine) {
+                    lockMachine = true;
+                    currentMachineState = "Drive Backward";
+                    System.out.println("LeftTarget: "+(int)actionArray[actionIndex][0]+" RightTarget: "+(int)actionArray[actionIndex][1]);
+                    System.out.println("LeftPower: "+actionArray[actionIndex][2]+" RightPower: "+actionArray[actionIndex][3]);
+
+                    setEncoderTarget((int)actionArray[actionIndex][0], (int)actionArray[actionIndex][1]);
+                    setDrivePower(actionArray[actionIndex][2], actionArray[actionIndex][3]);
+                }
+
+                if (negativeDriveCheck()) { actionIndex++; }
+                break;
+
+            case THE_DUMPER:
+                if (!lockMachine) {
+                    lockMachine = true;
+                    currentMachineState = "TheDumper";
+
+                    theDumperPosition = actionArray[actionIndex][0];
+                    System.out.println("DumperPosition: "+theDumperPosition);
+                    theDumper.setPosition(theDumperPosition);
+                }
+
+                lockMachine = false;
+                stateMachineIndex++;
+                actionIndex++;
+                break;
+
+            case STATE_WAIT:
+                if (!lockMachine) {
+                    lockMachine = true;
+                    targetWaitTicks = (int)actionArray[actionIndex][0];
+                }
+
+                if (currentWaitTicks >= targetWaitTicks) {
+                    currentWaitTicks = 0;
+                    lockMachine = false;
+                    stateMachineIndex++;
+                    actionIndex++;
+                }
+                else { currentMachineState = "Waiting... " + currentWaitTicks + "/" + targetWaitTicks; }
+
+                currentWaitTicks++;
+                break;
+            // END - CONCEPT 14
+
             case STATE_TURN_45_LEFT:
                 if (stateWait == 0) {
 

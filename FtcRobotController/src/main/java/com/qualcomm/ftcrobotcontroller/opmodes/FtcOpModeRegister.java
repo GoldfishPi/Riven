@@ -32,6 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
 
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousConcept14;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousMountainRight;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousMountainLeft;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.TeleOp.DriverOp;
@@ -63,5 +64,6 @@ public class FtcOpModeRegister implements OpModeRegister {
     manager.register("DriverOp", DriverOp.class);
     manager.register("<- Autonomous Mountain Left", AutonomousMountainLeft.class);
     manager.register("-> Autonomous Mountain Right", AutonomousMountainRight.class);
+    manager.register("<^_^> Autonomous Concept 14", AutonomousConcept14.class);
   }
 }
