@@ -212,13 +212,13 @@ public class AutonomousVariables extends OpMode {
 
     public void setTelemetry() {
         telemetry.addData("State", currentMachineState);
-//        telemetry.addData("Left Position", getEncoderValue(lDrive));
-//        telemetry.addData("right Position", getEncoderValue(rDrive));
-//
-//        telemetry.addData("left Target", leftEncoderTarget);
-//        telemetry.addData("right Target", rightEncoderTarget);
+        telemetry.addData("Left Position", getEncoderValue(lDrive));
+        telemetry.addData("right Position", getEncoderValue(rDrive));
 
-//        telemetry.addData("theDumper Position", theDumperPosition);
+        telemetry.addData("left Target", leftEncoderTarget);
+        telemetry.addData("right Target", rightEncoderTarget);
+
+        telemetry.addData("theDumper Position", theDumperPosition);
 //        telemetry.addData("Arm Position", getEncoderValue(arm));
 
 
@@ -279,12 +279,12 @@ public class AutonomousVariables extends OpMode {
     }
 
     public void autonomousInit() {
-//        lDrive = getMotor("lDrive");
-//        rDrive = getMotor("rDrive");
-//        lDrive.setDirection(DcMotor.Direction.REVERSE);
-//        rDrive.setDirection(DcMotor.Direction.FORWARD);
+        lDrive = getMotor("lDrive");
+        rDrive = getMotor("rDrive");
+        lDrive.setDirection(DcMotor.Direction.REVERSE);
+        rDrive.setDirection(DcMotor.Direction.FORWARD);
 
-//        theDumper = getServo("theDumper");
+        theDumper = getServo("theDumper");
 //        arm       = getMotor("arm");
 
         stateWait = 0;
@@ -302,22 +302,22 @@ public class AutonomousVariables extends OpMode {
             stateMachineArray[i] = debugArray[i];
         }
 
-//        setEncoderTarget(0, 0);
-//        setDrivePower(0.0, 0.0);
-//
-//        resetEncodersAuto(lDrive);
-//        resetEncodersAuto(rDrive);
+        setEncoderTarget(0, 0);
+        setDrivePower(0.0, 0.0);
+
+        resetEncodersAuto(lDrive);
+        resetEncodersAuto(rDrive);
 
 //        resetEncodersAuto(arm);
     }
 
     public void autonomousInitLoop() {
-//        resetEncodersAuto(lDrive);
-//        resetEncodersAuto(rDrive);
+        resetEncodersAuto(lDrive);
+        resetEncodersAuto(rDrive);
 //        resetEncodersAuto(arm);
         theDumperTick = 0;
-//        theDumperPosition = Servo.MIN_POSITION;
-//        theDumper.setPosition(theDumperPosition);
+        theDumperPosition = Servo.MIN_POSITION;
+        theDumper.setPosition(theDumperPosition);
     }
 
     public void autonomousloop() {
@@ -394,7 +394,6 @@ public class AutonomousVariables extends OpMode {
 
                     setEncoderTarget(0, 2340);                                    // Drive distance
                     setDrivePower(0.0, 1.0);
-//                    rightEncoderTarget = getEncoderValue(rDrive) + 2340;
                 }
 
                 positiveDriveCheck();
