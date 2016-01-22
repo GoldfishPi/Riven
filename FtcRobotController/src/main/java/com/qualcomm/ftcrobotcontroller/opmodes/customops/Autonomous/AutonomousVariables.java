@@ -95,7 +95,8 @@ public class AutonomousVariables extends OpMode {
             DRIVE_FORWARD = 27,
             DRIVE_BACKWARD= 28,
             STATE_WAIT    = 29,
-            THE_DUMPER    = 30;
+            THE_DUMPER    = 30,
+            ARM_ACTION    = 31;
 
 
     public int
@@ -218,7 +219,7 @@ public class AutonomousVariables extends OpMode {
         telemetry.addData("left Target", leftEncoderTarget);
         telemetry.addData("right Target", rightEncoderTarget);
 
-        telemetry.addData("theDumper Position", theDumperPosition);
+//        telemetry.addData("theDumper Position", theDumperPosition);
 //        telemetry.addData("Arm Position", getEncoderValue(arm));
 
 
@@ -259,6 +260,15 @@ public class AutonomousVariables extends OpMode {
         actionIndex++;
     }
 
+    public void addArmAction(int state, int armPosition, double armPower) {
+        debugArray[debugArrayIndex] = state;
+        debugArrayIndex++;
+
+        double[] array = {armPosition, armPower};
+        actionArray[actionIndex] = array;
+        actionIndex++;
+    }
+
     @Override
     public void init() {
         autonomousInit();
@@ -284,7 +294,7 @@ public class AutonomousVariables extends OpMode {
         lDrive.setDirection(DcMotor.Direction.REVERSE);
         rDrive.setDirection(DcMotor.Direction.FORWARD);
 
-        theDumper = getServo("theDumper");
+//        theDumper = getServo("theDumper");
 //        arm       = getMotor("arm");
 
         stateWait = 0;
@@ -316,8 +326,8 @@ public class AutonomousVariables extends OpMode {
         resetEncodersAuto(rDrive);
 //        resetEncodersAuto(arm);
         theDumperTick = 0;
-        theDumperPosition = Servo.MIN_POSITION;
-        theDumper.setPosition(theDumperPosition);
+//        theDumperPosition = Servo.MIN_POSITION;
+//        theDumper.setPosition(theDumperPosition);
     }
 
     public void autonomousloop() {
@@ -329,28 +339,63 @@ public class AutonomousVariables extends OpMode {
                 if (!lockMachine) {
                     lockMachine = true;
                     currentMachineState = "Drive Forward";
-                    System.out.println("LeftTarget: "+(int)actionArray[actionIndex][0]+" RightTarget: "+(int)actionArray[actionIndex][1]);
-                    System.out.println("LeftPower: "+actionArray[actionIndex][2]+" RightPower: "+actionArray[actionIndex][3]);
+                    System.out.println("LeftTarget: " + (int) actionArray[actionIndex][0] + " RightTarget: " + (int) actionArray[actionIndex][1]);
+                    System.out.println("LeftPower: " + actionArray[actionIndex][2] + " RightPower: " + actionArray[actionIndex][3]);
 
                     setEncoderTarget((int) actionArray[actionIndex][0], (int) actionArray[actionIndex][1]);
                     setDrivePower(actionArray[actionIndex][2], actionArray[actionIndex][3]);
                 }
 
-                if (positiveDriveCheck()) { actionIndex++; }
+                if (positiveDriveCheck()) {
+                    actionIndex++;
+                }
                 break;
 
             case DRIVE_BACKWARD:
                 if (!lockMachine) {
                     lockMachine = true;
                     currentMachineState = "Drive Backward";
-                    System.out.println("LeftTarget: "+(int)actionArray[actionIndex][0]+" RightTarget: "+(int)actionArray[actionIndex][1]);
-                    System.out.println("LeftPower: "+actionArray[actionIndex][2]+" RightPower: "+actionArray[actionIndex][3]);
+                    System.out.println("LeftTarget: " + (int) actionArray[actionIndex][0] + " RightTarget: " + (int) actionArray[actionIndex][1]);
+                    System.out.println("LeftPower: " + actionArray[actionIndex][2] + " RightPower: " + actionArray[actionIndex][3]);
 
-                    setEncoderTarget((int)actionArray[actionIndex][0], (int)actionArray[actionIndex][1]);
+                    setEncoderTarget((int) actionArray[actionIndex][0], (int) actionArray[actionIndex][1]);
                     setDrivePower(actionArray[actionIndex][2], actionArray[actionIndex][3]);
                 }
 
-                if (negativeDriveCheck()) { actionIndex++; }
+                if (negativeDriveCheck()) {
+                    actionIndex++;
+                }
+                break;
+
+            case ARM_ACTION:
+                if (!lockMachine) {
+                    lockMachine = true;
+                    resetEncodersAuto(arm);
+                    currentMachineState = "Arm Action";
+                    armSpeed = actionArray[actionIndex][1];
+                    armLocation = getEncoderValue(arm);
+                    arm.setTargetPosition(armLocation - (int) actionArray[actionIndex][0]);
+                    arm.setPower(armSpeed);
+                }
+
+                if (armSpeed <= 0.0) {
+                    if (getEncoderValue(arm) <= getEncoderValue(arm) + 15) {
+                        lockMachine = false;
+                        arm.setPower(0.0);
+                        stateMachineIndex++;
+                        actionIndex++;
+                    }
+                }
+
+                if (armSpeed >= 0.0) {
+                    if (getEncoderValue(arm) >= getEncoderValue(arm) - 15) {
+                        lockMachine = false;
+                        arm.setPower(0.0);
+                        stateMachineIndex++;
+                        actionIndex++;
+                    }
+                }
+
                 break;
 
             case THE_DUMPER:
