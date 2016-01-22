@@ -108,6 +108,7 @@ public class DriverOp extends OpMode {
 
     @Override
     public void loop() {
+
         telemetry.addData("ArmSpeed", armSpeed);
         telemetry.addData("Arm Encoders", arm.getCurrentPosition());
         if (gamepad1.b) {

@@ -3,7 +3,8 @@ package com.qualcomm.ftcrobotcontroller.opmodes.customops.Storage;
 /**
  * Created by root on 1/21/16.
  */
-public class Saver {
+public class Saver
+{
 
     int[] savedInfo;
     int infoLocation;
@@ -14,14 +15,16 @@ public class Saver {
 
     }
 
-    public void save(int info, String tag){
+    public void save(int info, String tag)
+    {
         savedInfo[infoLocation] = info;
         infoTag[tagLocation] = tag;
         tagLocation ++;
         infoLocation ++;
     }
 
-    public void spit(int amount){
+    public void spit(int amount)
+    {
 
         int savedInfoSize = savedInfo.length;
 
@@ -32,7 +35,8 @@ public class Saver {
 
     }
 
-    public void spitAll(){
+    public void spitAll()
+    {
 
         int savedInfoSize = savedInfo.length;
 
