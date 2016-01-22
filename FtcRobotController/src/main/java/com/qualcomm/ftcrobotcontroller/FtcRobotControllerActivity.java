@@ -85,6 +85,7 @@ public class FtcRobotControllerActivity extends Activity {
 
   protected UpdateUI.Callback callback;
   protected Context context;
+  public static Context contextLocal;
   private Utility utility;
   protected ImageButton buttonMenu;
 
@@ -142,6 +143,7 @@ public class FtcRobotControllerActivity extends Activity {
 
     utility = new Utility(this);
     context = this;
+    FtcRobotControllerActivity.contextLocal = this;
     entireScreenLayout = (LinearLayout) findViewById(R.id.entire_screen);
     buttonMenu = (ImageButton) findViewById(R.id.menu_buttons);
     buttonMenu.setOnClickListener(new View.OnClickListener() {

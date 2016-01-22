@@ -1,11 +1,17 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous;
 
+import com.qualcomm.ftcrobotcontroller.FtcRobotControllerActivity;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.TeleOp.DriverOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
+
+import android.content.Context;
+import android.media.AudioManager;
+import android.media.ToneGenerator;
+import android.os.Vibrator;
 
 import java.lang.reflect.Array;
 import java.util.Map;
@@ -33,6 +39,9 @@ public class AutonomousVariables extends OpMode {
     public DcMotor armExtender;
 
     public DcMotor arm;
+
+    public Vibrator vibrator = (Vibrator) FtcRobotControllerActivity.contextLocal.getSystemService(Context.VIBRATOR_SERVICE);
+    final ToneGenerator toneGenerator = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
 
     public double armSpeed;
     public int armLocation;
@@ -96,7 +105,12 @@ public class AutonomousVariables extends OpMode {
             DRIVE_BACKWARD= 28,
             STATE_WAIT    = 29,
             THE_DUMPER    = 30,
-            ARM_ACTION    = 31;
+            ARM_ACTION    = 31,
+
+            SET_COLLISION_PROFILE      = 32,
+            COLLISION_IGNORE           = 33,
+            COLLISION_CHANGE_DIRECTION = 34,
+            VIBRATOR_ACTION            = 35;
 
 
     public int
@@ -107,6 +121,9 @@ public class AutonomousVariables extends OpMode {
             stateRaiseArm = 0,
             stateExtnedArm = 0,
             stateRetractArm = 0;
+
+    public int collisionProfile = COLLISION_IGNORE;
+
 
     public DcMotor getMotor(String string) {
         return hardwareMap.dcMotor.get(string);
@@ -152,12 +169,10 @@ public class AutonomousVariables extends OpMode {
             lDrive.setPower(lDrivePower);
         }
 
-
         if (getEncoderValue(rDrive) >= rightEncoderTarget - 15) {
             rDrivePower = 0.0;
             rDrive.setPower(rDrivePower);
         }
-
 
         if ((lDrivePower <= 0.1) && (rDrivePower <= 0.1)) {
             checkFinal = true;
@@ -186,12 +201,10 @@ public class AutonomousVariables extends OpMode {
             lDrive.setPower(lDrivePower);
         }
 
-
         if (getEncoderValue(rDrive) <= rightEncoderTarget + 15) {
             rDrivePower = 0.0;
             rDrive.setPower(rDrivePower);
         }
-
 
         if ((lDrivePower >= -0.1) && (rDrivePower >= -0.1)) {
             lDrivePower = 0.0;
@@ -213,16 +226,14 @@ public class AutonomousVariables extends OpMode {
 
     public void setTelemetry() {
         telemetry.addData("State", currentMachineState);
-        telemetry.addData("Left Position", getEncoderValue(lDrive));
-        telemetry.addData("right Position", getEncoderValue(rDrive));
+//        telemetry.addData("Left Position", getEncoderValue(lDrive));
+//        telemetry.addData("right Position", getEncoderValue(rDrive));
 
-        telemetry.addData("left Target", leftEncoderTarget);
-        telemetry.addData("right Target", rightEncoderTarget);
+//        telemetry.addData("left Target", leftEncoderTarget);
+//        telemetry.addData("right Target", rightEncoderTarget);
 
 //        telemetry.addData("theDumper Position", theDumperPosition);
 //        telemetry.addData("Arm Position", getEncoderValue(arm));
-
-
     }
 
     public void setupAutonomous() {
@@ -269,6 +280,29 @@ public class AutonomousVariables extends OpMode {
         actionIndex++;
     }
 
+    public void addVibratorAction(int duration) {
+        debugArray[debugArrayIndex] = VIBRATOR_ACTION;
+        debugArrayIndex++;
+
+        double[] array = {duration};
+        actionArray[actionIndex] = array;
+        actionIndex++;
+    }
+
+    public void setCollisionProfile(int profile) {
+        debugArray[debugArrayIndex] = SET_COLLISION_PROFILE;
+        debugArrayIndex++;
+
+        double[] array = {profile};
+        actionArray[actionIndex] = array;
+        actionIndex++;
+    }
+
+    public void scream() {
+//        toneGenerator.startTone(ToneGenerator.TONE_CDMA_CALL_SIGNAL_ISDN_NORMAL, 250);
+        toneGenerator.startTone(ToneGenerator.TONE_DTMF_A, 250);
+    }
+
     @Override
     public void init() {
         autonomousInit();
@@ -289,10 +323,10 @@ public class AutonomousVariables extends OpMode {
     }
 
     public void autonomousInit() {
-        lDrive = getMotor("lDrive");
-        rDrive = getMotor("rDrive");
-        lDrive.setDirection(DcMotor.Direction.REVERSE);
-        rDrive.setDirection(DcMotor.Direction.FORWARD);
+//        lDrive = getMotor("lDrive");
+//        rDrive = getMotor("rDrive");
+//        lDrive.setDirection(DcMotor.Direction.REVERSE);
+//        rDrive.setDirection(DcMotor.Direction.FORWARD);
 
 //        theDumper = getServo("theDumper");
 //        arm       = getMotor("arm");
@@ -312,18 +346,18 @@ public class AutonomousVariables extends OpMode {
             stateMachineArray[i] = debugArray[i];
         }
 
-        setEncoderTarget(0, 0);
-        setDrivePower(0.0, 0.0);
+//        setEncoderTarget(0, 0);
+//        setDrivePower(0.0, 0.0);
 
-        resetEncodersAuto(lDrive);
-        resetEncodersAuto(rDrive);
+//        resetEncodersAuto(lDrive);
+//        resetEncodersAuto(rDrive);
 
 //        resetEncodersAuto(arm);
     }
 
     public void autonomousInitLoop() {
-        resetEncodersAuto(lDrive);
-        resetEncodersAuto(rDrive);
+//        resetEncodersAuto(lDrive);
+//        resetEncodersAuto(rDrive);
 //        resetEncodersAuto(arm);
         theDumperTick = 0;
 //        theDumperPosition = Servo.MIN_POSITION;
@@ -406,6 +440,36 @@ public class AutonomousVariables extends OpMode {
                     theDumperPosition = actionArray[actionIndex][0];
                     System.out.println("DumperPosition: "+theDumperPosition);
                     theDumper.setPosition(theDumperPosition);
+                }
+
+                lockMachine = false;
+                stateMachineIndex++;
+                actionIndex++;
+                break;
+
+            case SET_COLLISION_PROFILE:
+                if (!lockMachine) {
+                    lockMachine = true;
+
+                    int profile = (int)actionArray[actionIndex][0];
+                    System.out.println("CollisionProfile: "+profile);
+                    currentMachineState = "Updating Collision Profile";
+                    collisionProfile = profile;
+                }
+
+                lockMachine = false;
+                stateMachineIndex++;
+                actionIndex++;
+                break;
+
+            case VIBRATOR_ACTION:
+                if (!lockMachine) {
+                    lockMachine = true;
+                    currentMachineState = "Vibrator";
+                    scream();
+
+                    int duration = (int)actionArray[actionIndex][0];
+                    vibrator.vibrate(duration);
                 }
 
                 lockMachine = false;
