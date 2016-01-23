@@ -6,14 +6,13 @@ package com.qualcomm.ftcrobotcontroller.opmodes.customops.Storage;
 public class Saver
 {
 
-    int[] savedInfo;
+    int[] savedInfo = new int[5555555];
     int infoLocation;
-    String[] infoTag;
+    String[] infoTag = new String[5555555];
     int tagLocation;
+    int savedInfoSize = savedInfo.length;
 
-    public Saver(){
-
-    }
+    public Saver() {}
 
     public void save(int info, String tag)
     {
@@ -28,9 +27,11 @@ public class Saver
 
         int savedInfoSize = savedInfo.length;
 
-        for(int i = 0; i < amount && i < savedInfoSize; i++){
-            System.out.println(infoTag[i].toString() +":");
-            System.out.print(savedInfo[i]);
+        for(int i = 0; i < amount && i < savedInfoSize; i++)
+        {
+
+            System.out.println(infoTag[i] +" : " + savedInfo[i]);
+
         }
 
     }
@@ -38,12 +39,27 @@ public class Saver
     public void spitAll()
     {
 
-        int savedInfoSize = savedInfo.length;
+        for(int i = 0;  i < savedInfoSize; i++)
+        {
 
-        for(int i = 0;  i < savedInfoSize; i++){
-            System.out.println(infoTag[i].toString() + ":");
-            System.out.print(savedInfo[i]);
+            if(infoTag[i] != null)
+            {
+                System.out.println(infoTag[i] + " : " + savedInfo[i] );
+            }
+            else
+            {
+                break;
+            }
         }
+    }
 
+    public void spitTag(String tag)
+    {
+
+        for(int i = 0; i< savedInfoSize; i ++){
+            if(infoTag[i] == tag){
+                System.out.println(infoTag[i] + " : " + savedInfo[i]);
+            }
+        }
     }
 }

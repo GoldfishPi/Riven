@@ -1,20 +1,21 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous;
 
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.Storage.Saver;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 /**
  * Created by root on 1/21/16.
  */
-public class AutoSaveTest extends AutonomousVariables {
+public class AutoSaveTest extends OpMode {
 
     Saver saver = new Saver();
+    public int x;
 
     @Override
-    public void setupAutonomous()
+    public void init()
     {
 
-        addDriveAction(DRIVE_FORWARD, 21108, 18768, 1.0, 1.0);
-        addState(STATE_STOP);
+
 
     }
 
@@ -22,7 +23,9 @@ public class AutoSaveTest extends AutonomousVariables {
     public void loop()
     {
 
-        saver.save(555, "kill");
+        saver.save(x, "hello");
+        saver.save(00, "poopy pants");
+        x++;
 
     }
 
@@ -31,7 +34,8 @@ public class AutoSaveTest extends AutonomousVariables {
     {
 
         saver.spitAll();
-
     }
+
+
 
 }

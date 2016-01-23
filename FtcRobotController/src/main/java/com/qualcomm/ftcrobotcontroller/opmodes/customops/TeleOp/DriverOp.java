@@ -201,14 +201,6 @@ public class DriverOp extends OpMode {
             }
 
 
-            if(gamepad2.right_stick_y != 0.0) {
-                armControlls(true, 0);
-            }
-            else{
-
-                armControlls(false, 0);
-            }
-
             //Arm In and Out
             if (gamepad2.y) {
 
@@ -231,6 +223,10 @@ public class DriverOp extends OpMode {
             if(gamepad2.dpad_right){
                 extendEqual("STOP", 0.0);
             }
+
+            //Arm up and down
+
+            armControlls(gamepad2.right_stick_y);
 
 
             //gill controls
@@ -269,31 +265,10 @@ public class DriverOp extends OpMode {
         armExtender.setPower(gamepad2.left_stick_y);
     }
 
-    public void armControlls(boolean running, int speed) {
-        double armPower = 0.1;
+    public void armControlls(double speed) {
 
-        if (running) {
-            arm.setPower(Range.clip(speed, -1.0, 1.0));
-            } else if (!running) {
-            if (arm.getCurrentPosition() > arm.getTargetPosition()) {
-                arm.setPower(-armPower);
-            } else if (arm.getCurrentPosition() < arm.getTargetPosition()) {
-                arm.setPower(armPower);
-            } else {
-                arm.setPower(0.0);
-            }
-        }
+        arm.setPower(speed);
 
-
-
-
-        //Arm up and down
-        if (gamepad2.right_stick_y > 0.0) {
-            arm.setTargetPosition(arm.getCurrentPosition() + 112);
-        } else if (gamepad2.right_stick_y < 0.0) {
-
-            arm.setTargetPosition(arm.getCurrentPosition() - 112);
-        }
 
     }
 
