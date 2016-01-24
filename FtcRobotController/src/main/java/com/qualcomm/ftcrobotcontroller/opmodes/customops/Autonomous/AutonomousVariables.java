@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 import android.content.Context;
+import android.hardware.SensorEvent;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.Vibrator;
@@ -40,7 +41,7 @@ public class AutonomousVariables extends OpMode {
 
     public DcMotor arm;
 
-    public Vibrator vibrator = (Vibrator) FtcRobotControllerActivity.contextLocal.getSystemService(Context.VIBRATOR_SERVICE);
+    public Vibrator vibrator;
     final ToneGenerator toneGenerator = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
 
     public double armSpeed;
@@ -68,6 +69,8 @@ public class AutonomousVariables extends OpMode {
     public boolean lockMachine = false;
     public int currentWaitTicks = 0;
     public int targetWaitTicks  = 10;
+
+    public FtcRobotControllerActivity instance;
 
     String currentState;
 
@@ -303,6 +306,14 @@ public class AutonomousVariables extends OpMode {
         toneGenerator.startTone(ToneGenerator.TONE_DTMF_A, 250);
     }
 
+    public void sensorAccelerometer(SensorEvent event) {
+        float x = event.values[0];
+        float y = event.values[1];
+        float z = event.values[2];
+
+        System.out.println("x: " + x + " y: " + y + " z: " + z);
+    }
+
     @Override
     public void init() {
         autonomousInit();
@@ -320,9 +331,14 @@ public class AutonomousVariables extends OpMode {
 
     @Override
     public void stop() {
+        instance.getSensorAccelerometer().unregisterActiveBrain();
     }
 
     public void autonomousInit() {
+        instance = FtcRobotControllerActivity.getInstance();
+        instance.getSensorAccelerometer().registerActiveBrain(this);
+        vibrator = (Vibrator) instance.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
+
 //        lDrive = getMotor("lDrive");
 //        rDrive = getMotor("rDrive");
 //        lDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -345,6 +361,7 @@ public class AutonomousVariables extends OpMode {
         for (int i = 0; i < 100; i++) {
             stateMachineArray[i] = debugArray[i];
         }
+//        FtcRobotControllerActivity.getSensorAccelermeter().registerActiveBrain(this);
 
 //        setEncoderTarget(0, 0);
 //        setDrivePower(0.0, 0.0);

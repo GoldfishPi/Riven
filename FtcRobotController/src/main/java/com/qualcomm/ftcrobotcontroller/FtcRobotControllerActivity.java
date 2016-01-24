@@ -62,6 +62,7 @@ import com.qualcomm.ftccommon.LaunchActivityConstantsList;
 import com.qualcomm.ftccommon.Restarter;
 import com.qualcomm.ftccommon.UpdateUI;
 import com.qualcomm.ftcrobotcontroller.opmodes.FtcOpModeRegister;
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.Sensors.Accelerometer;
 import com.qualcomm.hardware.HardwareFactory;
 import com.qualcomm.robotcore.hardware.configuration.Utility;
 import com.qualcomm.robotcore.util.Dimmer;
@@ -72,6 +73,8 @@ import com.qualcomm.robotcore.wifi.WifiDirectAssistant;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FtcRobotControllerActivity extends Activity {
 
@@ -85,7 +88,6 @@ public class FtcRobotControllerActivity extends Activity {
 
   protected UpdateUI.Callback callback;
   protected Context context;
-  public static Context contextLocal;
   private Utility utility;
   protected ImageButton buttonMenu;
 
@@ -104,6 +106,19 @@ public class FtcRobotControllerActivity extends Activity {
   protected FtcRobotControllerService controllerService;
 
   protected FtcEventLoop eventLoop;
+
+  private static FtcRobotControllerActivity[] instances;
+  public static FtcRobotControllerActivity getInstance() throws NullPointerException {
+    try {
+      return instances[0];
+    }
+    catch (NullPointerException ex) {
+      System.out.println("This cheese has become chess.");
+      return null;
+    }
+  }
+  private Accelerometer sensorAccelerometer;
+  public Accelerometer getSensorAccelerometer() { return sensorAccelerometer; }
 
   protected class RobotRestarter implements Restarter {
 
@@ -141,9 +156,11 @@ public class FtcRobotControllerActivity extends Activity {
 
     setContentView(R.layout.activity_ftc_controller);
 
+    instances = new FtcRobotControllerActivity[1];
+    instances[0] = this;
+
     utility = new Utility(this);
     context = this;
-    FtcRobotControllerActivity.contextLocal = this;
     entireScreenLayout = (LinearLayout) findViewById(R.id.entire_screen);
     buttonMenu = (ImageButton) findViewById(R.id.menu_buttons);
     buttonMenu.setOnClickListener(new View.OnClickListener() {
@@ -210,11 +227,16 @@ public class FtcRobotControllerActivity extends Activity {
   @Override
   protected void onResume() {
     super.onResume();
+
+    sensorAccelerometer = new Accelerometer();
+    sensorAccelerometer.registerListener(this);
   }
 
   @Override
   public void onPause() {
     super.onPause();
+
+    sensorAccelerometer.unregisterListener(this);
   }
 
   @Override
