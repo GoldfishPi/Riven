@@ -14,9 +14,6 @@ import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.Vibrator;
 
-import java.lang.reflect.Array;
-import java.util.Map;
-
 /**
  * Created by goldfishpi on 12/12/15.
  */
@@ -125,7 +122,21 @@ public class AutonomousVariables extends OpMode {
             stateExtnedArm = 0,
             stateRetractArm = 0;
 
-    public int collisionProfile = COLLISION_IGNORE;
+    public int collisionProfile   = COLLISION_IGNORE,
+               COLLISION_THRESHOLD= 12,
+               tickSinceCollision = 0,
+               accelerometerTicks = 0;
+    public boolean collisionLock  = false;
+
+    public float deadX,
+                 deadY,
+                 deadZ,
+                 oldX,
+                 oldY,
+                 oldZ,
+                 x,
+                 y,
+                 z;
 
 
     public DcMotor getMotor(String string) {
@@ -228,6 +239,7 @@ public class AutonomousVariables extends OpMode {
     }
 
     public void setTelemetry() {
+        telemetry.addData("Accelerometer", "X: "+x+" Y: "+y+" Z: "+Math.round(z));
         telemetry.addData("State", currentMachineState);
 //        telemetry.addData("Left Position", getEncoderValue(lDrive));
 //        telemetry.addData("right Position", getEncoderValue(rDrive));
@@ -307,11 +319,45 @@ public class AutonomousVariables extends OpMode {
     }
 
     public void sensorAccelerometer(SensorEvent event) {
-        float x = event.values[0];
-        float y = event.values[1];
-        float z = event.values[2];
+        oldX = x;
+        oldY = y;
+        oldZ = z;
 
-        System.out.println("x: " + x + " y: " + y + " z: " + z);
+        x = event.values[0];
+        y = event.values[1];
+        z = event.values[2];
+
+        if (accelerometerTicks >= 2) {
+            deadX = x;
+            deadY = y;
+            deadZ = z;
+        }
+
+        accelerometerTicks++;
+    }
+
+    public void checkCollision() { // FIXME: Reduntant collision check method, will trigger again on recovery.
+        if (collisionLock) {
+            tickSinceCollision++;
+            if (tickSinceCollision >= 45) {
+                tickSinceCollision = 0;
+                collisionLock = false;
+            }
+        }
+
+        if (accelerometerTicks >= 4 && !collisionLock) {
+            System.out.println("x: " + Math.abs(x) + " y: " + Math.abs(y) + " z: " + Math.abs(z));
+
+            if (Math.abs(x) >= COLLISION_THRESHOLD && !collisionLock) {
+                scream();
+                collisionLock = true;
+            }
+
+            if (Math.abs(y) >= COLLISION_THRESHOLD && !collisionLock) {
+                scream();
+                collisionLock = true;
+            }
+        }
     }
 
     @Override
@@ -348,6 +394,7 @@ public class AutonomousVariables extends OpMode {
 //        arm       = getMotor("arm");
 
         stateWait = 0;
+        currentMachineState = "In-Active";
         lockMachine = false;
         stateMachineIndex = 0;
         actionIndex       = 0;
@@ -383,6 +430,7 @@ public class AutonomousVariables extends OpMode {
 
     public void autonomousloop() {
         setTelemetry();
+        checkCollision();
 
         switch (stateMachineArray[stateMachineIndex]) {
             // BEGIN - CONCEPT 14
@@ -483,7 +531,6 @@ public class AutonomousVariables extends OpMode {
                 if (!lockMachine) {
                     lockMachine = true;
                     currentMachineState = "Vibrator";
-                    scream();
 
                     int duration = (int)actionArray[actionIndex][0];
                     vibrator.vibrate(duration);
