@@ -143,7 +143,7 @@ public class DriverOp extends OpMode {
         {
 
             if(gamepad1.a){
-                lovePonny.setPosition(22);
+                lovePonny.setPosition(0.22);
             }
 
             if(gamepad1.y){
