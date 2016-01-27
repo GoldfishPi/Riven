@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
 <Robot>
     <ServoController name="Servo theDumper" serialNumber="AL00YA7S">
-        <Servo name="theDumper" port="1" />
+        <Servo name="theDumper" port="6" />
     </ServoController>
     <MotorController name="Motor Controller Drive" serialNumber="AL00VSB7">
         <Motor name="lDrive" port="1" />

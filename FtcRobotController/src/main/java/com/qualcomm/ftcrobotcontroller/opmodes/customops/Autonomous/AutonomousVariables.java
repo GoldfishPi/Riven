@@ -242,16 +242,16 @@ public class AutonomousVariables extends OpMode {
     }
 
     public void setTelemetry() {
-        telemetry.addData("Accelerometer", "X: "+x+" Y: "+y+" Z: "+Math.round(z));
         telemetry.addData("State", currentMachineState);
-//        telemetry.addData("Left Position", getEncoderValue(lDrive));
-//        telemetry.addData("right Position", getEncoderValue(rDrive));
+        telemetry.addData("Accelerometer", "X: "+x+" Y: "+y+" Z: "+Math.round(z));
+        telemetry.addData("Left Position", getEncoderValue(lDrive));
+        telemetry.addData("right Position", getEncoderValue(rDrive));
 
-//        telemetry.addData("left Target", leftEncoderTarget);
-//        telemetry.addData("right Target", rightEncoderTarget);
+        telemetry.addData("left Target", leftEncoderTarget);
+        telemetry.addData("right Target", rightEncoderTarget);
 
-//        telemetry.addData("theDumper Position", theDumperPosition);
-//        telemetry.addData("Arm Position", getEncoderValue(arm));
+        telemetry.addData("theDumper Position", theDumperPosition);
+        telemetry.addData("Arm Position", getEncoderValue(arm));
     }
 
     public void setupAutonomous() {
@@ -349,7 +349,7 @@ public class AutonomousVariables extends OpMode {
         }
 
         if (accelerometerTicks >= 4 && !collisionLock) {
-            System.out.println("x: " + Math.abs(x) + " y: " + Math.abs(y) + " z: " + Math.abs(z));
+//            System.out.println("x: " + Math.abs(x) + " y: " + Math.abs(y) + " z: " + Math.abs(z));
 
             if (Math.abs(x) >= COLLISION_THRESHOLD && !collisionLock) {
                 scream();
@@ -395,6 +395,7 @@ public class AutonomousVariables extends OpMode {
 
         theDumper = getServo("theDumper");
         arm       = getMotor("arm");
+        arm.setDirection(DcMotor.Direction.REVERSE);
 
         stateWait = 0;
         currentMachineState = "In-Active";
@@ -480,7 +481,7 @@ public class AutonomousVariables extends OpMode {
                 }
 
                 if (armSpeed <= 0.0) {
-                    if (getEncoderValue(arm) <= getEncoderValue(arm) + 15) {
+                    if (getEncoderValue(arm) <= armLocation + 15) {
                         lockMachine = false;
                         arm.setPower(0.0);
                         stateMachineIndex++;
@@ -490,12 +491,11 @@ public class AutonomousVariables extends OpMode {
                 }
 
                 if (armSpeed >= 0.0) {
-                    if (getEncoderValue(arm) >= getEncoderValue(arm) - 15) {
+                    if (getEncoderValue(arm) >= armLocation - 15) {
                         lockMachine = false;
                         arm.setPower(0.0);
                         stateMachineIndex++;
                         actionIndex++;
-                        vibrator.vibrate(2500);
                     }
                 }
 
