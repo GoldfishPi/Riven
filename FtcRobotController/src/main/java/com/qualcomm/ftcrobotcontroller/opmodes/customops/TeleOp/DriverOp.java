@@ -81,6 +81,7 @@ public class DriverOp extends OpMode {
         resetEncoders(armExtender);
 
         resetEncoders(arm);
+        arm.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
 
         for(int i = 0; i < motors.length; i ++){
             motors[i] = hardwareMap.dcMotor.get(motorNames[i]);
@@ -142,7 +143,7 @@ public class DriverOp extends OpMode {
         {
 
             if(gamepad1.a){
-                lovePonny.setPosition(Servo.MIN_POSITION);
+                lovePonny.setPosition(22);
             }
 
             if(gamepad1.y){
