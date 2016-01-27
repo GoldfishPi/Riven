@@ -123,10 +123,13 @@ public class AutonomousVariables extends OpMode {
             stateRetractArm = 0;
 
     public int collisionProfile   = COLLISION_IGNORE,
-               COLLISION_THRESHOLD= 12,
+               COLLISION_THRESHOLD= 6,
                tickSinceCollision = 0,
                accelerometerTicks = 0;
-    public boolean collisionLock  = false;
+    public boolean collisionLock  = false,
+                   needsDrive     = false,
+                   needsDumper    = false,
+                   needsArm       = false;
 
     public float deadX,
                  deadY,
@@ -339,7 +342,7 @@ public class AutonomousVariables extends OpMode {
     public void checkCollision() { // FIXME: Reduntant collision check method, will trigger again on recovery.
         if (collisionLock) {
             tickSinceCollision++;
-            if (tickSinceCollision >= 45) {
+            if (tickSinceCollision >= 250) {
                 tickSinceCollision = 0;
                 collisionLock = false;
             }
@@ -385,13 +388,13 @@ public class AutonomousVariables extends OpMode {
         instance.getSensorAccelerometer().registerActiveBrain(this);
         vibrator = (Vibrator) instance.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
 
-//        lDrive = getMotor("lDrive");
-//        rDrive = getMotor("rDrive");
-//        lDrive.setDirection(DcMotor.Direction.REVERSE);
-//        rDrive.setDirection(DcMotor.Direction.FORWARD);
+        lDrive = getMotor("lDrive");
+        rDrive = getMotor("rDrive");
+        lDrive.setDirection(DcMotor.Direction.REVERSE);
+        rDrive.setDirection(DcMotor.Direction.FORWARD);
 
-//        theDumper = getServo("theDumper");
-//        arm       = getMotor("arm");
+        theDumper = getServo("theDumper");
+        arm       = getMotor("arm");
 
         stateWait = 0;
         currentMachineState = "In-Active";
@@ -408,24 +411,23 @@ public class AutonomousVariables extends OpMode {
         for (int i = 0; i < 100; i++) {
             stateMachineArray[i] = debugArray[i];
         }
-//        FtcRobotControllerActivity.getSensorAccelermeter().registerActiveBrain(this);
 
-//        setEncoderTarget(0, 0);
-//        setDrivePower(0.0, 0.0);
+        setEncoderTarget(0, 0);
+        setDrivePower(0.0, 0.0);
 
-//        resetEncodersAuto(lDrive);
-//        resetEncodersAuto(rDrive);
+        resetEncodersAuto(lDrive);
+        resetEncodersAuto(rDrive);
 
-//        resetEncodersAuto(arm);
+        resetEncodersAuto(arm);
     }
 
     public void autonomousInitLoop() {
-//        resetEncodersAuto(lDrive);
-//        resetEncodersAuto(rDrive);
-//        resetEncodersAuto(arm);
+        resetEncodersAuto(lDrive);
+        resetEncodersAuto(rDrive);
+        resetEncodersAuto(arm);
         theDumperTick = 0;
-//        theDumperPosition = Servo.MIN_POSITION;
-//        theDumper.setPosition(theDumperPosition);
+        theDumperPosition = Servo.MIN_POSITION;
+        theDumper.setPosition(theDumperPosition);
     }
 
     public void autonomousloop() {
@@ -483,6 +485,7 @@ public class AutonomousVariables extends OpMode {
                         arm.setPower(0.0);
                         stateMachineIndex++;
                         actionIndex++;
+                        scream();
                     }
                 }
 
@@ -492,6 +495,7 @@ public class AutonomousVariables extends OpMode {
                         arm.setPower(0.0);
                         stateMachineIndex++;
                         actionIndex++;
+                        vibrator.vibrate(2500);
                     }
                 }
 

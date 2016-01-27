@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<Robot>
+    <ServoController name="Servo theDumper" serialNumber="AL00YA7S">
+        <Servo name="theDumper" port="1" />
+    </ServoController>
+    <MotorController name="Motor Controller Drive" serialNumber="AL00VSB7">
+        <Motor name="lDrive" port="1" />
+        <Motor name="rDrive" port="2" />
+    </MotorController>
+    <MotorController name="Motor Controller Wench lGill" serialNumber="AL00XUZ8">
+        <Motor name="armExtender" port="1" />
+        <Motor name="lGill" port="2" />
+    </MotorController>
+    <MotorController name="Motor Controller Arm rGill" serialNumber="AL00VSCN">
+        <Motor name="arm" port="1" />
+        <Motor name="rGill" port="2" />
+    </MotorController>
+    <LegacyModuleController name="Legacy Module Fingers" serialNumber="AL00YDLG">
+        <MotorController name="Fingers" port="0">
+            <Motor name="lFinger" port="1" />
+            <Motor name="rFinger" port="2" />
+        </MotorController>
+    </LegacyModuleController>
+</Robot>
