@@ -45,7 +45,9 @@ import com.qualcomm.robotcore.eventloop.opmode.OpModeRegister;
 /**
  * Register Op Modes
  */
-public class FtcOpModeRegister implements OpModeRegister {
+public class FtcOpModeRegister implements OpModeRegister
+
+{
 
   /**
    * The Op Mode Manager will call this method when it wants a list of all
@@ -53,7 +55,9 @@ public class FtcOpModeRegister implements OpModeRegister {
    *
    * @param manager op mode manager
    */
-  public void register(OpModeManager manager) {
+  public void register(OpModeManager manager)
+
+  {
 
     /*
      * register your op modes here.
@@ -63,10 +67,11 @@ public class FtcOpModeRegister implements OpModeRegister {
      * If two or more op modes are registered with the same name, the app will display an error.
      */
 
-    manager.register("DriverOp", DriverOp.class);
-    manager.register("<- Autonomous Mountain Left", AutonomousMountainLeft.class);
-    manager.register("-> Autonomous Mountain Right", AutonomousMountainRight.class);
-    manager.register("<^_^> Autonomous Concept 14", AutonomousConcept14.class);
-    manager.register("motorTest", SingleMotorTest.class);
+      manager.register("DriverOp", DriverOp.class);
+      manager.register("<- Autonomous Mountain Left", AutonomousMountainLeft.class);
+      manager.register("-> Autonomous Mountain Right", AutonomousMountainRight.class);
+      manager.register("<^_^> Autonomous Concept 14", AutonomousConcept14.class);
+
   }
+
 }

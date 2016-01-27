@@ -1,17 +1,16 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.customops.TeleOp;
 
+import android.content.Context;
 import android.media.AudioManager;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
 import android.media.ToneGenerator;
-import android.net.Uri;
+import android.os.Vibrator;
 
+import com.qualcomm.ftcrobotcontroller.FtcRobotControllerActivity;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.BatteryChecker;
-import com.qualcomm.robotcore.util.Range;
 
 /**
  * Created by goldfishpi on 11/21/15.
@@ -31,21 +30,18 @@ public class DriverOp extends OpMode {
 
     private DcMotor arm;
 
-    private BatteryChecker batteryChecker;
-
-    final ToneGenerator tg = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
-
     private Servo lovePonny;
 
-    private boolean yPressed = false;
-    private boolean aPressed = false;
+    private boolean yPressed   = false;
+    private boolean aPressed   = false;
 
-    private boolean xPressed = false;
-    private boolean bPressed = false;
+    private boolean xPressed   = false;
+    private boolean bPressed   = false;
 
-    public double armSpeed = 0.3;
+    public double armSpeed     = 0.3;
 
-    public double[] armPositions = {0.0, 150};
+    public DcMotor[] motors    = new DcMotor[8];
+    public String[] motorNames = new String[]{"lDrive", "rDrive", "lFinger", "rFinger", "lGill", "rGill", "armExtender", "arm"};
 
     public DriverOp() {
 
@@ -53,22 +49,22 @@ public class DriverOp extends OpMode {
 
     @Override
     public void init() {
-//        batteryChecker.startBatteryMonitoring();
 
-        lDrive = hardwareMap.dcMotor.get("lDrive");
-        rDrive = hardwareMap.dcMotor.get("rDrive");
 
-        lFinger = hardwareMap.dcMotor.get("lFinger");
-        rFinger = hardwareMap.dcMotor.get("rFinger");
+        lDrive      = hardwareMap.dcMotor.get("lDrive");
+        rDrive      = hardwareMap.dcMotor.get("rDrive");
 
-        lGill = hardwareMap.dcMotor.get("lGill");
-        rGill = hardwareMap.dcMotor.get("rGill");
+        lFinger     = hardwareMap.dcMotor.get("lFinger");
+        rFinger     = hardwareMap.dcMotor.get("rFinger");
+
+        lGill       = hardwareMap.dcMotor.get("lGill");
+        rGill       = hardwareMap.dcMotor.get("rGill");
 
         armExtender = hardwareMap.dcMotor.get("armExtender");
 
-        lovePonny = hardwareMap.servo.get("theDumper");
+        lovePonny   = hardwareMap.servo.get("theDumper");
 
-        arm = hardwareMap.dcMotor.get("arm");
+        arm         = hardwareMap.dcMotor.get("arm");
 
         rDrive.setDirection(DcMotor.Direction.FORWARD);
         lDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -86,14 +82,25 @@ public class DriverOp extends OpMode {
 
         resetEncoders(arm);
 
+        for(int i = 0; i < motors.length; i ++){
+            motors[i] = hardwareMap.dcMotor.get(motorNames[i]);
+        }
+
     }
 
     @Override
-    public void stop() {
+    public void stop()
+    {
+
+        for(int i = 0; i < motors.length; i ++){
+            motors[i].setPower(0.0);
+        }
+
     }
 
     @Override
-    public void init_loop() {
+    public void init_loop()
+    {
 
         resetEncoders(lDrive);
         resetEncoders(rDrive);
@@ -107,14 +114,17 @@ public class DriverOp extends OpMode {
     }
 
     @Override
-    public void loop() {
 
-        telemetry.addData("ArmSpeed", armSpeed);
-        telemetry.addData("Arm Encoders", arm.getCurrentPosition());
+    public void loop()
+    {
+
+        telemetry.addData("ArmSpeed     ", armSpeed);
+        telemetry.addData("Arm Encoders ", arm.getCurrentPosition());
+
         if (gamepad1.b) {
-            System.out.println("lDrive : " + lDrive.getCurrentPosition());
-            System.out.println("rDrive : " + rDrive.getCurrentPosition());
-            System.out.println("Arm : " + arm.getCurrentPosition());
+            System.out.println("lDrive  : " + lDrive.getCurrentPosition());
+            System.out.println("rDrive  : " + rDrive.getCurrentPosition());
+            System.out.println("Arm     : " + arm.getCurrentPosition());
 
         }
 
@@ -134,6 +144,7 @@ public class DriverOp extends OpMode {
             if(gamepad1.a){
                 lovePonny.setPosition(Servo.MIN_POSITION);
             }
+
             if(gamepad1.y){
                 lovePonny.setPosition(Servo.MAX_POSITION);
             }
@@ -151,6 +162,7 @@ public class DriverOp extends OpMode {
             } else {
                 rDrive.setPower(0.0);
             }
+
             if(gamepad1.left_stick_y != 0){
                 lDrive.setPower(-gamepad1.left_stick_y);
             } else{
@@ -165,6 +177,7 @@ public class DriverOp extends OpMode {
             } else {
                 lFinger.setPower(0.0);
             }
+
             if (gamepad1.right_trigger != 0.0) {
                 rFinger.setPower(0.3);
             } else if (gamepad1.right_bumper) {
@@ -177,7 +190,8 @@ public class DriverOp extends OpMode {
     }
 
 
-    public void controllerTwo() {
+    public void controllerTwo()
+    {
         {
 
             if(!gamepad2.dpad_right){
@@ -192,6 +206,7 @@ public class DriverOp extends OpMode {
             else if(!gamepad2.x && xPressed){
                 xPressed = false;
             }
+
             if(gamepad2.b && !bPressed && armSpeed > -1.100){
                 bPressed = true;
                 armSpeed -= 0.100;
@@ -202,26 +217,14 @@ public class DriverOp extends OpMode {
 
 
             //Arm In and Out
-            if (gamepad2.y) {
-
-                yPressed = true;
-                extendEqual("out", Math.abs(gamepad2.left_stick_y));
-            } else if (!gamepad2.y && yPressed) {
-                yPressed = false;
+            if(gamepad2.y){
+                extendEqual(+0.5);
             }
-
-            if (gamepad2.a) {
-                aPressed = true;
-                extendEqual("in", Math.abs(gamepad2.left_stick_y));
-            } else if (!gamepad2.a && aPressed) {
-                aPressed = false;
+            if(gamepad2.a){
+                extendEqual(-0.5);
             }
-
-            if(!aPressed && !yPressed){
-                extendEqual("STOP", 0.0);
-            }
-            if(gamepad2.dpad_right){
-                extendEqual("STOP", 0.0);
+            if(!gamepad2.a && !gamepad2.y){
+                extendEqual(0.0);
             }
 
             //Arm up and down
@@ -248,38 +251,29 @@ public class DriverOp extends OpMode {
         }
     }
 
-    public void extendEqual(String direction, double speed) {
+    public void extendEqual( double speed)
+    {
 
-        if (direction == "out") {
-            armExtender.setTargetPosition(armExtender.getCurrentPosition()+50);
-
-        }
-        if (direction == "in") {
-            armExtender.setTargetPosition(armExtender.getCurrentPosition()-50);
-        }
-
-        if(direction == "STOP"){
-            armExtender.setPower(0.0);
-        }
-
-        armExtender.setPower(gamepad2.left_stick_y);
+        armExtender.setPower(speed);
     }
 
-    public void armControlls(double speed) {
+    public void armControlls(double speed)
+    {
 
         arm.setPower(speed);
 
-
     }
 
-    public void resetEncoders(DcMotor motor) {
+    public void resetEncoders(DcMotor motor)
+    {
 
         motor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
         motor.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
 
     }
 
-    public void setMotorToRunToPos(DcMotor motor) {
+    public void setMotorToRunToPos(DcMotor motor)
+    {
 
         motor.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
 
