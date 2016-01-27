@@ -81,11 +81,12 @@ public class DriverOp extends OpMode {
         resetEncoders(armExtender);
 
         resetEncoders(arm);
-        arm.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
 
         for(int i = 0; i < motors.length; i ++){
             motors[i] = hardwareMap.dcMotor.get(motorNames[i]);
         }
+
+
 
     }
 
@@ -108,9 +109,10 @@ public class DriverOp extends OpMode {
         resetEncoders(armExtender);
         resetEncoders(arm);
 
-        setMotorToRunToPos(arm);
         lDrive.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
         rDrive.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        arm.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+
 
     }
 
@@ -135,7 +137,6 @@ public class DriverOp extends OpMode {
 
         controllerOne();
         controllerTwo();
-        setMotorToRunToPos(arm);
     }
 
     public void controllerOne()//Living organism velocity extender and phasing oscillation neutralizing neon elliptical yielder
