@@ -82,6 +82,8 @@ public class DriverOp extends OpMode {
 
         resetEncoders(arm);
 
+
+
         for(int i = 0; i < motors.length; i ++){
             motors[i] = hardwareMap.dcMotor.get(motorNames[i]);
         }
