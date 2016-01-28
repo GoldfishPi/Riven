@@ -244,14 +244,16 @@ public class AutonomousVariables extends OpMode {
     public void setTelemetry() {
         telemetry.addData("State", currentMachineState);
         telemetry.addData("Accelerometer", "X: "+x+" Y: "+y+" Z: "+Math.round(z));
-        telemetry.addData("Left Position", getEncoderValue(lDrive));
-        telemetry.addData("right Position", getEncoderValue(rDrive));
+        if (needsDrive) {
+            telemetry.addData("Left Drive Position", getEncoderValue(lDrive));
+            telemetry.addData("right Drive Position", getEncoderValue(rDrive));
 
-        telemetry.addData("left Target", leftEncoderTarget);
-        telemetry.addData("right Target", rightEncoderTarget);
+            telemetry.addData("left Drive Target", leftEncoderTarget);
+            telemetry.addData("right Drive Target", rightEncoderTarget);
+        }
 
-        telemetry.addData("theDumper Position", theDumperPosition);
-        telemetry.addData("Arm Position", getEncoderValue(arm));
+        if (needsDumper) { telemetry.addData("theDumper Position", theDumperPosition); }
+        if (needsArm) { telemetry.addData("Arm Position", getEncoderValue(arm)); }
     }
 
     public void setupAutonomous() {
@@ -263,6 +265,7 @@ public class AutonomousVariables extends OpMode {
     }
 
     public void addDriveAction(int state, int leftDrive, int rightDrive, double leftPower, double rightPower) {
+        needsDrive = true;
         debugArray[debugArrayIndex] = state;
         debugArrayIndex++;
 
@@ -272,6 +275,7 @@ public class AutonomousVariables extends OpMode {
     }
 
     public void addServoAction(int state, double position) {
+        needsDumper = true;
         debugArray[debugArrayIndex] = state;
         debugArrayIndex++;
 
@@ -290,6 +294,7 @@ public class AutonomousVariables extends OpMode {
     }
 
     public void addArmAction(int state, int armPosition, double armPower) {
+        needsArm = true;
         debugArray[debugArrayIndex] = state;
         debugArrayIndex++;
 
@@ -388,15 +393,6 @@ public class AutonomousVariables extends OpMode {
         instance.getSensorAccelerometer().registerActiveBrain(this);
         vibrator = (Vibrator) instance.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
 
-        lDrive = getMotor("lDrive");
-        rDrive = getMotor("rDrive");
-        lDrive.setDirection(DcMotor.Direction.REVERSE);
-        rDrive.setDirection(DcMotor.Direction.FORWARD);
-
-        theDumper = getServo("theDumper");
-        arm       = getMotor("arm");
-        arm.setDirection(DcMotor.Direction.REVERSE);
-
         stateWait = 0;
         currentMachineState = "In-Active";
         lockMachine = false;
@@ -409,31 +405,52 @@ public class AutonomousVariables extends OpMode {
         setupAutonomous(); // Add states to debugArray before setting stateMachineArray
         actionIndex = 0; // Reset to 0 after setup
 
+        if (needsDrive) {
+            lDrive = getMotor("lDrive");
+            rDrive = getMotor("rDrive");
+            lDrive.setDirection(DcMotor.Direction.REVERSE);
+            rDrive.setDirection(DcMotor.Direction.FORWARD);
+
+            setEncoderTarget(0, 0);
+            setDrivePower(0.0, 0.0);
+
+            resetEncodersAuto(lDrive);
+            resetEncodersAuto(rDrive);
+        }
+
+        if (needsDumper) {
+            theDumper = getServo("theDumper");
+        }
+
+        if (needsArm) {
+            arm = getMotor("arm");
+            arm.setDirection(DcMotor.Direction.REVERSE);
+            resetEncodersAuto(arm);
+        }
+
         for (int i = 0; i < 100; i++) {
             stateMachineArray[i] = debugArray[i];
         }
-
-        setEncoderTarget(0, 0);
-        setDrivePower(0.0, 0.0);
-
-        resetEncodersAuto(lDrive);
-        resetEncodersAuto(rDrive);
-
-        resetEncodersAuto(arm);
     }
 
     public void autonomousInitLoop() {
-        resetEncodersAuto(lDrive);
-        resetEncodersAuto(rDrive);
-        resetEncodersAuto(arm);
-        theDumperTick = 0;
-        theDumperPosition = Servo.MIN_POSITION;
-        theDumper.setPosition(theDumperPosition);
+        if (needsDrive) {
+            resetEncodersAuto(lDrive);
+            resetEncodersAuto(rDrive);
+        }
+
+        if (needsDumper) {
+            theDumperTick = 0;
+            theDumperPosition = Servo.MIN_POSITION;
+            theDumper.setPosition(theDumperPosition);
+        }
+
+        if (needsArm) { resetEncodersAuto(arm); }
     }
 
     public void autonomousloop() {
         setTelemetry();
-        checkCollision();
+        if (needsDrive) { checkCollision(); }
 
         switch (stateMachineArray[stateMachineIndex]) {
             // BEGIN - CONCEPT 14

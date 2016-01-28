@@ -14,13 +14,13 @@ public class AutonomousConcept14 extends AutonomousVariables {
 //        addDriveAction(DRIVE_FORWARD, 475, 475, 0.3, 0.3);
 //        addServoAction(THE_DUMPER, 1.0);
 //        addWaitAction(120); // time_in_ticks
-        addServoAction(THE_DUMPER, 1.0);
+//        addServoAction(THE_DUMPER, 1.0);
         addWaitAction(120);
-        addServoAction(THE_DUMPER, 0.0);
+//        addServoAction(THE_DUMPER, 0.0);
         addWaitAction(120);
-        addServoAction(THE_DUMPER, 1.0);
+//        addServoAction(THE_DUMPER, 1.0);
         addWaitAction(120);
-        addServoAction(THE_DUMPER, 0.0);
+//        addServoAction(THE_DUMPER, 0.0);
         addWaitAction(120);
 //        addDriveAction(DRIVE_BACKWARD, 475, 475, -0.3, -0.3);
 //        addArmAction(ARM_ACTION, 40, -0.5);
