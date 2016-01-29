@@ -110,7 +110,9 @@ public class AutonomousVariables extends OpMode {
             SET_COLLISION_PROFILE      = 32,
             COLLISION_IGNORE           = 33,
             COLLISION_CHANGE_DIRECTION = 34,
-            VIBRATOR_ACTION            = 35;
+            VIBRATOR_ACTION            = 35,
+            SCREAM_ACTION              = 36,
+            RELIEVED_ACTION            = 37;
 
 
     public int
@@ -312,6 +314,18 @@ public class AutonomousVariables extends OpMode {
         actionIndex++;
     }
 
+    public void addScreamAction() {
+        debugArray[debugArrayIndex] = SCREAM_ACTION;
+        debugArrayIndex++;
+        actionIndex++;
+    }
+
+    public void addRelievedAction() {
+        debugArray[debugArrayIndex] = RELIEVED_ACTION;
+        debugArrayIndex++;
+        actionIndex++;
+    }
+
     public void setCollisionProfile(int profile) {
         debugArray[debugArrayIndex] = SET_COLLISION_PROFILE;
         debugArrayIndex++;
@@ -324,6 +338,11 @@ public class AutonomousVariables extends OpMode {
     public void scream() {
 //        toneGenerator.startTone(ToneGenerator.TONE_CDMA_CALL_SIGNAL_ISDN_NORMAL, 250);
         toneGenerator.startTone(ToneGenerator.TONE_DTMF_A, 250);
+    }
+
+    public void relieved() {
+//        toneGenerator.startTone(ToneGenerator.TONE_CDMA_CALL_SIGNAL_ISDN_NORMAL, 250);
+        toneGenerator.startTone(ToneGenerator.TONE_DTMF_A, 1000);
     }
 
     public void sensorAccelerometer(SensorEvent event) {
@@ -555,6 +574,32 @@ public class AutonomousVariables extends OpMode {
 
                     int duration = (int)actionArray[actionIndex][0];
                     vibrator.vibrate(duration);
+                }
+
+                lockMachine = false;
+                stateMachineIndex++;
+                actionIndex++;
+                break;
+
+            case SCREAM_ACTION:
+                if (!lockMachine) {
+                    lockMachine = true;
+                    currentMachineState = "Scream";
+
+                    scream();
+                }
+
+                lockMachine = false;
+                stateMachineIndex++;
+                actionIndex++;
+                break;
+
+            case RELIEVED_ACTION:
+                if (!lockMachine) {
+                    lockMachine = true;
+                    currentMachineState = "Relieved";
+
+                    relieved();
                 }
 
                 lockMachine = false;

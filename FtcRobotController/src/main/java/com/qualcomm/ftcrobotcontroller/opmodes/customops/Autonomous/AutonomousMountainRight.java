@@ -40,6 +40,22 @@ public class AutonomousMountainRight extends AutonomousVariables {
 
     @Override
     public void setupAutonomous() {
+//        addDriveAction(DRIVE_FORWARD, 21108, 18768, 1.0, 1.0);
+//        addDriveAction(DRIVE_FORWARD, 3500, 3500, 1.0, 1.0);
+//        addArmAction(ARM_ACTION, 1024, 0.2);
+//        addDriveAction(DRIVE_FORWARD, 475*2, 475*2, 0.3, 0.3);
+//        addServoAction(THE_DUMPER, 1.0);
+//        addWaitAction(120); // time_in_ticks
+//        addServoAction(THE_DUMPER, 0.0);
+//        addDriveAction(DRIVE_BACKWARD, -475*2, -475*2, -1.0, -1.0);
+//        addArmAction(ARM_ACTION, -1024, -0.2);
+//        addArmAction(ARM_ACTION, 0, 0.0);
+//        addDriveAction(DRIVE_BACKWARD, -6720, 0, -1.0, 0.0);
+//        addDriveAction(DRIVE_FORWARD, 3400, 6040, 1.0, 1.0);
+//        addDriveAction(DRIVE_FORWARD, 9120, 9120, 1.0, 1.0);
+//        addDriveAction(DRIVE_FORWARD, 0, 8962+640, 0.0, 1.0);
+//        addDriveAction(DRIVE_FORWARD, 13200, 13200, 1.0, 1.0);
+
         addState(STATE_DRIVE_STRAIGHT_CORNER_TO_GOAL);
         addState(STATE_TURN_45_RIGHT);
         addState(STATE_STRAIGHT_PARK);
