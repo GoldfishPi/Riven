@@ -48,7 +48,8 @@ public class DriverOp extends OpMode {
     }
 
     @Override
-    public void init() {
+    public void init()
+    {
 
 
         lDrive      = hardwareMap.dcMotor.get("lDrive");
@@ -75,20 +76,15 @@ public class DriverOp extends OpMode {
         lGill.setDirection(DcMotor.Direction.FORWARD);
         armExtender.setDirection(DcMotor.Direction.FORWARD);
 
-
         resetEncoders(lDrive);
         resetEncoders(rDrive);
         resetEncoders(armExtender);
 
         resetEncoders(arm);
 
-
-
         for(int i = 0; i < motors.length; i ++){
             motors[i] = hardwareMap.dcMotor.get(motorNames[i]);
         }
-
-
 
     }
 
@@ -119,30 +115,28 @@ public class DriverOp extends OpMode {
     }
 
     @Override
-
     public void loop()
     {
 
         telemetry.addData("ArmSpeed     ", armSpeed);
         telemetry.addData("Arm Encoders ", arm.getCurrentPosition());
 
-        if (gamepad1.b) {
+        if (gamepad1.b)
+        {
             System.out.println("lDrive  : " + lDrive.getCurrentPosition());
             System.out.println("rDrive  : " + rDrive.getCurrentPosition());
             System.out.println("Arm     : " + arm.getCurrentPosition());
 
         }
 
-//        if(batteryChecker.getBatteryLevel() < 100.0){
-//            tg.startTone(ToneGenerator.TONE_SUP_ERROR);
-//        }
-
         controllerOne();
         controllerTwo();
+
     }
 
     public void controllerOne()//Living organism velocity extender and phasing oscillation neutralizing neon elliptical yielder
     {
+
         {
 
             if(gamepad1.a){
@@ -170,26 +164,25 @@ public class DriverOp extends OpMode {
             if(gamepad1.left_stick_y != 0){
                 lDrive.setPower(-gamepad1.left_stick_y);
             } else{
-                lDrive.setPower(0.0);
-            }
-
             //Finger controls
             if (gamepad1.left_trigger != 0.0) {
                 lFinger.setPower(0.3);
             } else if (gamepad1.left_bumper) {
-                lFinger.setPower(-0.3);
             } else {
                 lFinger.setPower(0.0);
             }
+            lDrive.setPower(0.0);
+        }
 
-            if (gamepad1.right_trigger != 0.0) {
+
+        if (gamepad1.right_trigger != 0.0) {
                 rFinger.setPower(0.3);
             } else if (gamepad1.right_bumper) {
                 rFinger.setPower(-0.3);
+                lFinger.setPower(-0.3);
             } else {
                 rFinger.setPower(0.0);
             }
-
         }
     }
 
