@@ -64,6 +64,7 @@ public class AutonomousVariables extends OpMode {
     public int[] debugArray;
 
     public boolean lockMachine = false;
+    public boolean machineCompleted = false;
     public int currentWaitTicks = 0;
     public int targetWaitTicks  = 10;
 
@@ -72,47 +73,48 @@ public class AutonomousVariables extends OpMode {
     String currentState;
 
     public final int
-            STATE_TURN_45_RIGHT                 = 0,
-            STATE_STOP                          = 1,
-            STATE_DRIVE_STRAIGHT_CORNER_TO_GOAL = 2,
-            STATE_TURN_45_LEFT                  = 3,
-            STATE_RAISE_ARM                     = 4,
-            STATE_LOWER_ARM                     = 5,
-            STATE_EXTEND_ARM                    = 6,
-            STATE_RETRACT_ARM                   = 7,
-            STATE_STRAIGHT_PARK                 = 8,
-            STATE_STRAIGHT_POSITION             = 9,
-            STATE_DUMP_GUYS                     = 10,
-            STATE_UNDUMP_GUYS                   = 11,
-            STATE_STRAIGHT_REPOSITION           = 12,
-            STATE_REVERSE_90_DEGREE_LEFT        = 13,
-            STATE_STRAIGHT_TO_SIDE              = 14,
-            STATE_STRAIGHT_TO_MOUNTAIN          = 15,
-            STATE_REVERSE_90_DEGREE_RIGHT       = 16,
-            STATE_STRAIGHT_TO_FAR               = 17,
-            STATE_STRAIGHT_TO_CORNER            = 18,
-            STATE_REVERSE_135_DEGREE_RIGHT      = 19,
-            STATE_REVERSE_135_DEGREE_LEFT       = 20,
-            STATE_135_DEGREE_RIGHT              = 21,
-            STATE_135_DEGREE_LEFT               = 22,
-            STATE_TURN_90_DEGREE_RIGHT          = 23,
-            STATE_TURN_90_DEGREE_LEFT           = 24,
+            STATE_TURN_45_RIGHT                 = 1,
+            STATE_STOP                          = 2,
+            STATE_DRIVE_STRAIGHT_CORNER_TO_GOAL = 3,
+            STATE_TURN_45_LEFT                  = 4,
+            STATE_RAISE_ARM                     = 5,
+            STATE_LOWER_ARM                     = 6,
+            STATE_EXTEND_ARM                    = 7,
+            STATE_RETRACT_ARM                   = 8,
+            STATE_STRAIGHT_PARK                 = 9,
+            STATE_STRAIGHT_POSITION             = 10,
+            STATE_DUMP_GUYS                     = 11,
+            STATE_UNDUMP_GUYS                   = 12,
+            STATE_STRAIGHT_REPOSITION           = 13,
+            STATE_REVERSE_90_DEGREE_LEFT        = 14,
+            STATE_STRAIGHT_TO_SIDE              = 15,
+            STATE_STRAIGHT_TO_MOUNTAIN          = 16,
+            STATE_REVERSE_90_DEGREE_RIGHT       = 17,
+            STATE_STRAIGHT_TO_FAR               = 18,
+            STATE_STRAIGHT_TO_CORNER            = 19,
+            STATE_REVERSE_135_DEGREE_RIGHT      = 20,
+            STATE_REVERSE_135_DEGREE_LEFT       = 21,
+            STATE_135_DEGREE_RIGHT              = 22,
+            STATE_135_DEGREE_LEFT               = 23,
+            STATE_TURN_90_DEGREE_RIGHT          = 24,
+            STATE_TURN_90_DEGREE_LEFT           = 25,
 
             // States for testing new approach to autonomous construction
-            FORWARD_TURN  = 25, // use for dual-motor turns, with +/- angle as only action input
-            REVERSE_TURN  = 26,
-            DRIVE_FORWARD = 27,
-            DRIVE_BACKWARD= 28,
-            STATE_WAIT    = 29,
-            THE_DUMPER    = 30,
-            ARM_ACTION    = 31,
+            FORWARD_TURN  = 26, // use for dual-motor turns, with +/- angle as only action input
+            REVERSE_TURN  = 27,
+            DRIVE_FORWARD = 28,
+            DRIVE_BACKWARD= 29,
+            STATE_WAIT    = 30,
+            THE_DUMPER    = 31,
+            ARM_ACTION    = 32,
 
-            SET_COLLISION_PROFILE      = 32,
-            COLLISION_IGNORE           = 33,
-            COLLISION_CHANGE_DIRECTION = 34,
-            VIBRATOR_ACTION            = 35,
-            SCREAM_ACTION              = 36,
-            RELIEVED_ACTION            = 37;
+            SET_COLLISION_PROFILE      = 33,
+            COLLISION_IGNORE           = 0,
+            COLLISION_CHANGE_DIRECTION = 1,
+            COLLISION_WAIT             = 2,
+            VIBRATOR_ACTION            = 34,
+            SCREAM_ACTION              = 35,
+            RELIEVED_ACTION            = 36;
 
 
     public int
@@ -127,11 +129,13 @@ public class AutonomousVariables extends OpMode {
     public int collisionProfile   = COLLISION_IGNORE,
                COLLISION_THRESHOLD= 6,
                tickSinceCollision = 0,
+               collisionID        = 0,
                accelerometerTicks = 0;
-    public boolean collisionLock  = false,
-                   needsDrive     = false,
-                   needsDumper    = false,
-                   needsArm       = false;
+    public boolean collisionLock     = false,
+                   collisionDetected = false,
+                   needsDrive        = false,
+                   needsDumper       = false,
+                   needsArm          = false;
 
     public float deadX,
                  deadY,
@@ -261,6 +265,10 @@ public class AutonomousVariables extends OpMode {
     public void setupAutonomous() {
     }
 
+    public void puts(String string) {
+        System.out.println(string);
+    }
+
     public void addState(int state) {
         debugArray[debugArrayIndex] = state;
         debugArrayIndex++;
@@ -337,12 +345,14 @@ public class AutonomousVariables extends OpMode {
 
     public void scream() {
 //        toneGenerator.startTone(ToneGenerator.TONE_CDMA_CALL_SIGNAL_ISDN_NORMAL, 250);
-        toneGenerator.startTone(ToneGenerator.TONE_DTMF_A, 250);
+        toneGenerator.startTone(ToneGenerator.TONE_CDMA_ALERT_NETWORK_LITE, 1000);
+//        toneGenerator.startTone(ToneGenerator.TONE_DTMF_A, 250);
     }
 
     public void relieved() {
 //        toneGenerator.startTone(ToneGenerator.TONE_CDMA_CALL_SIGNAL_ISDN_NORMAL, 250);
-        toneGenerator.startTone(ToneGenerator.TONE_DTMF_A, 1000);
+//        toneGenerator.startTone(ToneGenerator.TONE_CDMA_ALERT_NETWORK_LITE, 1000);
+        toneGenerator.startTone(ToneGenerator.TONE_DTMF_A, 250);
     }
 
     public void sensorAccelerometer(SensorEvent event) {
@@ -377,14 +387,135 @@ public class AutonomousVariables extends OpMode {
 
             if (Math.abs(x) >= COLLISION_THRESHOLD && !collisionLock) {
                 scream();
+                resolveCollision();
                 collisionLock = true;
             }
 
             if (Math.abs(y) >= COLLISION_THRESHOLD && !collisionLock) {
                 scream();
+                resolveCollision();
                 collisionLock = true;
             }
         }
+    }
+
+    public void resolveCollision() {
+        collisionDetected = true;
+        collisionID++;
+        boolean leftDrivePowered = false;
+        boolean rightDrivePowered = false;
+
+        // Only process collision resolution if not already processed and not in a wait state
+        if (!collisionLock && (stateMachineArray[stateMachineIndex] != STATE_WAIT)) {
+
+            switch (collisionProfile) {
+                case COLLISION_IGNORE:
+                    relieved();
+                    break;
+                case COLLISION_WAIT:
+                    injectWait(120);
+                    break;
+                case COLLISION_CHANGE_DIRECTION:
+                    telemetry.addData("<DATA>", "Collision Change Direction");
+                    if (Math.abs(lDrivePower) >= 0.1){ leftDrivePowered = true; }
+                    if (Math.abs(rDrivePower) >= 0.1){ rightDrivePowered = true; }
+
+                    if (leftDrivePowered && rightDrivePowered) {
+                        // Can safely change direction due to not being in a turn
+                        injectDriveDirectionChange();
+                    } else {
+                        // Drive might be in a turn or not moving, would mal-align robot if direction changed to straight back
+                        // Rusty gives up and waits about a second to resume.
+                        injectWait(100);
+                        relieved();
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    public void injectWait(int ticks) {
+        // Inject wait state into current actionArray index and stateMachine index, then reorder array and adjust currently running state to compensate for distance already traveled
+        int[] stateArrayCopied  = new int[100];
+        double[][] actionArrayCopied = new double[100][4];
+
+        for (int i = 0; i < stateMachineArray.length; i++) {
+            if (i >= 99) {break;} // can't set 100!
+            puts("StateMachineArray index:" + i);
+            if (i < stateMachineIndex) {
+                stateArrayCopied[i] = stateMachineArray[i];
+            } else if (i == stateMachineIndex) {
+                stateArrayCopied[i] = STATE_WAIT;
+            } else if (i > stateMachineIndex) {
+                stateArrayCopied[i+1] = stateMachineArray[i];
+            } else { puts("How is this possible?"); }
+        }
+
+        for (int i = 0; i < actionArray.length; i++) {
+            if (i >= 99) {break;} // can't set 100!
+            puts("ActionArray index:" + i);
+            if (i < actionIndex) {
+                actionArrayCopied[i] = actionArray[i];
+            } else if (i == stateMachineIndex) {
+                actionArrayCopied[i][0] = ticks;
+            } else if (i > stateMachineIndex) {
+                actionArrayCopied[i+1] = actionArray[i];
+            } else { puts("How is this possible?"); }
+        }
+
+        stateMachineArray = stateArrayCopied;
+        actionArray       = actionArrayCopied;
+
+        if (needsDrive) { setDrivePower(0.0, 0.0);}
+        lockMachine = false;
+    }
+
+    // FIXME: Compensate for distance already travelled
+    public void injectDriveDirectionChange() {
+        int[] stateArrayCopied  = new int[100];
+        double[][] actionArrayCopied = new double[100][4];
+        int direction = 1;
+        int recoveryDistance = 800;
+        int state = DRIVE_FORWARD;
+        double power = 0.3;
+
+        if (lDrivePower < 0.0) { direction = -1; state = DRIVE_BACKWARD; }
+
+
+        for (int i = 0; i < stateMachineArray.length; i++) {
+            if (i >= 99) {break;} // can't set 100!
+            puts("StateMachineArray index:" + i);
+            if (i < stateMachineIndex) {
+                stateArrayCopied[i] = stateMachineArray[i];
+            } else if (i == stateMachineIndex) {
+                stateArrayCopied[i] = state;
+            } else if (i > stateMachineIndex) {
+                stateArrayCopied[i+1] = stateMachineArray[i];
+            } else { puts("How is this possible?"); }
+        }
+
+        for (int i = 0; i < actionArray.length; i++) {
+            if (i >= 99) {break;} // can't set 100!
+            puts("ActionArray index:" + i);
+            if (i < actionIndex) {
+                actionArrayCopied[i] = actionArray[i];
+            } else if (i == stateMachineIndex) {
+                actionArrayCopied[i][0] = recoveryDistance * direction;
+                actionArrayCopied[i][1] = recoveryDistance * direction;
+                actionArrayCopied[i][2] = power * direction;
+                actionArrayCopied[i][3] = power * direction;
+            } else if (i > stateMachineIndex) {
+                actionArrayCopied[i+1] = actionArray[i];
+            } else { puts("How is this possible?"); }
+        }
+
+        stateMachineArray = stateArrayCopied;
+        actionArray       = actionArrayCopied;
+
+        if (needsDrive) { setDrivePower(0.0, 0.0); }
+        lockMachine = false;
     }
 
     @Override
@@ -469,7 +600,8 @@ public class AutonomousVariables extends OpMode {
 
     public void autonomousloop() {
         setTelemetry();
-        if (needsDrive) { checkCollision(); }
+//        if (needsDrive) { checkCollision(); }
+        if (!machineCompleted) { checkCollision(); }
 
         switch (stateMachineArray[stateMachineIndex]) {
             // BEGIN - CONCEPT 14
@@ -545,6 +677,8 @@ public class AutonomousVariables extends OpMode {
                     theDumperPosition = actionArray[actionIndex][0];
                     System.out.println("DumperPosition: "+theDumperPosition);
                     theDumper.setPosition(theDumperPosition);
+
+                    if (collisionDetected) { scream(); } // TODO: May be do not allow use of dumper of collision detected to prevent putting the climbers out of field
                 }
 
                 lockMachine = false;
@@ -954,6 +1088,11 @@ public class AutonomousVariables extends OpMode {
                 break;
 
             case STATE_STOP:
+                if (collisionID == 0) {
+                    // Cheer, we didn't hit anything!
+                }
+                lockMachine = true;
+                machineCompleted = true;
 
                 currentMachineState = "STOP";
                 break;

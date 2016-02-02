@@ -34,6 +34,7 @@ package com.qualcomm.ftcrobotcontroller.opmodes;
 
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutoSaveTest;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousConcept14;
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousConcept51;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousMountainRight;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousMountainLeft;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.MotorTest.SingleMotorTest;
@@ -71,7 +72,8 @@ public class FtcOpModeRegister implements OpModeRegister
       manager.register("DriverOp", DriverOp.class);
       manager.register("<- Autonomous Mountain Left", AutonomousMountainLeft.class);
       manager.register("-> Autonomous Mountain Right", AutonomousMountainRight.class);
-      manager.register("<^_^> Autonomous Concept 14", AutonomousConcept14.class);
+    manager.register("<^_^> Autonomous Concept 14", AutonomousConcept14.class);
+    manager.register("[.|.] Autonomous Concept 51", AutonomousConcept51.class);
 
       manager.register("servo test", TheSuperAwesomeServoTest.class);
 

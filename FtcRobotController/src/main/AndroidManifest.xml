@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
           package="com.qualcomm.ftcrobotcontroller"
-          android:versionCode="5"
-          android:versionName="1.25">
+          android:versionCode="6"
+          android:versionName="1.5"> <!-- Lie to robot Driver Station until we can update truely -->
 
 
   <uses-permission
@@ -11,6 +11,9 @@
     android:required="true" />
   <uses-permission
     android:name="android.permission.CHANGE_WIFI_STATE"
+    android:required="true" />
+  <uses-permission
+    android:name="android.permission.WAKE_LOCK"
     android:required="true" />
   <uses-permission
     android:name="android.permission.ACCESS_NETWORK_STATE"
