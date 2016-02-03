@@ -495,7 +495,7 @@ public class AutonomousVariables extends OpMode {
         double newLeftTarget,
                newRightTarget;
 
-        if (lDrivePower < 0.0) { direction = -1; state = DRIVE_BACKWARD; }
+        if (lDrivePower > 0.0) { direction = -1; state = DRIVE_BACKWARD; }
 
 
         for (int i = 0; i < stateMachineArray.length; i++) {
