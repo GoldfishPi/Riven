@@ -1,4 +1,4 @@
-package com.qualcomm.ftcrobotcontroller.opmodes.customops.TeleOp;
+package  com.qualcomm.ftcrobotcontroller.opmodes.customops.TeleOp;
 
 import android.content.Context;
 import android.media.AudioManager;
@@ -218,9 +218,9 @@ public class DriverOp extends OpMode {
 
             //Arm In and Out
             if(gamepad2.a){
-                armExtender.setPower(-gamepad2.left_stick_y);
+                armExtender.setPower(-1.0);
             }else if(gamepad2.y){
-                armExtender.setPower(gamepad2.left_stick_y);
+                armExtender.setPower(1.0);
             }else{
                 armExtender.setPower(0.0);
             }
