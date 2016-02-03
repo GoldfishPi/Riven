@@ -436,10 +436,14 @@ public class AutonomousVariables extends OpMode {
         }
     }
 
+    // FIXME: Compensate for distance already travelled
     public void injectWait(int ticks) {
         // Inject wait state into current actionArray index and stateMachine index, then reorder array and adjust currently running state to compensate for distance already traveled
         int[] stateArrayCopied  = new int[100];
         double[][] actionArrayCopied = new double[100][4];
+        double[] newActionArray = new double[4];
+        double newLeftTarget,
+               newRightTarget;
 
         for (int i = 0; i < stateMachineArray.length; i++) {
             if (i >= 99) {break;} // can't set 100!
@@ -458,9 +462,16 @@ public class AutonomousVariables extends OpMode {
             puts("ActionArray index:" + i);
             if (i < actionIndex) {
                 actionArrayCopied[i] = actionArray[i];
-            } else if (i == stateMachineIndex) {
+            } else if (i == actionIndex) { // TODO: Test that this works as expected and works with negative targets
+                newLeftTarget =  ((leftEncoderTarget-getEncoderValue(lDrive)) -actionArray[actionIndex][0]);
+                newRightTarget=  ((rightEncoderTarget-getEncoderValue(rDrive))-actionArray[actionIndex][1]);
+                newActionArray[0] = newLeftTarget;
+                newActionArray[1] = newRightTarget;
+                newActionArray[2] = actionArray[actionIndex][2];
+                newActionArray[3] = actionArray[actionIndex][3];
                 actionArrayCopied[i][0] = ticks;
-            } else if (i > stateMachineIndex) {
+                actionArrayCopied[i+1]  = newActionArray;
+            } else if (i > actionIndex) {
                 actionArrayCopied[i+1] = actionArray[i];
             } else { puts("How is this possible?"); }
         }
@@ -480,6 +491,9 @@ public class AutonomousVariables extends OpMode {
         int recoveryDistance = 800;
         int state = DRIVE_FORWARD;
         double power = 0.3;
+        double[] newActionArray = new double[4];
+        double newLeftTarget,
+               newRightTarget;
 
         if (lDrivePower < 0.0) { direction = -1; state = DRIVE_BACKWARD; }
 
@@ -501,12 +515,20 @@ public class AutonomousVariables extends OpMode {
             puts("ActionArray index:" + i);
             if (i < actionIndex) {
                 actionArrayCopied[i] = actionArray[i];
-            } else if (i == stateMachineIndex) {
+            } else if (i == actionIndex) { // TODO: Test that this works as expected and works with negative targets
                 actionArrayCopied[i][0] = recoveryDistance * direction;
                 actionArrayCopied[i][1] = recoveryDistance * direction;
                 actionArrayCopied[i][2] = power * direction;
                 actionArrayCopied[i][3] = power * direction;
-            } else if (i > stateMachineIndex) {
+
+                newLeftTarget =  ((leftEncoderTarget-getEncoderValue(lDrive)) -actionArray[actionIndex][0]);
+                newRightTarget=  ((rightEncoderTarget-getEncoderValue(rDrive))-actionArray[actionIndex][1]);
+                newActionArray[0] = newLeftTarget;
+                newActionArray[1] = newRightTarget;
+                newActionArray[2] = actionArray[actionIndex][2];
+                newActionArray[3] = actionArray[actionIndex][3];
+                actionArrayCopied[i+1]  = newActionArray;
+            } else if (i > actionIndex) {
                 actionArrayCopied[i+1] = actionArray[i];
             } else { puts("How is this possible?"); }
         }
@@ -678,7 +700,7 @@ public class AutonomousVariables extends OpMode {
                     System.out.println("DumperPosition: "+theDumperPosition);
                     theDumper.setPosition(theDumperPosition);
 
-                    if (collisionDetected) { scream(); } // TODO: May be do not allow use of dumper of collision detected to prevent putting the climbers out of field
+                    if (collisionDetected) { scream(); } // TODO: Maybe do not allow use of dumper if collision detected to prevent putting the climbers out of field
                 }
 
                 lockMachine = false;
