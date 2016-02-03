@@ -43,6 +43,8 @@ public class DriverOp extends OpMode {
     public DcMotor[] motors    = new DcMotor[8];
     public String[] motorNames = new String[]{"lDrive", "rDrive", "lFinger", "rFinger", "lGill", "rGill", "armExtender", "arm"};
 
+    public byte extendMultiplier;
+
     public DriverOp() {
 
     }
@@ -215,14 +217,12 @@ public class DriverOp extends OpMode {
 
 
             //Arm In and Out
-            if(gamepad2.y){
-                extendEqual(+0.5);
-            }
             if(gamepad2.a){
-                extendEqual(-0.5);
-            }
-            if(!gamepad2.a && !gamepad2.y){
-                extendEqual(0.0);
+                armExtender.setPower(gamepad2.left_stick_y);
+            }else if(gamepad2.y){
+                armExtender.setPower(-gamepad2.left_stick_y);
+            }else{
+                armExtender.setPower(0.0);
             }
 
             //Arm up and down
