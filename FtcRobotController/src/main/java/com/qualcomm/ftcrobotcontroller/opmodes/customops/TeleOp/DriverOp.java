@@ -218,9 +218,9 @@ public class DriverOp extends OpMode {
 
             //Arm In and Out
             if(gamepad2.a){
-                armExtender.setPower(-1.0);
-            }else if(gamepad2.y){
                 armExtender.setPower(1.0);
+            }else if(gamepad2.y){
+                armExtender.setPower(-1.0);
             }else{
                 armExtender.setPower(0.0);
             }
