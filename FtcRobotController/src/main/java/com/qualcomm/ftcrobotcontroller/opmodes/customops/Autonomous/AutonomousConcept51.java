@@ -6,11 +6,7 @@ package com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous;
 public class AutonomousConcept51 extends AutonomousVariables {
     @Override
     public void setupAutonomous() {
-        addWaitAction(4000);
-        setCollisionProfile(COLLISION_CHANGE_DIRECTION);
-        addWaitAction(2000);
-        setCollisionProfile(COLLISION_WAIT);
-        addWaitAction(1000);
+        addArmAction(ARM_ACTION, -1024, -0.2);
         addState(STATE_STOP);
     }
 }
