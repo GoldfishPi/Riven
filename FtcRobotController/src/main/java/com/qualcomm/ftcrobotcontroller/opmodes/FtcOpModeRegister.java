@@ -32,12 +32,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
 
-import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutoSaveTest;
-import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousConcept14;
-import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousConcept51;
-import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousMountainRight;
-import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousMountainLeft;
-import com.qualcomm.ftcrobotcontroller.opmodes.customops.MotorTest.SingleMotorTest;
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousMountainLeftSide;
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousMountainRightSide;
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousMountainRightCorner;
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousMountainLeftCorner;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.MotorTest.TheSuperAwesomeServoTest;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.TeleOp.DriverOp;
 
@@ -70,13 +68,17 @@ public class FtcOpModeRegister implements OpModeRegister
      */
 
       manager.register("DriverOp", DriverOp.class);
-      manager.register("<- Autonomous Mountain Left", AutonomousMountainLeft.class);
-      manager.register("-> Autonomous Mountain Right", AutonomousMountainRight.class);
-    manager.register("<^_^> Autonomous Concept 14", AutonomousConcept14.class);
-    manager.register("[.|.] Autonomous Concept 51", AutonomousConcept51.class);
+      /* Autonomous op modes first portion is meta data for seeing which
+         placement of robot (against wall '|' or in a corner '>' or '<') and direction of mountain (left '<' or right '>',
+         a '*' character means the robot will wait before starting on its journey.
 
-      manager.register("servo test", TheSuperAwesomeServoTest.class);
-
+         e.g. '>->' means that the robot expects to be in the corner and the mountain should be on its right side.
+         e.g. '<-|' means that the robot expects the mountain on its left side and is flat against the wall.
+      */
+      manager.register("<-< Autonomous Mountain Left Corner", AutonomousMountainLeftCorner.class);
+      manager.register(">-> Autonomous Mountain Right Corner", AutonomousMountainRightCorner.class);
+      manager.register("<-| Autonomous Mountain Left Side", AutonomousMountainLeftSide.class);
+      manager.register("|-> Autonomous Mountain Right Side", AutonomousMountainRightSide.class);
   }
 
 }

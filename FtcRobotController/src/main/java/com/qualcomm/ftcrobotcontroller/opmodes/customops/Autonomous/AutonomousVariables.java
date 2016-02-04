@@ -452,6 +452,7 @@ public class AutonomousVariables extends OpMode {
                 stateArrayCopied[i] = stateMachineArray[i];
             } else if (i == stateMachineIndex) {
                 stateArrayCopied[i] = STATE_WAIT;
+                stateArrayCopied[i+1] = stateMachineArray[stateMachineIndex];
             } else if (i > stateMachineIndex) {
                 stateArrayCopied[i+1] = stateMachineArray[i];
             } else { puts("How is this possible?"); }
@@ -505,6 +506,7 @@ public class AutonomousVariables extends OpMode {
                 stateArrayCopied[i] = stateMachineArray[i];
             } else if (i == stateMachineIndex) {
                 stateArrayCopied[i] = state;
+                stateArrayCopied[i+1] = stateMachineArray[stateMachineIndex];
             } else if (i > stateMachineIndex) {
                 stateArrayCopied[i+1] = stateMachineArray[i];
             } else { puts("How is this possible?"); }
@@ -596,7 +598,7 @@ public class AutonomousVariables extends OpMode {
 
         if (needsArm) {
             arm = getMotor("arm");
-            arm.setDirection(DcMotor.Direction.REVERSE);
+            arm.setDirection(DcMotor.Direction.FORWARD);
             resetEncodersAuto(arm);
         }
 
@@ -623,7 +625,7 @@ public class AutonomousVariables extends OpMode {
     public void autonomousloop() {
         setTelemetry();
 //        if (needsDrive) { checkCollision(); }
-        if (!machineCompleted) { checkCollision(); }
+        if (!machineCompleted && needsDrive) { checkCollision(); }
 
         switch (stateMachineArray[stateMachineIndex]) {
             // BEGIN - CONCEPT 14
@@ -652,6 +654,7 @@ public class AutonomousVariables extends OpMode {
 
                     setEncoderTarget((int) actionArray[actionIndex][0], (int) actionArray[actionIndex][1]);
                     setDrivePower(actionArray[actionIndex][2], actionArray[actionIndex][3]);
+                    scream();
                 }
 
                 if (negativeDriveCheck()) {
@@ -666,7 +669,8 @@ public class AutonomousVariables extends OpMode {
                     currentMachineState = "Arm Action";
                     armSpeed = actionArray[actionIndex][1];
                     armLocation = getEncoderValue(arm);
-                    arm.setTargetPosition(armLocation - (int) actionArray[actionIndex][0]);
+                    armLocation+=(int) actionArray[actionIndex][0];
+                    arm.setTargetPosition(armLocation);
                     arm.setPower(armSpeed);
                 }
 
@@ -676,11 +680,8 @@ public class AutonomousVariables extends OpMode {
                         arm.setPower(0.0);
                         stateMachineIndex++;
                         actionIndex++;
-                        scream();
                     }
-                }
-
-                if (armSpeed >= 0.0) {
+                } else if (armSpeed >= 0.0) {
                     if (getEncoderValue(arm) >= armLocation - 15) {
                         lockMachine = false;
                         arm.setPower(0.0);
