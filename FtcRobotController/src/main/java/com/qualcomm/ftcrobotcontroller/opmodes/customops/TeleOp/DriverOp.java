@@ -217,7 +217,7 @@ public class DriverOp extends OpMode {
                     armExtended = true;
                     armExtenderSpeed = 0.0;
                 }
-                if(armExtenderSpeed != 1.0){
+                if(armExtenderSpeed != 0.9){
                     armExtenderSpeed +=0.01;
                 }
                 armExtender.setPower(armExtenderSpeed);
@@ -227,7 +227,7 @@ public class DriverOp extends OpMode {
                     armExtended = false;
                     armExtenderSpeed = 0.0;
                 }
-                if(armExtenderSpeed != -1.0){
+                if(armExtenderSpeed != -0.9){
                     armExtenderSpeed -= 0.01;
                 }
                 armExtender.setPower(armExtenderSpeed);
