@@ -186,41 +186,7 @@ public class DriverOp extends OpMode {
     }
 
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
 
-        DriverOp driverOp = (DriverOp) o;
-
-        if (yPressed != driverOp.yPressed) return false;
-        if (aPressed != driverOp.aPressed) return false;
-        if (xPressed != driverOp.xPressed) return false;
-        if (bPressed != driverOp.bPressed) return false;
-        if (Double.compare(driverOp.armSpeed, armSpeed) != 0) return false;
-        if (Double.compare(driverOp.armExtenderSpeed, armExtenderSpeed) != 0) return false;
-        if (armExtended != driverOp.armExtended) return false;
-        if (lDrive != null ? !lDrive.equals(driverOp.lDrive) : driverOp.lDrive != null)
-            return false;
-        if (rDrive != null ? !rDrive.equals(driverOp.rDrive) : driverOp.rDrive != null)
-            return false;
-        if (lFinger != null ? !lFinger.equals(driverOp.lFinger) : driverOp.lFinger != null)
-            return false;
-        if (rFinger != null ? !rFinger.equals(driverOp.rFinger) : driverOp.rFinger != null)
-            return false;
-        if (lGill != null ? !lGill.equals(driverOp.lGill) : driverOp.lGill != null) return false;
-        if (rGill != null ? !rGill.equals(driverOp.rGill) : driverOp.rGill != null) return false;
-        if (armExtender != null ? !armExtender.equals(driverOp.armExtender) : driverOp.armExtender != null)
-            return false;
-        if (arm != null ? !arm.equals(driverOp.arm) : driverOp.arm != null) return false;
-        if (lovePonny != null ? !lovePonny.equals(driverOp.lovePonny) : driverOp.lovePonny != null)
-            return false;
-        // Probably incorrect - comparing Object[] arrays with Arrays.equals
-        if (!Arrays.equals(motors, driverOp.motors)) return false;
-        // Probably incorrect - comparing Object[] arrays with Arrays.equals
-        return Arrays.equals(motorNames, driverOp.motorNames);
-
-    }
 
 
 
@@ -278,7 +244,7 @@ public class DriverOp extends OpMode {
 
             //Arm up and down
 
-            armControlls(gamepad2.right_stick_y);
+            armControlls(gamepad2.left_stick_y);
 
 
             //gill controls

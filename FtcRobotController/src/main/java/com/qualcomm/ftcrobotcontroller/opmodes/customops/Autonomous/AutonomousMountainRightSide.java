@@ -8,19 +8,19 @@ public class AutonomousMountainRightSide extends AutonomousVariables {
     @Override
     public void setupAutonomous() {
         addScreamAction();
-        addWaitAction(640);
+        addWaitAction(900);
         addRelievedAction();
         addDriveAction(DRIVE_FORWARD, 6500 + (50 * 45), 6500, 1.0, 1.0);
         addDriveAction(DRIVE_FORWARD, 8000, 8000, 1.0, 1.0);
         addDriveAction(DRIVE_FORWARD, 50 * 45, 0, 1.0, 1.0);
         addArmAction(ARM_ACTION, 2048, 0.5);
         addDriveAction(DRIVE_FORWARD, 4500, 4500, 0.5, 0.5);
+        addArmAction(ARM_ACTION, 0, 0.0);
         addServoAction(THE_DUMPER, 1.0);
         addWaitAction(120); // time_in_ticks
         addServoAction(THE_DUMPER, 0.0);
         addDriveAction(DRIVE_BACKWARD, -475 * 2, -475 * 2, -1.0, -1.0);
-        addArmAction(ARM_ACTION, -2048, -0.5);
-        addArmAction(ARM_ACTION, 0, 0.0);
+//        addArmAction(ARM_ACTION, -2048, -0.5);
         addDriveAction(DRIVE_BACKWARD, -6720, 0, -1.0, 0.0);
         addDriveAction(DRIVE_FORWARD, 3400, 6040, 1.0, 1.0);
         addDriveAction(DRIVE_FORWARD, 9120, 9120, 1.0, 1.0);

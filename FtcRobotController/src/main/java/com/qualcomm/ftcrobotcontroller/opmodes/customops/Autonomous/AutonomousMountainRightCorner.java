@@ -32,7 +32,7 @@ public class AutonomousMountainRightCorner extends AutonomousVariables {
         addWaitAction(120); // time_in_ticks
         addServoAction(THE_DUMPER, 0.0);
         addDriveAction(DRIVE_BACKWARD, -475 * 2, -475 * 2, -1.0, -1.0);
-        addArmAction(ARM_ACTION, -2048, -0.5);
+//        addArmAction(ARM_ACTION, -2048, -0.5);
         addArmAction(ARM_ACTION, 0, 0.0);
         addDriveAction(DRIVE_BACKWARD, -6720, 0, -1.0, 0.0);
         addDriveAction(DRIVE_FORWARD, 3400, 6040, 1.0, 1.0);

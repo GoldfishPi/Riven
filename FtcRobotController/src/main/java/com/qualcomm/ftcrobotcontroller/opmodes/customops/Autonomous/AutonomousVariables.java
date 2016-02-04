@@ -34,7 +34,7 @@ public class AutonomousVariables extends OpMode {
 
     public Servo theDumper;
 
-    public DcMotor armExtender;
+    public DcMotor winch;
 
     public DcMotor arm;
 
@@ -109,12 +109,14 @@ public class AutonomousVariables extends OpMode {
             ARM_ACTION    = 32,
 
             SET_COLLISION_PROFILE      = 33,
-            COLLISION_IGNORE           = 0,
-            COLLISION_CHANGE_DIRECTION = 1,
-            COLLISION_WAIT             = 2,
             VIBRATOR_ACTION            = 34,
             SCREAM_ACTION              = 35,
-            RELIEVED_ACTION            = 36;
+            RELIEVED_ACTION            = 36,
+            WINCH_ACTION               = 37,
+            COLLISION_IGNORE           = 0,
+            COLLISION_CHANGE_DIRECTION = 1,
+            COLLISION_WAIT             = 2;
+
 
 
     public int
@@ -130,12 +132,15 @@ public class AutonomousVariables extends OpMode {
                COLLISION_THRESHOLD= 6,
                tickSinceCollision = 0,
                collisionID        = 0,
-               accelerometerTicks = 0;
+               accelerometerTicks = 0,
+               winchTicks         = 0,
+               winchTarget        = 0;
     public boolean collisionLock     = false,
                    collisionDetected = false,
                    needsDrive        = false,
                    needsDumper       = false,
-                   needsArm          = false;
+                   needsArm          = false,
+                   needsWinch        = false;
 
     public float deadX,
                  deadY,
@@ -260,6 +265,8 @@ public class AutonomousVariables extends OpMode {
 
         if (needsDumper) { telemetry.addData("theDumper Position", theDumperPosition); }
         if (needsArm) { telemetry.addData("Arm Position", getEncoderValue(arm)); }
+
+        if (needsWinch) { telemetry.addData("Winch Ticks", winchTicks); }
     }
 
     public void setupAutonomous() {
@@ -339,6 +346,16 @@ public class AutonomousVariables extends OpMode {
         debugArrayIndex++;
 
         double[] array = {profile};
+        actionArray[actionIndex] = array;
+        actionIndex++;
+    }
+
+    public void addWinchAction(int winchPosition, double winchPower) {
+        needsWinch = true;
+        debugArray[debugArrayIndex] = WINCH_ACTION;
+        debugArrayIndex++;
+
+        double[] array = {winchPosition, winchPower};
         actionArray[actionIndex] = array;
         actionIndex++;
     }
@@ -602,6 +619,11 @@ public class AutonomousVariables extends OpMode {
             resetEncodersAuto(arm);
         }
 
+        if (needsWinch) {
+            winch = getMotor("armExtender");
+            arm.setDirection(DcMotor.Direction.FORWARD);
+        }
+
         for (int i = 0; i < 100; i++) {
             stateMachineArray[i] = debugArray[i];
         }
@@ -624,8 +646,9 @@ public class AutonomousVariables extends OpMode {
 
     public void autonomousloop() {
         setTelemetry();
-//        if (needsDrive) { checkCollision(); }
-        if (!machineCompleted && needsDrive) { checkCollision(); }
+        /* Collision Detection is off due to lack of testing.
+            if (!machineCompleted && needsDrive) { checkCollision(); }
+        */
 
         switch (stateMachineArray[stateMachineIndex]) {
             // BEGIN - CONCEPT 14
@@ -654,7 +677,6 @@ public class AutonomousVariables extends OpMode {
 
                     setEncoderTarget((int) actionArray[actionIndex][0], (int) actionArray[actionIndex][1]);
                     setDrivePower(actionArray[actionIndex][2], actionArray[actionIndex][3]);
-                    scream();
                 }
 
                 if (negativeDriveCheck()) {
@@ -664,7 +686,7 @@ public class AutonomousVariables extends OpMode {
 
             case ARM_ACTION:
                 if (!lockMachine) {
-                    lockMachine = true;
+//                    lockMachine = true;
                     resetEncodersAuto(arm);
                     currentMachineState = "Arm Action";
                     armSpeed = actionArray[actionIndex][1];
@@ -672,24 +694,40 @@ public class AutonomousVariables extends OpMode {
                     armLocation+=(int) actionArray[actionIndex][0];
                     arm.setTargetPosition(armLocation);
                     arm.setPower(armSpeed);
+                    stateMachineIndex++;
+                    actionIndex++;
                 }
 
-                if (armSpeed <= 0.0) {
-                    if (getEncoderValue(arm) <= armLocation + 15) {
-                        lockMachine = false;
-                        arm.setPower(0.0);
-                        stateMachineIndex++;
-                        actionIndex++;
-                    }
-                } else if (armSpeed >= 0.0) {
-                    if (getEncoderValue(arm) >= armLocation - 15) {
-                        lockMachine = false;
-                        arm.setPower(0.0);
-                        stateMachineIndex++;
-                        actionIndex++;
-                    }
+//                if (armSpeed <= 0.0) {
+//                    if (getEncoderValue(arm) <= armLocation + 15) {
+//                        lockMachine = false;
+//                        arm.setPower(0.0);
+//                        stateMachineIndex++;
+//                        actionIndex++;
+//                    }
+//                } else if (armSpeed >= 0.0) {
+//                    if (getEncoderValue(arm) >= armLocation - 15) {
+//                        lockMachine = false;
+//                        arm.setPower(0.0);
+//                        stateMachineIndex++;
+//                        actionIndex++;
+//                    }
+//                }
+
+                break;
+
+            case WINCH_ACTION:
+                if (!lockMachine) {
+                    winchTarget = (int) actionArray[actionIndex][0];
+                    arm.setPower(actionArray[actionIndex][1]);
                 }
 
+                if (winchTarget >= winchTicks - 15) {
+                    winch.setPower(0.0);
+                    winchTicks = 0;
+                }
+
+                winchTicks++;
                 break;
 
             case THE_DUMPER:

@@ -8,7 +8,7 @@ public class AutonomousMountainLeftSide extends AutonomousVariables {
     @Override
     public void setupAutonomous() {
         addScreamAction();
-        addWaitAction(640);
+        addWaitAction(900);
         addRelievedAction();
         addDriveAction(DRIVE_FORWARD, 6500, 6500 + (50 * 45), 1.0, 1.0);
         addDriveAction(DRIVE_FORWARD, 8000, 8000, 1.0, 1.0);
@@ -19,7 +19,7 @@ public class AutonomousMountainLeftSide extends AutonomousVariables {
         addWaitAction(120); // time_in_ticks
         addServoAction(THE_DUMPER, 0.0);
         addDriveAction(DRIVE_BACKWARD, -475 * 2, -475 * 2, -1.0, -1.0);
-        addArmAction(ARM_ACTION, -2048, -0.5);
+//        addArmAction(ARM_ACTION, -2048, -0.5);
         addArmAction(ARM_ACTION, 0, 0.0);
         addDriveAction(DRIVE_BACKWARD, 0, -6720, 0.0, -1.0);
         addDriveAction(DRIVE_FORWARD, 6040, 3400, 1.0, 1.0);
