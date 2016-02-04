@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import java.util.Arrays;
+
 /**
  * Created by goldfishpi on 11/21/15.
  */
@@ -184,6 +186,44 @@ public class DriverOp extends OpMode {
     }
 
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DriverOp driverOp = (DriverOp) o;
+
+        if (yPressed != driverOp.yPressed) return false;
+        if (aPressed != driverOp.aPressed) return false;
+        if (xPressed != driverOp.xPressed) return false;
+        if (bPressed != driverOp.bPressed) return false;
+        if (Double.compare(driverOp.armSpeed, armSpeed) != 0) return false;
+        if (Double.compare(driverOp.armExtenderSpeed, armExtenderSpeed) != 0) return false;
+        if (armExtended != driverOp.armExtended) return false;
+        if (lDrive != null ? !lDrive.equals(driverOp.lDrive) : driverOp.lDrive != null)
+            return false;
+        if (rDrive != null ? !rDrive.equals(driverOp.rDrive) : driverOp.rDrive != null)
+            return false;
+        if (lFinger != null ? !lFinger.equals(driverOp.lFinger) : driverOp.lFinger != null)
+            return false;
+        if (rFinger != null ? !rFinger.equals(driverOp.rFinger) : driverOp.rFinger != null)
+            return false;
+        if (lGill != null ? !lGill.equals(driverOp.lGill) : driverOp.lGill != null) return false;
+        if (rGill != null ? !rGill.equals(driverOp.rGill) : driverOp.rGill != null) return false;
+        if (armExtender != null ? !armExtender.equals(driverOp.armExtender) : driverOp.armExtender != null)
+            return false;
+        if (arm != null ? !arm.equals(driverOp.arm) : driverOp.arm != null) return false;
+        if (lovePonny != null ? !lovePonny.equals(driverOp.lovePonny) : driverOp.lovePonny != null)
+            return false;
+        // Probably incorrect - comparing Object[] arrays with Arrays.equals
+        if (!Arrays.equals(motors, driverOp.motors)) return false;
+        // Probably incorrect - comparing Object[] arrays with Arrays.equals
+        return Arrays.equals(motorNames, driverOp.motorNames);
+
+    }
+
+
+
     public void controllerTwo()
     {
         {
@@ -217,8 +257,8 @@ public class DriverOp extends OpMode {
                     armExtended = true;
                     armExtenderSpeed = 0.0;
                 }
-                if(armExtenderSpeed != 0.9){
-                    armExtenderSpeed +=0.01;
+                if(armExtenderSpeed < 0.9){
+                    armExtenderSpeed +=0.1;
                 }
                 armExtender.setPower(armExtenderSpeed);
 
@@ -227,13 +267,14 @@ public class DriverOp extends OpMode {
                     armExtended = false;
                     armExtenderSpeed = 0.0;
                 }
-                if(armExtenderSpeed != -0.9){
-                    armExtenderSpeed -= 0.01;
+                if(armExtenderSpeed > -0.9){
+                    armExtenderSpeed -= 0.1;
                 }
                 armExtender.setPower(armExtenderSpeed);
             }else{
                 armExtender.setPower(0.0);
             }
+
 
             //Arm up and down
 
@@ -285,6 +326,33 @@ public class DriverOp extends OpMode {
 
         motor.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
 
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        result = lDrive != null ? lDrive.hashCode() : 0;
+        result = 31 * result + (rDrive != null ? rDrive.hashCode() : 0);
+        result = 31 * result + (lFinger != null ? lFinger.hashCode() : 0);
+        result = 31 * result + (rFinger != null ? rFinger.hashCode() : 0);
+        result = 31 * result + (lGill != null ? lGill.hashCode() : 0);
+        result = 31 * result + (rGill != null ? rGill.hashCode() : 0);
+        result = 31 * result + (armExtender != null ? armExtender.hashCode() : 0);
+        result = 31 * result + (arm != null ? arm.hashCode() : 0);
+        result = 31 * result + (lovePonny != null ? lovePonny.hashCode() : 0);
+        result = 31 * result + (yPressed ? 1 : 0);
+        result = 31 * result + (aPressed ? 1 : 0);
+        result = 31 * result + (xPressed ? 1 : 0);
+        result = 31 * result + (bPressed ? 1 : 0);
+        temp = Double.doubleToLongBits(armSpeed);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + (motors != null ? Arrays.hashCode(motors) : 0);
+        result = 31 * result + (motorNames != null ? Arrays.hashCode(motorNames) : 0);
+        temp = Double.doubleToLongBits(armExtenderSpeed);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + (armExtended ? 1 : 0);
+        return result;
     }
 
 }
