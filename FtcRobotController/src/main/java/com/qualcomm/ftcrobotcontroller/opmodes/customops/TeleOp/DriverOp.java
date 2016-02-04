@@ -1,16 +1,9 @@
 package  com.qualcomm.ftcrobotcontroller.opmodes.customops.TeleOp;
 
-import android.content.Context;
-import android.media.AudioManager;
-import android.media.ToneGenerator;
-import android.os.Vibrator;
-
-import com.qualcomm.ftcrobotcontroller.FtcRobotControllerActivity;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.BatteryChecker;
 
 /**
  * Created by goldfishpi on 11/21/15.
@@ -43,7 +36,8 @@ public class DriverOp extends OpMode {
     public DcMotor[] motors    = new DcMotor[8];
     public String[] motorNames = new String[]{"lDrive", "rDrive", "lFinger", "rFinger", "lGill", "rGill", "armExtender", "arm"};
 
-    public byte extendMultiplier;
+    public double armExtenderSpeed;
+    public boolean armExtended;
 
     public DriverOp() {
 
@@ -218,9 +212,25 @@ public class DriverOp extends OpMode {
 
             //Arm In and Out
             if(gamepad2.a){
-                armExtender.setPower(1.0);
+
+                if(!armExtended) {
+                    armExtended = true;
+                    armExtenderSpeed = 0.0;
+                }
+                if(armExtenderSpeed != 1.0){
+                    armExtenderSpeed +=0.01;
+                }
+                armExtender.setPower(armExtenderSpeed);
+
             }else if(gamepad2.y){
-                armExtender.setPower(-1.0);
+                if(armExtended){
+                    armExtended = false;
+                    armExtenderSpeed = 0.0;
+                }
+                if(armExtenderSpeed != -1.0){
+                    armExtenderSpeed -= 0.01;
+                }
+                armExtender.setPower(armExtenderSpeed);
             }else{
                 armExtender.setPower(0.0);
             }
