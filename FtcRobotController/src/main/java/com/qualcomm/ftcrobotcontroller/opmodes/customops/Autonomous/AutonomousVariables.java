@@ -12,7 +12,6 @@ import android.content.Context;
 import android.hardware.SensorEvent;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
-import android.os.SystemClock;
 import android.os.Vibrator;
 
 /**
@@ -114,6 +113,8 @@ public class AutonomousVariables extends OpMode {
             SCREAM_ACTION              = 35,
             RELIEVED_ACTION            = 36,
             WINCH_ACTION               = 37,
+            DRIVE_ARM_ACTION           = 38,
+            DRIVE_WINCH_ACTION         = 39,
             COLLISION_IGNORE           = 0,
             COLLISION_CHANGE_DIRECTION = 1,
             COLLISION_WAIT             = 2;
@@ -698,24 +699,32 @@ public class AutonomousVariables extends OpMode {
                     armLocation+=(int) actionArray[actionIndex][0];
                     arm.setTargetPosition(armLocation);
                     arm.setPower(armSpeed);
+
+                    // TODO: Assert arm moves
+                    lockMachine = false;
+                    stateMachineIndex++;
+                    actionIndex++;
                 }
 
-                if (armSpeed <= 0.0) {
-                    if (getEncoderValue(arm) <= armLocation + 15) {
-                        lockMachine = false;
-                        arm.setPower(0.0);
-                        stateMachineIndex++;
-                        actionIndex++;
-                    }
-                } else if (armSpeed >= 0.0) {
-                    if (getEncoderValue(arm) >= armLocation - 15) {
-                        lockMachine = false;
-                        arm.setPower(0.0);
-                        stateMachineIndex++;
-                        actionIndex++;
-                    }
-                }
+//                if (armSpeed <= 0.0) {
+//                    if (getEncoderValue(arm) <= armLocation + 15) {
+//                        lockMachine = false;
+//                        arm.setPower(0.0);
+//                        stateMachineIndex++;
+//                        actionIndex++;
+//                    }
+//                } else if (armSpeed >= 0.0) {
+//                    if (getEncoderValue(arm) >= armLocation - 15) {
+//                        lockMachine = false;
+//                        arm.setPower(0.0);
+//                        stateMachineIndex++;
+//                        actionIndex++;
+//                    }
+//                }
 
+                break;
+
+            case DRIVE_ARM_ACTION:
                 break;
 
             case WINCH_ACTION:
@@ -727,25 +736,33 @@ public class AutonomousVariables extends OpMode {
                     puts("Winch TARGET: "+winchTarget+" SPEED: "+winchSpeed);
                     winch.setTargetPosition(winchTarget);
                     winch.setPower(winchSpeed);
+
+                    // TODO: Assert winch extends
+                    lockMachine = false;
+                    stateMachineIndex++;
+                    actionIndex++;
                 }
 
-                if (winchSpeed <= 0.0) {
-                    if (getEncoderValue(winch) <= winchTarget + 15) {
-                        lockMachine = false;
-                        winch.setPower(0.0);
-                        stateMachineIndex++;
-                        actionIndex++;
-                    }
-                } else if (winchSpeed >= 0.0) {
-                    if (getEncoderValue(winch) >= winchTarget- 15) {
-                        lockMachine = false;
-                        winch.setPower(0.0);
-                        stateMachineIndex++;
-                        actionIndex++;
-                    }
-                } else {
-                    scream();
-                }
+//                if (winchSpeed <= 0.0) {
+//                    if (getEncoderValue(winch) <= winchTarget + 15) {
+//                        lockMachine = false;
+//                        winch.setPower(0.0);
+//                        stateMachineIndex++;
+//                        actionIndex++;
+//                    }
+//                } else if (winchSpeed >= 0.0) {
+//                    if (getEncoderValue(winch) >= winchTarget- 15) {
+//                        lockMachine = false;
+//                        winch.setPower(0.0);
+//                        stateMachineIndex++;
+//                        actionIndex++;
+//                    }
+//                } else {
+//                    scream();
+//                }
+                break;
+
+            case DRIVE_WINCH_ACTION:
                 break;
 
             case THE_DUMPER:
@@ -1170,6 +1187,10 @@ public class AutonomousVariables extends OpMode {
                 if (collisionID == 0) {
                     // Cheer, we didn't hit anything!
                 }
+                if (needsArm) { arm.setPower(0.0); }
+                if (needsWinch) { winch.setPower(0.0); }
+                if (needsDrive) { lDrive.setPower(0.0); rDrive.setPower(0.0); }
+                if (needsDumper) { theDumper.setPosition(Servo.MIN_POSITION); }
                 lockMachine = true;
                 machineCompleted = true;
 

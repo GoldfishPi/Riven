@@ -78,9 +78,8 @@ public class FtcOpModeRegister implements OpModeRegister
       */
       manager.register("<-< Autonomous Mountain Left Corner", AutonomousMountainLeftCorner.class);
       manager.register(">-> Autonomous Mountain Right Corner", AutonomousMountainRightCorner.class);
-      manager.register("<-|* Autonomous Mountain Left Side", AutonomousMountainLeftSide.class);
-      manager.register("*|-> Autonomous Mountain Right Side", AutonomousMountainRightSide.class);
-      manager.register("|^| Autonomous Mountain Winch", AutonomouseMountainWinchTesting.class);
+      manager.register("<-| Autonomous Mountain Left Side", AutonomousMountainLeftSide.class);
+      manager.register("|-> Autonomous Mountain Right Side", AutonomousMountainRightSide.class);
   }
 
 }

@@ -9,8 +9,8 @@ public class AutonomouseMountainWinchTesting extends AutonomousVariables {
     public void setupAutonomous() {
         addDriveAction(DRIVE_FORWARD, 475 * 2, 475 * 2, 0.3, 0.3);
         addArmAction(ARM_ACTION, 2140, 0.5);
-        addArmAction(ARM_ACTION, 0, 0.0);
         addDriveAction(DRIVE_FORWARD, 20158, 17818, 1.0, 1.0); // TODO: Check distance is correct
+        addArmAction(ARM_ACTION, 0, 0.0);
         addDriveAction(DRIVE_FORWARD, 3500, 3500, 1.0, 1.0);
         addDriveAction(DRIVE_FORWARD, 475 * 2, 475 * 2, 0.3, 0.3);
         addServoAction(THE_DUMPER, 1.0);
