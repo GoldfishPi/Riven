@@ -36,6 +36,7 @@ import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousMo
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousMountainRightSide;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousMountainRightCorner;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousMountainLeftCorner;
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomouseMountainWinchTesting;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.MotorTest.TheSuperAwesomeServoTest;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.TeleOp.DriverOp;
 
@@ -79,7 +80,7 @@ public class FtcOpModeRegister implements OpModeRegister
       manager.register(">-> Autonomous Mountain Right Corner", AutonomousMountainRightCorner.class);
       manager.register("<-|* Autonomous Mountain Left Side", AutonomousMountainLeftSide.class);
       manager.register("*|-> Autonomous Mountain Right Side", AutonomousMountainRightSide.class);
-      manager.register("|^| Autonomous Mountain Winch", AutonomousMountainWinchTesting.class);
+      manager.register("|^| Autonomous Mountain Winch", AutonomouseMountainWinchTesting.class);
   }
 
 }

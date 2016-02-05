@@ -27,7 +27,7 @@ public class MotorTest extends AutonomousVariables {
         lFinger = getMotor("lFinger");
         rFinger = getMotor("rFinger");
 
-        armExtender = getMotor("armExtender");
+        winch = getMotor("armExtender");
 
         arm = getMotor("arm");
 
@@ -55,7 +55,7 @@ public class MotorTest extends AutonomousVariables {
         lFinger.setPower(lDrivePower);
         rFinger.setPower(lDrivePower);
         arm.setPower(lDrivePower);
-        armExtender.setPower(lDrivePower);
+        winch.setPower(lDrivePower);
         lGill.setPower(lDrivePower);
         rGill.setPower(lDrivePower);
         theDumper.setPosition(lDrivePower);
