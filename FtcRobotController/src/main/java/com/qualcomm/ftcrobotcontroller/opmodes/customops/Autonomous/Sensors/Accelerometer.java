@@ -7,13 +7,13 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
 import com.qualcomm.ftcrobotcontroller.FtcRobotControllerActivity;
-import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousVariables;
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousMindContainer;
 
 /**
  * Created by cyberarm on 1/24/16.
  */
 public class Accelerometer implements SensorEventListener {
-    protected AutonomousVariables activeBrain = null;
+    protected AutonomousMindContainer activeBrain = null;
     protected SensorManager sensorManager;
     protected Sensor accelerometer;
     protected float x = 0,
@@ -46,7 +46,7 @@ public class Accelerometer implements SensorEventListener {
         }
     }
 
-    public void registerActiveBrain(AutonomousVariables brain) {
+    public void registerActiveBrain(AutonomousMindContainer brain) {
         activeBrain = brain;
     }
 

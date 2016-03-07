@@ -1,20 +1,22 @@
-package com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous;
+package com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.Minds;
+
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousMindContainer;
 
 /*
-* created by C5, Cyberarm and GoldfishPi
+* created by c5, GoldfishPi, and Cyberarm
 * Contact details: timecrafters8962@gmail.com
 * */
 
-public class AutonomousMountainRightCorner extends AutonomousVariables {
+public class AutonomousMountainLeftCorner extends AutonomousMindContainer {
     //-------------------------------
-    // motor declarations come from autonomous variables class
+    // motor declearations come from atonomous veriables class
     //------------------------------//
 
     @Override
     public void setupAutonomous() {
         addDriveAction(DRIVE_FORWARD, 1000, 1000, 1.0, 1.0);
         addArmAction(ARM_ACTION, 2140, 0.5);
-        addDriveAction(DRIVE_FORWARD, 19758, 17418, 1.0, 1.0);
+        addDriveAction(DRIVE_FORWARD, 17418, 19758, 1.0, 1.0);
         addArmAction(ARM_ACTION, 0, 0.0);
         addDriveAction(DRIVE_FORWARD, 3500, 3500, 1.0, 1.0);
         addDriveAction(DRIVE_FORWARD, 950, 950, 0.5, 0.5);
@@ -23,7 +25,7 @@ public class AutonomousMountainRightCorner extends AutonomousVariables {
         addServoAction(THE_DUMPER, 0.0);
         addDriveAction(DRIVE_BACKWARD, 950, 950, -1.0, -1.0);
         addWinchAction(30000, 0.9);
-        addDriveAction(DRIVE_BACKWARD, -50 * 90, -50 * 205, -0.1, -1.0);
+        addDriveAction(DRIVE_BACKWARD, -50 * 205, -50 * 90, -1.0, -0.1);
         addWaitAction((1800));
         addWinchAction(-10000, -0.9);
         addWaitAction((850));

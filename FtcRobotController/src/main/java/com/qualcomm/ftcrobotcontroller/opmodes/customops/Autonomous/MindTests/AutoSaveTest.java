@@ -1,4 +1,4 @@
-package com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous;
+package com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.MindTests;
 
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.Storage.Saver;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;

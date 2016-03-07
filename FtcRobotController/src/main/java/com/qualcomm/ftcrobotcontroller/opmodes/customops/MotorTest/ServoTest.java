@@ -4,12 +4,14 @@ package com.qualcomm.ftcrobotcontroller.opmodes.customops.MotorTest;
  * Created by cyberarm on 12/19/15.
  */
 
-import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousVariables;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
-public class ServoTest extends AutonomousVariables {
+public class ServoTest extends OpMode {
     public Boolean mode = true;
+    public double lDrivePower = 0.0;
+    public Servo theDumper;
 
     //-------------------------------
     // motor declearations come from atonomous veriables class
@@ -24,10 +26,9 @@ public class ServoTest extends AutonomousVariables {
     }
 
     public void autonomousInit() {
-        theDumper = getServo("theDumper");
+        theDumper = hardwareMap.servo.get("theDumper");
 
         lDrivePower = 0.00;
-        rDrivePower = 0.00;
 
     }
 

@@ -32,12 +32,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
 
-import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousMountainLeftSide;
-import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousMountainRightSide;
-import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousMountainRightCorner;
-import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousMountainLeftCorner;
-import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomouseMountainWinchTesting;
-import com.qualcomm.ftcrobotcontroller.opmodes.customops.MotorTest.TheSuperAwesomeServoTest;
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.Minds.AutonomousMountainLeftSide;
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.Minds.AutonomousMountainRightSide;
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.Minds.AutonomousMountainRightCorner;
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.Minds.AutonomousMountainLeftCorner;
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.MotorTest.SingleMotorTest;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.TeleOp.DriverOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
@@ -80,6 +79,7 @@ public class FtcOpModeRegister implements OpModeRegister
       manager.register(">-> Autonomous Mountain Right Corner", AutonomousMountainRightCorner.class);
       manager.register("<-| Autonomous Mountain Left Side", AutonomousMountainLeftSide.class);
       manager.register("|-> Autonomous Mountain Right Side", AutonomousMountainRightSide.class);
+      manager.register("Single motor test", SingleMotorTest.class);
   }
 
 }

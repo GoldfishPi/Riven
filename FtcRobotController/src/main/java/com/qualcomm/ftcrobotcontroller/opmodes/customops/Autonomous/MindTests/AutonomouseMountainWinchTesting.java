@@ -1,9 +1,11 @@
-package com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous;
+package com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.MindTests;
+
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousMindContainer;
 
 /**
  * Created by cyberarm on 2/4/16.
  */
-public class AutonomouseMountainWinchTesting extends AutonomousVariables {
+public class AutonomouseMountainWinchTesting extends AutonomousMindContainer {
 
     @Override
     public void setupAutonomous() {

@@ -16,7 +16,7 @@ import android.os.Vibrator;
 /**
  * Created by goldfishpi on 12/12/15.
  */
-public class AutonomousVariables extends OpMode {
+public class AutonomousMindContainer extends OpMode {
 
     /* Begin variable definitions */
     public String currentMachineState;
@@ -31,6 +31,8 @@ public class AutonomousVariables extends OpMode {
     public DcMotor rGill;
 
     public Servo theDumper;
+    public Servo leftShuriken;
+    public Servo rightShuriken;
 
     public DcMotor winch;
 
@@ -47,12 +49,6 @@ public class AutonomousVariables extends OpMode {
     public double rDrivePower;
     public double theDumperPosition;
     public int theDumperTick;
-
-    public double wheelBase = 15.75;
-    public double wheelCircumfrance;
-    public double dInsideWheelDistance;
-    public double dOutsideWheelDistance;
-    public double[] adRotatingRobotDrive = new double[5];
 
     public int stateMachineIndex = 0;
     public int debugArrayIndex   = 0;
@@ -104,7 +100,8 @@ public class AutonomousVariables extends OpMode {
                    needsDrive        = false,
                    needsDumper       = false,
                    needsArm          = false,
-                   needsWinch        = false;
+                   needsWinch        = false,
+                   needsShurikens    = false;
 
     public float deadX,
                  deadY,
@@ -226,6 +223,11 @@ public class AutonomousVariables extends OpMode {
         if (needsArm) { telemetry.addData("Arm Position", getEncoderValue(arm)); }
 
         if (needsWinch) { telemetry.addData("Winch Position", getEncoderValue(winch)); }
+        if (needsShurikens) {
+            telemetry.addData("leftShuriken Position", leftShuriken.getPosition());
+            telemetry.addData("rightShuriken Position", rightShuriken.getPosition());
+        }
+
     }
 
     public void setupAutonomous() {
@@ -585,6 +587,13 @@ public class AutonomousVariables extends OpMode {
         for (int i = 0; i < 100; i++) {
             stateMachineArray[i] = debugArray[i];
         }
+
+        if (needsShurikens) {
+            leftShuriken  = getServo("leftShuriken");
+            rightShuriken = getServo("rightShuriken");
+
+            rightShuriken.setDirection(Servo.Direction.REVERSE);
+        }
     }
 
     public void autonomousInitLoop() {
@@ -597,6 +606,11 @@ public class AutonomousVariables extends OpMode {
             theDumperTick = 0;
             theDumperPosition = Servo.MIN_POSITION;
             theDumper.setPosition(theDumperPosition);
+        }
+
+        if (needsShurikens) {
+            leftShuriken.setPosition(Servo.MIN_POSITION);
+            rightShuriken.setPosition(Servo.MIN_POSITION);
         }
 
         if (needsArm) { resetEncodersAuto(arm); }

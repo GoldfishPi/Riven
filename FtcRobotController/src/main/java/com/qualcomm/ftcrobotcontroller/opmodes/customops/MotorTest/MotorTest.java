@@ -4,10 +4,9 @@ package com.qualcomm.ftcrobotcontroller.opmodes.customops.MotorTest;
  * Created by cyberarm on 12/19/15.
  */
 
-import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousVariables;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousMindContainer;
 
-public class MotorTest extends AutonomousVariables {
+public class MotorTest extends AutonomousMindContainer {
     //-------------------------------
     // motor declearations come from atonomous veriables class
     //------------------------------//
