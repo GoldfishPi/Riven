@@ -183,15 +183,16 @@ public class DriverOp extends OpMode {
             lDrive.setPower(0.0);
         }
 
-
         if (gamepad1.right_trigger != 0.0) {
                 rFinger.setPower(0.3);
-            } else if (gamepad1.right_bumper) {
-                rFinger.setPower(-0.3);
-
             } else {
+            if (gamepad1.right_bumper) {
+                rFinger.setPower(-0.3);
+            }
+            else {
                 rFinger.setPower(0.0);
             }
+        }
 
 
         if(gamepad1.x){
@@ -204,12 +205,7 @@ public class DriverOp extends OpMode {
             rightShuriken.setPosition(0);
         }
 
-
     }
-
-
-
-
 
     public void controllerTwo()
     {
@@ -234,7 +230,6 @@ public class DriverOp extends OpMode {
             else if(!gamepad2.b && bPressed){
                 bPressed = false;
             }
-
 
             //Arm In and Out
             if(gamepad2.y){
@@ -261,11 +256,9 @@ public class DriverOp extends OpMode {
                 armExtender.setPower(0.0);
             }
 
-
             //Arm up and down
 
             armControlls(gamepad2.left_stick_y);
-
 
             //gill controls
             if (gamepad2.left_trigger != 0.0) {
@@ -312,7 +305,6 @@ public class DriverOp extends OpMode {
             lDrive.setPower(0.0);
         }
 
-
         if (gamepad1.right_trigger != 0.0) {
                 rFinger.setPower(0.3);
             } else if (gamepad1.right_bumper) {
@@ -370,8 +362,6 @@ public class DriverOp extends OpMode {
             }
         }
 
-
-
             if (gamepad2.right_trigger != 0) {
                 rGill.setPower(0.5);
             } else if (gamepad2.right_bumper) {
@@ -383,7 +373,6 @@ public class DriverOp extends OpMode {
 
 
     }
-
 
     public void extendEqual( double speed)
     {
