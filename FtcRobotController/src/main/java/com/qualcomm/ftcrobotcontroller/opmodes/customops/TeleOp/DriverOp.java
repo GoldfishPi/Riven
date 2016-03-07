@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import java.util.Arrays;
+import java.io.IOError;
 
 /**
  * Created by goldfishpi on 11/21/15.
@@ -26,6 +26,10 @@ public class DriverOp extends OpMode {
     private DcMotor arm;
 
     private Servo lovePonny;
+
+    private Servo rightShuriken;
+
+    private Servo leftSuriken;
 
     private boolean yPressed   = false;
     private boolean aPressed   = false;
@@ -64,6 +68,10 @@ public class DriverOp extends OpMode {
         lovePonny   = hardwareMap.servo.get("theDumper");
 
         arm         = hardwareMap.dcMotor.get("arm");
+
+        rightShuriken = hardwareMap.servo.get("rightShuriken");
+
+        leftSuriken = hardwareMap.servo.get("leftSuriken");
 
         rDrive.setDirection(DcMotor.Direction.FORWARD);
         lDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -129,13 +137,14 @@ public class DriverOp extends OpMode {
 
         controllerOne();
         controllerTwo();
-
+       
     }
 
     public void controllerOne()//Living organism velocity extender and phasing oscillation neutralizing neon elliptical yielder
     {
 
-        {
+       if(true)
+       {
 
             if(gamepad1.a){
                 lovePonny.setPosition(Servo.MIN_POSITION);
@@ -183,8 +192,21 @@ public class DriverOp extends OpMode {
                 rFinger.setPower(0.0);
             }
         }
+
+        if(gamepad1.x){
+            leftSuriken.setPosition(100);
+        }
+        else{
+            leftSuriken.setPosition(0);
+        }
+        if(gamepad1.b){
+            rightShuriken.setPosition(100);
+        }
+        else{
+            rightShuriken.setPosition(0);
     }
 
+}
 
 
 
@@ -192,6 +214,7 @@ public class DriverOp extends OpMode {
 
     public void controllerTwo()
     {
+        if(true)
         {
 
             if(!gamepad2.dpad_right){
@@ -263,8 +286,11 @@ public class DriverOp extends OpMode {
             } else {
                 rGill.setPower(0.0);
             }
+
+
         }
     }
+
 
     public void extendEqual( double speed)
     {
@@ -292,33 +318,6 @@ public class DriverOp extends OpMode {
 
         motor.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
 
-    }
-
-    @Override
-    public int hashCode() {
-        int result;
-        long temp;
-        result = lDrive != null ? lDrive.hashCode() : 0;
-        result = 31 * result + (rDrive != null ? rDrive.hashCode() : 0);
-        result = 31 * result + (lFinger != null ? lFinger.hashCode() : 0);
-        result = 31 * result + (rFinger != null ? rFinger.hashCode() : 0);
-        result = 31 * result + (lGill != null ? lGill.hashCode() : 0);
-        result = 31 * result + (rGill != null ? rGill.hashCode() : 0);
-        result = 31 * result + (armExtender != null ? armExtender.hashCode() : 0);
-        result = 31 * result + (arm != null ? arm.hashCode() : 0);
-        result = 31 * result + (lovePonny != null ? lovePonny.hashCode() : 0);
-        result = 31 * result + (yPressed ? 1 : 0);
-        result = 31 * result + (aPressed ? 1 : 0);
-        result = 31 * result + (xPressed ? 1 : 0);
-        result = 31 * result + (bPressed ? 1 : 0);
-        temp = Double.doubleToLongBits(armSpeed);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        result = 31 * result + (motors != null ? Arrays.hashCode(motors) : 0);
-        result = 31 * result + (motorNames != null ? Arrays.hashCode(motorNames) : 0);
-        temp = Double.doubleToLongBits(armExtenderSpeed);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        result = 31 * result + (armExtended ? 1 : 0);
-        return result;
     }
 
 }
