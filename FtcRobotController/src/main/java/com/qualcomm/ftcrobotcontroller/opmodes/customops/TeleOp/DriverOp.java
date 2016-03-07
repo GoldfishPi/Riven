@@ -394,13 +394,13 @@ public class DriverOp extends OpMode {
         }
 
         if(gamepad1.x){
-            leftShuriken.setPosition(100);
+            leftShuriken.setPosition(.8);
         }
         else{
             leftShuriken.setPosition(0);
         }
         if(gamepad1.b){
-            rightShuriken.setPosition(100);
+            rightShuriken.setPosition(.8);
         }
         else{
             rightShuriken.setPosition(0);
