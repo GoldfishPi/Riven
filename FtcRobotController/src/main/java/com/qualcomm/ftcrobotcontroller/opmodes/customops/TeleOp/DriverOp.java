@@ -145,8 +145,7 @@ public class DriverOp extends OpMode {
     public void controllerOne()//Living organism velocity extender and phasing oscillation neutralizing neon elliptical yielder
     {
 
-       if(true)
-       {
+
 
             if(gamepad1.a){
                 lovePonny.setPosition(Servo.MIN_POSITION);
@@ -193,22 +192,24 @@ public class DriverOp extends OpMode {
             } else {
                 rFinger.setPower(0.0);
             }
-        }
+
 
         if(gamepad1.x){
-            leftShuriken.setPosition(1);
+            leftShuriken.setPosition(.8);
+            rightShuriken.setPosition(.6);
+        }
+        else{
+
+        }
+        if(gamepad1.b){
+
         }
         else{
             leftShuriken.setPosition(0);
-        }
-        if(gamepad1.b){
-            rightShuriken.setPosition(1);
-        }
-        else{
             rightShuriken.setPosition(0);
-    }
+        }
 
-}
+    }
 
 
 
@@ -216,8 +217,6 @@ public class DriverOp extends OpMode {
 
     public void controllerTwo()
     {
-        if(true)
-        {
 
             if(!gamepad2.dpad_right){
                 arm.setPower(0.0);
@@ -242,7 +241,7 @@ public class DriverOp extends OpMode {
 
 
             //Arm In and Out
-            if(gamepad2.a){
+            if(gamepad2.y){
 
                 if(!armExtended) {
                     armExtended = true;
@@ -253,7 +252,7 @@ public class DriverOp extends OpMode {
                 }
                 armExtender.setPower(armExtenderSpeed);
 
-            }else if(gamepad2.y){
+            }else if(gamepad2.a){
                 if(armExtended){
                     armExtended = false;
                     armExtenderSpeed = 0.0;
@@ -281,8 +280,52 @@ public class DriverOp extends OpMode {
                 lGill.setPower(0.0);
             }{
 
-       if(true)
-       {
+            if(gamepad1.a){
+                lovePonny.setPosition(Servo.MIN_POSITION);
+            }
+
+            if(gamepad1.y){
+                lovePonny.setPosition(Servo.MAX_POSITION);
+            }
+
+            //Drive controls
+            if (lDrive.getMode() == DcMotorController.RunMode.RUN_TO_POSITION && rDrive.getMode() ==
+
+            DcMotorController.RunMode.RUN_TO_POSITION) {
+                lDrive.setPower(gamepad1.left_stick_y);
+                rDrive.setPower(gamepad1.right_stick_y);
+            }
+
+            if(gamepad1.right_stick_y != 0){
+                rDrive.setPower(-gamepad1.right_stick_y);
+            } else {
+                rDrive.setPower(0.0);
+            }
+
+            if(gamepad1.left_stick_y != 0){
+                lDrive.setPower(-gamepad1.left_stick_y);
+            } else{
+            //Finger controls
+            if (gamepad1.left_trigger != 0.0) {
+                lFinger.setPower(0.3);
+            } else if (gamepad1.left_bumper) {
+                lFinger.setPower(-0.3);
+            } else {
+                lFinger.setPower(0.0);
+            }
+            lDrive.setPower(0.0);
+        }
+
+
+        if (gamepad1.right_trigger != 0.0) {
+                rFinger.setPower(0.3);
+            } else if (gamepad1.right_bumper) {
+                rFinger.setPower(-0.3);
+
+            } else {
+                rFinger.setPower(0.0);
+            }
+
 
             if(gamepad1.a){
                 lovePonny.setPosition(Servo.MIN_POSITION);
@@ -331,85 +374,7 @@ public class DriverOp extends OpMode {
             }
         }
 
-        if(gamepad1.x){
-            leftShuriken.setPosition(100);
-        }
-        else{
-            leftShuriken.setPosition(0);
-        }
-        if(gamepad1.b){
-            rightShuriken.setPosition(100);
-        }
-        else{
-            rightShuriken.setPosition(0);{
 
-       if(true)
-       {
-
-            if(gamepad1.a){
-                lovePonny.setPosition(Servo.MIN_POSITION);
-            }
-
-            if(gamepad1.y){
-                lovePonny.setPosition(Servo.MAX_POSITION);
-            }
-
-            //Drive controls
-            if (lDrive.getMode() == DcMotorController.RunMode.RUN_TO_POSITION && rDrive.getMode() ==
-
-            DcMotorController.RunMode.RUN_TO_POSITION) {
-                lDrive.setPower(gamepad1.left_stick_y);
-                rDrive.setPower(gamepad1.right_stick_y);
-            }
-
-            if(gamepad1.right_stick_y != 0){
-                rDrive.setPower(-gamepad1.right_stick_y);
-            } else {
-                rDrive.setPower(0.0);
-            }
-
-            if(gamepad1.left_stick_y != 0){
-                lDrive.setPower(-gamepad1.left_stick_y);
-            } else{
-            //Finger controls
-            if (gamepad1.left_trigger != 0.0) {
-                lFinger.setPower(0.3);
-            } else if (gamepad1.left_bumper) {
-                lFinger.setPower(-0.3);
-            } else {
-                lFinger.setPower(0.0);
-            }
-            lDrive.setPower(0.0);
-        }
-
-
-        if (gamepad1.right_trigger != 0.0) {
-                rFinger.setPower(0.3);
-            } else if (gamepad1.right_bumper) {
-                rFinger.setPower(-0.3);
-
-            } else {
-                rFinger.setPower(0.0);
-            }
-        }
-
-        if(gamepad1.x){
-            leftShuriken.setPosition(.8);
-        }
-        else{
-            leftShuriken.setPosition(0);
-        }
-        if(gamepad1.b){
-            rightShuriken.setPosition(.6);
-        }
-        else{
-            rightShuriken.setPosition(0);
-    }
-
-}
-    }
-
-}
 
             if (gamepad2.right_trigger != 0) {
                 rGill.setPower(0.5);
@@ -420,7 +385,7 @@ public class DriverOp extends OpMode {
             }
 
 
-        }
+
     }
 
 
