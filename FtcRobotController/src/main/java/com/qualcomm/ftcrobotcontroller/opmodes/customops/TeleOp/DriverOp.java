@@ -29,7 +29,7 @@ public class DriverOp extends OpMode {
 
     private Servo rightShuriken;
 
-    private Servo leftSuriken;
+    private Servo leftShuriken;
 
     private boolean yPressed   = false;
     private boolean aPressed   = false;
@@ -71,7 +71,7 @@ public class DriverOp extends OpMode {
 
         rightShuriken = hardwareMap.servo.get("rightShuriken");
 
-        leftSuriken = hardwareMap.servo.get("leftSuriken");
+        leftShuriken = hardwareMap.servo.get("leftShuriken");
 
         rDrive.setDirection(DcMotor.Direction.FORWARD);
         lDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -194,10 +194,10 @@ public class DriverOp extends OpMode {
         }
 
         if(gamepad1.x){
-            leftSuriken.setPosition(100);
+            leftShuriken.setPosition(100);
         }
         else{
-            leftSuriken.setPosition(0);
+            leftShuriken.setPosition(0);
         }
         if(gamepad1.b){
             rightShuriken.setPosition(100);

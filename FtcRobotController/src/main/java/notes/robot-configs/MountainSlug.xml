@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<Robot>
+    <MotorController name="Drive Motor Controller" serialNumber="AL00VSB7">
+        <Motor name="rDrive" port="1" />
+        <Motor name="lDrive" port="2" />
+    </MotorController>
+    <ServoController name="Servo Controller" serialNumber="AL00YA7S">
+        <Servo name="theDumper" port="4" />
+        <Servo name="rightShuriken" port="5" />
+        <Servo name="leftShuriken" port="6" />
+    </ServoController>
+    <MotorController name="Motor Controller" serialNumber="AL00VSCN">
+        <Motor name="rGill" port="1" />
+        <Motor name="lGill" port="2" />
+    </MotorController>
+    <MotorController name="Winch and Arm Motor Controller" serialNumber="AL00XUZ8">
+        <Motor name="arm" port="1" />
+        <Motor name="armExtender" port="2" />
+    </MotorController>
+    <MotorController name="Finger Motor Controller" serialNumber="AL00XUZ0">
+        <Motor name="rFinger" port="1" />
+        <Motor name="lFinger" port="2" />
+    </MotorController>
+</Robot>
