@@ -101,7 +101,7 @@ public class AutonomousMindContainer extends OpMode {
                    needsDumper       = false,
                    needsArm          = false,
                    needsWinch        = false,
-                   needsShurikens    = false;
+                   needsShurikens    = true;
 
     public float deadX,
                  deadY,
@@ -609,8 +609,8 @@ public class AutonomousMindContainer extends OpMode {
         }
 
         if (needsShurikens) {
-            leftShuriken.setPosition(Servo.MIN_POSITION);
-            rightShuriken.setPosition(Servo.MIN_POSITION);
+            leftShuriken.setPosition(0.0);
+            rightShuriken.setPosition(0.0);
         }
 
         if (needsArm) { resetEncodersAuto(arm); }
@@ -619,9 +619,8 @@ public class AutonomousMindContainer extends OpMode {
 
     public void autonomousloop() {
         setTelemetry();
-        /* Collision Detection is off due to lack of testing.
-            if (!machineCompleted && needsDrive) { checkCollision(); }
-        */
+        /* Collision Detection is off due to lack of testing.*/
+        if (!machineCompleted && needsDrive) { checkCollision(); }
 
         switch (stateMachineArray[stateMachineIndex]) {
             // BEGIN - CONCEPT 14
@@ -668,7 +667,6 @@ public class AutonomousMindContainer extends OpMode {
                     arm.setTargetPosition(armLocation);
                     arm.setPower(armSpeed);
 
-                    // TODO: Assert arm moves
                     lockMachine = false;
                     stateMachineIndex++;
                     actionIndex++;
