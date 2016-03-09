@@ -243,7 +243,9 @@ public class AutonomousMindContainer extends OpMode {
     }
 
     public void addDriveAction(int state, int leftDrive, int rightDrive, double leftPower, double rightPower) {
+        // Set needsDrive to true if the "Mind" uses the drive train
         needsDrive = true;
+        //
         debugArray[debugArrayIndex] = state;
         debugArrayIndex++;
 
@@ -322,14 +324,10 @@ public class AutonomousMindContainer extends OpMode {
     }
 
     public void scream() {
-//        toneGenerator.startTone(ToneGenerator.TONE_CDMA_CALL_SIGNAL_ISDN_NORMAL, 250);
         toneGenerator.startTone(ToneGenerator.TONE_CDMA_ALERT_NETWORK_LITE, 1000);
-//        toneGenerator.startTone(ToneGenerator.TONE_DTMF_A, 250);
     }
 
     public void relieved() {
-//        toneGenerator.startTone(ToneGenerator.TONE_CDMA_CALL_SIGNAL_ISDN_NORMAL, 250);
-//        toneGenerator.startTone(ToneGenerator.TONE_CDMA_ALERT_NETWORK_LITE, 1000);
         toneGenerator.startTone(ToneGenerator.TONE_DTMF_A, 250);
     }
 
@@ -520,29 +518,36 @@ public class AutonomousMindContainer extends OpMode {
         lockMachine = false;
     }
 
+    // Setup autonomous
     @Override
     public void init() {
         autonomousInit();
     }
 
+    // Get everything ready for loop
     @Override
     public void init_loop(){
         autonomousInitLoop();
     }
 
+    // Run autonomous
     @Override
     public void loop() {
         autonomousloop();
     }
 
+    // What to do when the robot is stopped from the driver station (or time runs out)
     @Override
     public void stop() {
         instance.getSensorAccelerometer().unregisterActiveBrain();
     }
 
     public void autonomousInit() {
+        // Get instance of class FtcRobotControllerActivity
         instance = FtcRobotControllerActivity.getInstance();
+        // Register listener for accelerometer updates
         instance.getSensorAccelerometer().registerActiveBrain(this);
+        // Get access to the phones vibrator
         vibrator = (Vibrator) instance.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
 
         currentMachineState = "In-Active";
@@ -556,6 +561,7 @@ public class AutonomousMindContainer extends OpMode {
         setupAutonomous(); // Add states to debugArray before setting stateMachineArray
         actionIndex = 0; // Reset to 0 after setup
 
+        // Variable initialization of Motors and servos as needs by the "Minds"
         if (needsDrive) {
             lDrive = getMotor("lDrive");
             rDrive = getMotor("rDrive");
@@ -609,8 +615,8 @@ public class AutonomousMindContainer extends OpMode {
         }
 
         if (needsShurikens) {
-            leftShuriken.setPosition(0.0);
-            rightShuriken.setPosition(0.0);
+            leftShuriken.setPosition(0.8);
+            rightShuriken.setPosition(0.5);
         }
 
         if (needsArm) { resetEncodersAuto(arm); }
@@ -620,7 +626,7 @@ public class AutonomousMindContainer extends OpMode {
     public void autonomousloop() {
         setTelemetry();
         /* Collision Detection is off due to lack of testing.*/
-        if (!machineCompleted && needsDrive) { checkCollision(); }
+//        if (!machineCompleted && needsDrive) { checkCollision(); }
 
         switch (stateMachineArray[stateMachineIndex]) {
             // BEGIN - CONCEPT 14
