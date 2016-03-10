@@ -18,9 +18,11 @@ public class AutonomousConstruction extends Neuron {
     public void addDriveAction(int state, int leftDrive, int rightDrive, double leftPower, double rightPower) {
         // Set needsDrive to true if the "Mind" uses the drive train
         instance.needsDrive = true;
-        //
         instance.debugArray[instance.debugArrayIndex] = state;
         instance.debugArrayIndex++;
+
+        ensureMatchingGoal(leftDrive, leftPower);
+        ensureMatchingGoal(rightDrive, rightPower);
 
         double[] array = {leftDrive, rightDrive, leftPower, rightPower};
         instance.actionArray[instance.actionIndex] = array;
@@ -51,6 +53,8 @@ public class AutonomousConstruction extends Neuron {
         instance.debugArray[instance.debugArrayIndex] = state;
         instance.debugArrayIndex++;
 
+        ensureMatchingGoal(armPosition, armPower);
+
         double[] array = {armPosition, armPower, 0};
         instance.actionArray[instance.actionIndex] = array;
         instance.actionIndex++;
@@ -60,6 +64,8 @@ public class AutonomousConstruction extends Neuron {
         instance.needsArm = true;
         instance.debugArray[instance.debugArrayIndex] = state;
         instance.debugArrayIndex++;
+
+        ensureMatchingGoal(armPosition, armPower);
 
         double[] array = {armPosition, armPower, 1};
         instance.actionArray[instance.actionIndex] = array;
@@ -101,6 +107,8 @@ public class AutonomousConstruction extends Neuron {
         instance.debugArray[instance.debugArrayIndex] = WINCH_ACTION;
         instance.debugArrayIndex++;
 
+        ensureMatchingGoal(winchPosition, winchPower);
+
         double[] array = {winchPosition, winchPower, 0};
         instance.actionArray[instance.actionIndex] = array;
         instance.actionIndex++;
@@ -111,8 +119,21 @@ public class AutonomousConstruction extends Neuron {
         instance.debugArray[instance.debugArrayIndex] = WINCH_ACTION;
         instance.debugArrayIndex++;
 
+        ensureMatchingGoal(winchPosition, winchPower);
+
         double[] array = {winchPosition, winchPower, 1};
         instance.actionArray[instance.actionIndex] = array;
         instance.actionIndex++;
+    }
+
+    public void ensureMatchingGoal(int encoderTarget, double motorPower) {
+        if ((double)encoderTarget > 0 && motorPower > 0.0) {
+        } else if ((double)encoderTarget < 0 && motorPower < 0.0) {
+        } else if ((double)encoderTarget == 0 && motorPower == 0.0) {
+
+        } else {
+            instance.scream();
+            throw new RuntimeException("HANG DETECTED!\nA motor power and encoder target are not both greater than 0 or less than 0.");
+        }
     }
 }

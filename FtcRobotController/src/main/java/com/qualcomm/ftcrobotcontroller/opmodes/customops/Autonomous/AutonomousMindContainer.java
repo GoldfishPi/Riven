@@ -132,7 +132,7 @@ public class AutonomousMindContainer extends OpMode  {
 
     public double getEncoderValue(Servo servo) { return servo.getPosition(); }
 
-    void setEncoderTarget(int leftEncoder, int rightEncoder) {
+    public void setEncoderTarget(int leftEncoder, int rightEncoder) {
         leftEncoderTarget  = getEncoderValue(lDrive) + leftEncoder;
         rightEncoderTarget = getEncoderValue(rDrive) + rightEncoder;
 
@@ -302,7 +302,9 @@ public class AutonomousMindContainer extends OpMode  {
         instance.getSensorAccelerometer().registerActiveBrain(this);
         // Get access to the phones vibrator
         vibrator = (Vibrator) instance.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
+        // Handle collisions
         collisionHandler = new CollisionHandler(this);
+        // Construct autonomous modes
         builder = new AutonomousConstruction(this);
 
         currentMachineState = "In-Active";
@@ -381,7 +383,7 @@ public class AutonomousMindContainer extends OpMode  {
     public void autonomousloop() {
         setTelemetry();
         /* Collision Detection is off due to lack of testing.*/
-        if (!machineCompleted && needsDrive) { collisionHandler.checkCollision(); }
+//        if (!machineCompleted && needsDrive) { collisionHandler.checkCollision(); }
 
         switch (stateMachineArray[stateMachineIndex]) {
             // BEGIN - CONCEPT 14
