@@ -6,11 +6,11 @@ import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousMi
  * Created by cyberarm on 3/10/16.
  */
 public class CollisionHandler extends Neuron {
-    public AutonomousMindContainer instance;
 
     public CollisionHandler(AutonomousMindContainer container) {
         instance = container;
     }
+
     public void checkCollision() {
         if (instance.collisionLock) {
             instance.tickSinceCollision++;

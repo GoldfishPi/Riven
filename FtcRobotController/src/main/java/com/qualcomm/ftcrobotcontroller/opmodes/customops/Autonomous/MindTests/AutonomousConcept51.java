@@ -8,7 +8,7 @@ import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousMi
 public class AutonomousConcept51 extends AutonomousMindContainer {
     @Override
     public void setupAutonomous() {
-        addArmAction(ARM_ACTION, -1024, -0.2);
-        addState(STATE_STOP);
+        builder.addArmAction(ARM_ACTION, -1024, -0.2);
+        builder.addState(STATE_STOP);
     }
 }

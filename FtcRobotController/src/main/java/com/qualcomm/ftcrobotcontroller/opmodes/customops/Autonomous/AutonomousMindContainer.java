@@ -1,6 +1,7 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous;
 
 import com.qualcomm.ftcrobotcontroller.FtcRobotControllerActivity;
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.Neurons.AutonomousConstruction;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
@@ -22,6 +23,7 @@ public class AutonomousMindContainer extends OpMode  {
 
     /* Begin variable definitions */
     public CollisionHandler collisionHandler;
+    public AutonomousConstruction builder;
     public String currentMachineState;
 
     public DcMotor lDrive;
@@ -243,112 +245,6 @@ public class AutonomousMindContainer extends OpMode  {
         System.out.println(string);
     }
 
-    public void addState(int state) {
-        debugArray[debugArrayIndex] = state;
-        debugArrayIndex++;
-    }
-
-    public void addDriveAction(int state, int leftDrive, int rightDrive, double leftPower, double rightPower) {
-        // Set needsDrive to true if the "Mind" uses the drive train
-        needsDrive = true;
-        //
-        debugArray[debugArrayIndex] = state;
-        debugArrayIndex++;
-
-        double[] array = {leftDrive, rightDrive, leftPower, rightPower};
-        actionArray[actionIndex] = array;
-        actionIndex++;
-    }
-
-    public void addServoAction(int state, double position) {
-        needsDumper = true;
-        debugArray[debugArrayIndex] = state;
-        debugArrayIndex++;
-
-        double[] array = new double[1];
-        array[0] = position;
-        actionArray[actionIndex] = array;
-        actionIndex++;
-    }
-
-    public void addWaitAction(double ticks) {
-        debugArray[debugArrayIndex] = STATE_WAIT;
-        debugArrayIndex++;
-
-        actionArray[actionIndex][0] = ticks;
-        actionIndex++;
-    }
-
-    public void addArmAction(int state, int armPosition, double armPower) {
-        needsArm = true;
-        debugArray[debugArrayIndex] = state;
-        debugArrayIndex++;
-
-        double[] array = {armPosition, armPower, 0};
-        actionArray[actionIndex] = array;
-        actionIndex++;
-    }
-
-    public void addBlockingArmAction(int state, int armPosition, double armPower) {
-        needsArm = true;
-        debugArray[debugArrayIndex] = state;
-        debugArrayIndex++;
-
-        double[] array = {armPosition, armPower, 1};
-        actionArray[actionIndex] = array;
-        actionIndex++;
-    }
-
-    public void addVibratorAction(int duration) {
-        debugArray[debugArrayIndex] = VIBRATOR_ACTION;
-        debugArrayIndex++;
-
-        double[] array = {duration};
-        actionArray[actionIndex] = array;
-        actionIndex++;
-    }
-
-    public void addScreamAction() {
-        debugArray[debugArrayIndex] = SCREAM_ACTION;
-        debugArrayIndex++;
-        actionIndex++;
-    }
-
-    public void addRelievedAction() {
-        debugArray[debugArrayIndex] = RELIEVED_ACTION;
-        debugArrayIndex++;
-        actionIndex++;
-    }
-
-    public void setCollisionProfile(int profile) {
-        debugArray[debugArrayIndex] = SET_COLLISION_PROFILE;
-        debugArrayIndex++;
-
-        double[] array = {profile};
-        actionArray[actionIndex] = array;
-        actionIndex++;
-    }
-
-    public void addWinchAction(int winchPosition, double winchPower) {
-        needsWinch = true;
-        debugArray[debugArrayIndex] = WINCH_ACTION;
-        debugArrayIndex++;
-
-        double[] array = {winchPosition, winchPower, 0};
-        actionArray[actionIndex] = array;
-        actionIndex++;
-    }
-
-    public void addBlockingWinchAction(int winchPosition, double winchPower) {
-        needsWinch = true;
-        debugArray[debugArrayIndex] = WINCH_ACTION;
-        debugArrayIndex++;
-
-        double[] array = {winchPosition, winchPower, 1};
-        actionArray[actionIndex] = array;
-        actionIndex++;
-    }
-
     public void scream() {
         toneGenerator.startTone(ToneGenerator.TONE_CDMA_ALERT_NETWORK_LITE, 1000);
     }
@@ -407,6 +303,7 @@ public class AutonomousMindContainer extends OpMode  {
         // Get access to the phones vibrator
         vibrator = (Vibrator) instance.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
         collisionHandler = new CollisionHandler(this);
+        builder = new AutonomousConstruction(this);
 
         currentMachineState = "In-Active";
         lockMachine = false;
