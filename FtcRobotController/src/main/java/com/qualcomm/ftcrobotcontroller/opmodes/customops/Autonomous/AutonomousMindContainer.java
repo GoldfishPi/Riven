@@ -1,6 +1,7 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous;
 
 import com.qualcomm.ftcrobotcontroller.FtcRobotControllerActivity;
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.Neurons.AutonomousConstruction;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
@@ -13,12 +14,16 @@ import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.Vibrator;
 
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.Neurons.CollisionHandler;
+
 /**
  * Created by goldfishpi on 12/12/15.
  */
-public class AutonomousMindContainer extends OpMode {
+public class AutonomousMindContainer extends OpMode  {
 
     /* Begin variable definitions */
+    public CollisionHandler collisionHandler;
+    public AutonomousConstruction builder;
     public String currentMachineState;
 
     public DcMotor lDrive;
@@ -66,7 +71,7 @@ public class AutonomousMindContainer extends OpMode {
 
     String currentState = "Not set";
 
-    public final int
+    public static final int
             STATE_STOP    = 0,
             DRIVE_FORWARD = 1,
             DRIVE_BACKWARD= 2,
@@ -81,6 +86,9 @@ public class AutonomousMindContainer extends OpMode {
             WINCH_ACTION          = 10,
             DRIVE_ARM_ACTION      = 11,
             DRIVE_WINCH_ACTION    = 12,
+
+            LEFT_SHURIKEN  = 13,
+            RIGHT_SHURIKEN = 14,
 
             COLLISION_IGNORE           = 0,
             COLLISION_CHANGE_DIRECTION = 1,
@@ -101,7 +109,7 @@ public class AutonomousMindContainer extends OpMode {
                    needsDumper       = false,
                    needsArm          = false,
                    needsWinch        = false,
-                   needsShurikens    = false;
+                   needsShurikens    = true;
 
     public float deadX,
                  deadY,
@@ -132,7 +140,7 @@ public class AutonomousMindContainer extends OpMode {
         rDrive.setTargetPosition(rightEncoderTarget);
     }
 
-    void setDrivePower(double leftPower, double rightPower) {
+    public void setDrivePower(double leftPower, double rightPower) {
         lDrivePower = Range.clip(leftPower, -1.0, 1.0);
         rDrivePower = Range.clip(rightPower, -1.0, 1.0);
         lDrive.setPower(lDrivePower);
@@ -209,7 +217,7 @@ public class AutonomousMindContainer extends OpMode {
     }
 
     public void setTelemetry() {
-        telemetry.addData("State", currentMachineState);
+        telemetry.addData("State", currentMachineState + " (index: " + actionIndex + ")");
         telemetry.addData("Accelerometer", "X: "+x+" Y: "+y+" Z: "+Math.round(z));
         if (needsDrive) {
             telemetry.addData("Left Drive Position", getEncoderValue(lDrive));
@@ -237,99 +245,11 @@ public class AutonomousMindContainer extends OpMode {
         System.out.println(string);
     }
 
-    public void addState(int state) {
-        debugArray[debugArrayIndex] = state;
-        debugArrayIndex++;
-    }
-
-    public void addDriveAction(int state, int leftDrive, int rightDrive, double leftPower, double rightPower) {
-        needsDrive = true;
-        debugArray[debugArrayIndex] = state;
-        debugArrayIndex++;
-
-        double[] array = {leftDrive, rightDrive, leftPower, rightPower};
-        actionArray[actionIndex] = array;
-        actionIndex++;
-    }
-
-    public void addServoAction(int state, double position) {
-        needsDumper = true;
-        debugArray[debugArrayIndex] = state;
-        debugArrayIndex++;
-
-        double[] array = new double[1];
-        array[0] = position;
-        actionArray[actionIndex] = array;
-        actionIndex++;
-    }
-
-    public void addWaitAction(double ticks) {
-        debugArray[debugArrayIndex] = STATE_WAIT;
-        debugArrayIndex++;
-
-        actionArray[actionIndex][0] = ticks;
-        actionIndex++;
-    }
-
-    public void addArmAction(int state, int armPosition, double armPower) {
-        needsArm = true;
-        debugArray[debugArrayIndex] = state;
-        debugArrayIndex++;
-
-        double[] array = {armPosition, armPower};
-        actionArray[actionIndex] = array;
-        actionIndex++;
-    }
-
-    public void addVibratorAction(int duration) {
-        debugArray[debugArrayIndex] = VIBRATOR_ACTION;
-        debugArrayIndex++;
-
-        double[] array = {duration};
-        actionArray[actionIndex] = array;
-        actionIndex++;
-    }
-
-    public void addScreamAction() {
-        debugArray[debugArrayIndex] = SCREAM_ACTION;
-        debugArrayIndex++;
-        actionIndex++;
-    }
-
-    public void addRelievedAction() {
-        debugArray[debugArrayIndex] = RELIEVED_ACTION;
-        debugArrayIndex++;
-        actionIndex++;
-    }
-
-    public void setCollisionProfile(int profile) {
-        debugArray[debugArrayIndex] = SET_COLLISION_PROFILE;
-        debugArrayIndex++;
-
-        double[] array = {profile};
-        actionArray[actionIndex] = array;
-        actionIndex++;
-    }
-
-    public void addWinchAction(int winchPosition, double winchPower) {
-        needsWinch = true;
-        debugArray[debugArrayIndex] = WINCH_ACTION;
-        debugArrayIndex++;
-
-        double[] array = {winchPosition, winchPower};
-        actionArray[actionIndex] = array;
-        actionIndex++;
-    }
-
     public void scream() {
-//        toneGenerator.startTone(ToneGenerator.TONE_CDMA_CALL_SIGNAL_ISDN_NORMAL, 250);
         toneGenerator.startTone(ToneGenerator.TONE_CDMA_ALERT_NETWORK_LITE, 1000);
-//        toneGenerator.startTone(ToneGenerator.TONE_DTMF_A, 250);
     }
 
     public void relieved() {
-//        toneGenerator.startTone(ToneGenerator.TONE_CDMA_CALL_SIGNAL_ISDN_NORMAL, 250);
-//        toneGenerator.startTone(ToneGenerator.TONE_CDMA_ALERT_NETWORK_LITE, 1000);
         toneGenerator.startTone(ToneGenerator.TONE_DTMF_A, 250);
     }
 
@@ -351,199 +271,39 @@ public class AutonomousMindContainer extends OpMode {
         accelerometerTicks++;
     }
 
-    public void checkCollision() {
-        if (collisionLock) {
-            tickSinceCollision++;
-            if (tickSinceCollision >= 250) {
-                tickSinceCollision = 0;
-                collisionLock = false;
-            }
-        }
-
-        if (accelerometerTicks >= 4 && !collisionLock) {
-//            System.out.println("x: " + Math.abs(x) + " y: " + Math.abs(y) + " z: " + Math.abs(z));
-
-            if (Math.abs(x) >= COLLISION_THRESHOLD && !collisionLock) {
-                scream();
-                resolveCollision();
-                collisionLock = true;
-            }
-
-            if (Math.abs(y) >= COLLISION_THRESHOLD && !collisionLock) {
-                scream();
-                resolveCollision();
-                collisionLock = true;
-            }
-        }
-    }
-
-    public void resolveCollision() {
-        collisionDetected = true;
-        collisionID++;
-        boolean leftDrivePowered = false;
-        boolean rightDrivePowered = false;
-
-        // Only process collision resolution if not already processed and not in a wait state
-        if (!collisionLock && (stateMachineArray[stateMachineIndex] != STATE_WAIT)) {
-
-            switch (collisionProfile) {
-                case COLLISION_IGNORE:
-                    relieved();
-                    break;
-                case COLLISION_WAIT:
-                    injectWait(120);
-                    break;
-                case COLLISION_CHANGE_DIRECTION:
-                    telemetry.addData("<DATA>", "Collision Change Direction");
-                    if (Math.abs(lDrivePower) >= 0.1){ leftDrivePowered = true; }
-                    if (Math.abs(rDrivePower) >= 0.1){ rightDrivePowered = true; }
-
-                    if (leftDrivePowered && rightDrivePowered) {
-                        // Can safely change direction due to not being in a turn
-                        injectDriveDirectionChange();
-                    } else {
-                        // Drive might be in a turn or not moving, would mal-align robot if direction changed to straight back
-                        // Rusty gives up and waits about a second to resume.
-                        injectWait(100);
-                        relieved();
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-
-    // FIXME: Compensate for distance already travelled
-    public void injectWait(int ticks) {
-        // Inject wait state into current actionArray index and stateMachine index, then reorder array and adjust currently running state to compensate for distance already traveled
-        int[] stateArrayCopied  = new int[100];
-        double[][] actionArrayCopied = new double[100][4];
-        double[] newActionArray = new double[4];
-        double newLeftTarget,
-               newRightTarget;
-
-        for (int i = 0; i < stateMachineArray.length; i++) {
-            if (i >= 99) {break;} // can't set 100!
-            puts("StateMachineArray index:" + i);
-            if (i < stateMachineIndex) {
-                stateArrayCopied[i] = stateMachineArray[i];
-            } else if (i == stateMachineIndex) {
-                stateArrayCopied[i] = STATE_WAIT;
-                stateArrayCopied[i+1] = stateMachineArray[stateMachineIndex];
-            } else if (i > stateMachineIndex) {
-                stateArrayCopied[i+1] = stateMachineArray[i];
-            } else { puts("How is this possible?"); }
-        }
-
-        for (int i = 0; i < actionArray.length; i++) {
-            if (i >= 99) {break;} // can't set 100!
-            puts("ActionArray index:" + i);
-            if (i < actionIndex) {
-                actionArrayCopied[i] = actionArray[i];
-            } else if (i == actionIndex) { // TODO: Test that this works as expected and works with negative targets
-                newLeftTarget =  ((leftEncoderTarget-getEncoderValue(lDrive)) -actionArray[actionIndex][0]);
-                newRightTarget=  ((rightEncoderTarget-getEncoderValue(rDrive))-actionArray[actionIndex][1]);
-                newActionArray[0] = newLeftTarget;
-                newActionArray[1] = newRightTarget;
-                newActionArray[2] = actionArray[actionIndex][2];
-                newActionArray[3] = actionArray[actionIndex][3];
-                actionArrayCopied[i][0] = ticks;
-                actionArrayCopied[i+1]  = newActionArray;
-            } else if (i > actionIndex) {
-                actionArrayCopied[i+1] = actionArray[i];
-            } else { puts("How is this possible?"); }
-        }
-
-        stateMachineArray = stateArrayCopied;
-        actionArray       = actionArrayCopied;
-
-        if (needsDrive) { setDrivePower(0.0, 0.0);}
-        lockMachine = false;
-    }
-
-    // FIXME: Compensate for distance already travelled
-    public void injectDriveDirectionChange() {
-        int[] stateArrayCopied  = new int[100];
-        double[][] actionArrayCopied = new double[100][4];
-        int direction = 1;
-        int recoveryDistance = 800;
-        int state = DRIVE_FORWARD;
-        double power = 0.3;
-        double[] newActionArray = new double[4];
-        double newLeftTarget,
-               newRightTarget;
-
-        if (lDrivePower > 0.0) { direction = -1; state = DRIVE_BACKWARD; }
-
-
-        for (int i = 0; i < stateMachineArray.length; i++) {
-            if (i >= 99) {break;} // can't set 100!
-            puts("StateMachineArray index:" + i);
-            if (i < stateMachineIndex) {
-                stateArrayCopied[i] = stateMachineArray[i];
-            } else if (i == stateMachineIndex) {
-                stateArrayCopied[i] = state;
-                stateArrayCopied[i+1] = stateMachineArray[stateMachineIndex];
-            } else if (i > stateMachineIndex) {
-                stateArrayCopied[i+1] = stateMachineArray[i];
-            } else { puts("How is this possible?"); }
-        }
-
-        for (int i = 0; i < actionArray.length; i++) {
-            if (i >= 99) {break;} // can't set 100!
-            puts("ActionArray index:" + i);
-            if (i < actionIndex) {
-                actionArrayCopied[i] = actionArray[i];
-            } else if (i == actionIndex) {
-                actionArrayCopied[i][0] = recoveryDistance * direction;
-                actionArrayCopied[i][1] = recoveryDistance * direction;
-                actionArrayCopied[i][2] = power * direction;
-                actionArrayCopied[i][3] = power * direction;
-
-                newLeftTarget =  ((leftEncoderTarget-getEncoderValue(lDrive)) -actionArray[actionIndex][0]);
-                newRightTarget=  ((rightEncoderTarget-getEncoderValue(rDrive))-actionArray[actionIndex][1]);
-                newActionArray[0] = newLeftTarget;
-                newActionArray[1] = newRightTarget;
-                newActionArray[2] = actionArray[actionIndex][2];
-                newActionArray[3] = actionArray[actionIndex][3];
-                actionArrayCopied[i+1]  = newActionArray;
-            } else if (i > actionIndex) {
-                actionArrayCopied[i+1] = actionArray[i];
-            } else { puts("How is this possible?"); }
-        }
-
-        stateMachineArray = stateArrayCopied;
-        actionArray       = actionArrayCopied;
-
-        if (needsDrive) { setDrivePower(0.0, 0.0); }
-        lockMachine = false;
-    }
-
+    // Setup autonomous
     @Override
     public void init() {
         autonomousInit();
     }
 
+    // Get everything ready for loop
     @Override
     public void init_loop(){
         autonomousInitLoop();
     }
 
+    // Run autonomous
     @Override
     public void loop() {
         autonomousloop();
     }
 
+    // What to do when the robot is stopped from the driver station (or time runs out)
     @Override
     public void stop() {
         instance.getSensorAccelerometer().unregisterActiveBrain();
     }
 
     public void autonomousInit() {
+        // Get instance of class FtcRobotControllerActivity
         instance = FtcRobotControllerActivity.getInstance();
+        // Register listener for accelerometer updates
         instance.getSensorAccelerometer().registerActiveBrain(this);
+        // Get access to the phones vibrator
         vibrator = (Vibrator) instance.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
+        collisionHandler = new CollisionHandler(this);
+        builder = new AutonomousConstruction(this);
 
         currentMachineState = "In-Active";
         lockMachine = false;
@@ -556,6 +316,7 @@ public class AutonomousMindContainer extends OpMode {
         setupAutonomous(); // Add states to debugArray before setting stateMachineArray
         actionIndex = 0; // Reset to 0 after setup
 
+        // Variable initialization of Motors and servos as needs by the "Minds"
         if (needsDrive) {
             lDrive = getMotor("lDrive");
             rDrive = getMotor("rDrive");
@@ -581,7 +342,7 @@ public class AutonomousMindContainer extends OpMode {
 
         if (needsWinch) {
             winch = getMotor("armExtender");
-            winch.setDirection(DcMotor.Direction.REVERSE);
+            winch.setDirection(DcMotor.Direction.FORWARD);
         }
 
         for (int i = 0; i < 100; i++) {
@@ -619,9 +380,8 @@ public class AutonomousMindContainer extends OpMode {
 
     public void autonomousloop() {
         setTelemetry();
-        /* Collision Detection is off due to lack of testing.
-            if (!machineCompleted && needsDrive) { checkCollision(); }
-        */
+        /* Collision Detection is off due to lack of testing.*/
+        if (!machineCompleted && needsDrive) { collisionHandler.checkCollision(); }
 
         switch (stateMachineArray[stateMachineIndex]) {
             // BEGIN - CONCEPT 14
@@ -664,14 +424,37 @@ public class AutonomousMindContainer extends OpMode {
                     currentMachineState = "Arm Action";
                     armSpeed = actionArray[actionIndex][1];
                     armLocation = getEncoderValue(arm);
-                    armLocation+=(int) actionArray[actionIndex][0];
+                    armLocation += (int) actionArray[actionIndex][0];
+                    int block = (int) actionArray[actionIndex][2];
                     arm.setTargetPosition(armLocation);
                     arm.setPower(armSpeed);
 
-                    // TODO: Assert arm moves
-                    lockMachine = false;
-                    stateMachineIndex++;
-                    actionIndex++;
+                    if (block == 0) {
+                        lockMachine = false;
+                        stateMachineIndex++;
+                        actionIndex++;
+                        scream();
+                    }
+                }
+
+                if (actionArray[actionIndex][0] > 0) {
+                    if (Math.abs(getEncoderValue(arm)) >= Math.abs(armLocation) - 15) {
+                        armSpeed = 0.0;
+                        arm.setPower(armSpeed);
+                        lockMachine = false;
+                        stateMachineIndex++;
+                        actionIndex++;
+                    }
+                }
+
+                if (actionArray[actionIndex][0] < 0) {
+                    if (Math.abs(getEncoderValue(arm)) <= Math.abs(armLocation) + 15) {
+                        armSpeed = 0.0;
+                        arm.setPower(armSpeed);
+                        lockMachine = false;
+                        stateMachineIndex++;
+                        actionIndex++;
+                    }
                 }
                 break;
 
@@ -684,13 +467,41 @@ public class AutonomousMindContainer extends OpMode {
                     currentMachineState = "Winch Action";
                     winchTarget = getEncoderValue(winch) + (int) actionArray[actionIndex][0];
                     winchSpeed  = actionArray[actionIndex][1];
+                    int block   = (int) actionArray[actionIndex][2];
                     puts("Winch TARGET: "+winchTarget+" SPEED: "+winchSpeed);
                     winch.setTargetPosition(winchTarget);
                     winch.setPower(winchSpeed);
 
-                    lockMachine = false;
-                    stateMachineIndex++;
-                    actionIndex++;
+                    if (block == 0) {
+                        lockMachine = false;
+                        stateMachineIndex++;
+                        actionIndex++;
+                        relieved();
+                    }
+                }
+
+                if (actionArray[actionIndex][0] < 0) {
+                    if (winchTarget < getEncoderValue(winch)) {
+                        if (getEncoderValue(winch) <= winchTarget + 15) {
+                            winchSpeed = 0.0;
+                            winch.setPower(winchSpeed);
+                            lockMachine = false;
+                            stateMachineIndex++;
+                            actionIndex++;
+                        }
+                    }
+                }
+
+                if (actionArray[actionIndex][0] > 0) {
+                    if (winchTarget > getEncoderValue(winch)) {
+                        if (getEncoderValue(winch) >= winchTarget - 15) {
+                            winchSpeed = 0.0;
+                            winch.setPower(winchSpeed);
+                            lockMachine = false;
+                            stateMachineIndex++;
+                            actionIndex++;
+                        }
+                    }
                 }
                 break;
 
@@ -707,6 +518,34 @@ public class AutonomousMindContainer extends OpMode {
                     theDumper.setPosition(theDumperPosition);
 
                     if (collisionDetected) { scream(); } // TODO: Maybe do not allow use of dumper if collision detected to prevent putting the climbers out of field
+                }
+
+                lockMachine = false;
+                stateMachineIndex++;
+                actionIndex++;
+                break;
+
+            case LEFT_SHURIKEN:
+                if (!lockMachine) {
+                    lockMachine = true;
+                    currentMachineState = "leftShuriken";
+
+                    double position = actionArray[actionIndex][0];
+                    leftShuriken.setPosition(position);
+                }
+
+                lockMachine = false;
+                stateMachineIndex++;
+                actionIndex++;
+                break;
+
+            case RIGHT_SHURIKEN:
+                if (!lockMachine) {
+                    lockMachine = true;
+                    currentMachineState = "rightShuriken";
+
+                    double position = actionArray[actionIndex][0];
+                    rightShuriken.setPosition(position);
                 }
 
                 lockMachine = false;
