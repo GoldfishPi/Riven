@@ -23,7 +23,7 @@ public class AutonomousMountainLeftCorner extends AutonomousMindContainer {
         builder.addServoAction(THE_DUMPER, 1.0);
         builder.addWaitAction(120); // time_in_ticks
         builder.addServoAction(THE_DUMPER, 0.0);
-        builder.addDriveAction(DRIVE_BACKWARD, 237, 237, -1.0, -1.0);
+        builder.addDriveAction(DRIVE_BACKWARD, -237, -237, -1.0, -1.0);
         builder.addWinchAction(15000, 0.9);
         builder.addDriveAction(DRIVE_BACKWARD, -12 * 205, -12 * 90, -1.0, -0.1);
         builder.addWaitAction((1800));
