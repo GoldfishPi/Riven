@@ -155,8 +155,7 @@ public class DriverOp extends OpMode {
                 lovePonny.setPosition(Servo.MAX_POSITION);
             }
 
-            //Drive controls
-
+            //Drive controls[
             lDrive.setPower(gamepad1.left_stick_y);
             rDrive.setPower(-gamepad1.right_stick_y);
 

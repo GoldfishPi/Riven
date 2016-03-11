@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 import com.qualcomm.robotcore.util.Range;
 
 import android.content.Context;
@@ -42,6 +43,8 @@ public class AutonomousMindContainer extends OpMode  {
     public DcMotor winch;
 
     public DcMotor arm;
+
+    public UltrasonicSensor usSensor;
 
     public Vibrator vibrator;
     final ToneGenerator toneGenerator = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
@@ -89,6 +92,7 @@ public class AutonomousMindContainer extends OpMode  {
 
             LEFT_SHURIKEN  = 13,
             RIGHT_SHURIKEN = 14,
+            STATE_PING = 15,
 
             COLLISION_IGNORE           = 0,
             COLLISION_CHANGE_DIRECTION = 1,
@@ -109,6 +113,7 @@ public class AutonomousMindContainer extends OpMode  {
                    needsDumper       = false,
                    needsArm          = false,
                    needsWinch        = false,
+                   needsSensor       = false,
                    needsShurikens    = true;
 
     public float deadX,
@@ -357,6 +362,11 @@ public class AutonomousMindContainer extends OpMode  {
             rightShuriken = getServo("rightShuriken");
 
             rightShuriken.setDirection(Servo.Direction.REVERSE);
+        }
+
+        if(needsSensor){
+
+            usSensor = hardwareMap.ultrasonicSensor.get("usSensor");
         }
     }
 
@@ -634,9 +644,33 @@ public class AutonomousMindContainer extends OpMode  {
                 currentMachineState = "STOP";
                 break;
 
+            case STATE_PING:
+
+                //todo add drive forward action
+
+                break;
+
+
             default:
                 currentMachineState = "!NO ACTIVE STATE!";
                 break;
         }
+    }
+
+    public double getPings(int pingAmount, UltrasonicSensor sensor)
+    {
+
+        double[] pings = new double[100];
+        double addedPings = 0;
+        double adveragePings = 0;
+
+        for(int i = 0; i < pingAmount;i++){
+            pings[i] = sensor.getUltrasonicLevel();
+            addedPings += pings[i];
+        }
+
+        adveragePings = addedPings/pingAmount;
+
+        return adveragePings;
     }
 }

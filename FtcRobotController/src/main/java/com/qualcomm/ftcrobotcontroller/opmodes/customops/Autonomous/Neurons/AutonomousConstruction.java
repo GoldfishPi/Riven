@@ -1,6 +1,7 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.Neurons;
 
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousMindContainer;
+import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 
 /**
  * Created by cyberarm on 3/10/16.
