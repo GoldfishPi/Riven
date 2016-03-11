@@ -147,8 +147,6 @@ public class DriverOp extends OpMode {
     public void controllerOne()//Living organism velocitys extender and phasing oscillation neutralizingsu   elliptical yielder
     {
 
-
-
             if(gamepad1.a){
                 lovePonny.setPosition(Servo.MIN_POSITION);
             }
