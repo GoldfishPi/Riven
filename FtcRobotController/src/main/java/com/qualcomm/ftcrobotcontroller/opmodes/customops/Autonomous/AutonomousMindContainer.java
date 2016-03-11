@@ -229,6 +229,7 @@ public class AutonomousMindContainer extends OpMode  {
 
         if (needsDumper) { telemetry.addData("theDumper Position", theDumperPosition); }
         if (needsArm) { telemetry.addData("Arm Position", getEncoderValue(arm)); }
+        if (needsArm) { telemetry.addData("[RAW] Arm Position", arm.getCurrentPosition()); }
 
         if (needsWinch) { telemetry.addData("Winch Position", getEncoderValue(winch)); }
         if (needsShurikens) {
@@ -338,7 +339,7 @@ public class AutonomousMindContainer extends OpMode  {
 
         if (needsArm) {
             arm = getMotor("arm");
-            arm.setDirection(DcMotor.Direction.FORWARD);
+            arm.setDirection(DcMotor.Direction.REVERSE);
             resetEncodersAuto(arm);
         }
 
@@ -391,8 +392,6 @@ public class AutonomousMindContainer extends OpMode  {
                 if (!lockMachine) {
                     lockMachine = true;
                     currentMachineState = "Drive Forward";
-                    System.out.println("LeftTarget: " + (int) actionArray[actionIndex][0] + " RightTarget: " + (int) actionArray[actionIndex][1]);
-                    System.out.println("LeftPower: " + actionArray[actionIndex][2] + " RightPower: " + actionArray[actionIndex][3]);
 
                     setEncoderTarget((int) actionArray[actionIndex][0], (int) actionArray[actionIndex][1]);
                     setDrivePower(actionArray[actionIndex][2], actionArray[actionIndex][3]);
@@ -407,8 +406,6 @@ public class AutonomousMindContainer extends OpMode  {
                 if (!lockMachine) {
                     lockMachine = true;
                     currentMachineState = "Drive Backward";
-                    System.out.println("LeftTarget: " + (int) actionArray[actionIndex][0] + " RightTarget: " + (int) actionArray[actionIndex][1]);
-                    System.out.println("LeftPower: " + actionArray[actionIndex][2] + " RightPower: " + actionArray[actionIndex][3]);
 
                     setEncoderTarget((int) actionArray[actionIndex][0], (int) actionArray[actionIndex][1]);
                     setDrivePower(actionArray[actionIndex][2], actionArray[actionIndex][3]);
@@ -422,11 +419,9 @@ public class AutonomousMindContainer extends OpMode  {
             case ARM_ACTION:
                 if (!lockMachine) {
                     lockMachine = true;
-                    resetEncodersAuto(arm);
                     currentMachineState = "Arm Action";
                     armSpeed = actionArray[actionIndex][1];
-                    armLocation = getEncoderValue(arm);
-                    armLocation += (int) actionArray[actionIndex][0];
+                    armLocation = (getEncoderValue(arm) + (int) actionArray[actionIndex][0]);
                     int block = (int) actionArray[actionIndex][2];
                     arm.setTargetPosition(armLocation);
                     arm.setPower(armSpeed);
@@ -435,29 +430,32 @@ public class AutonomousMindContainer extends OpMode  {
                         lockMachine = false;
                         stateMachineIndex++;
                         actionIndex++;
-                        scream();
+
+                        resetEncodersAuto(arm);
                     }
                 }
 
-                if (actionArray[actionIndex][0] > 0) {
-                    if (Math.abs(getEncoderValue(arm)) >= Math.abs(armLocation) - 15) {
-                        armSpeed = 0.0;
-                        arm.setPower(armSpeed);
-                        lockMachine = false;
-                        stateMachineIndex++;
-                        actionIndex++;
-                    }
+                puts("ARM Encoder: " + Math.abs(getEncoderValue(arm)) + " Location: " + Math.abs(armLocation));
+                puts("[RAW] ARM Encoder: " + getEncoderValue(arm) + " [RAW] Location: " + armLocation);
+
+                if ((Math.abs(getEncoderValue(arm))) >= (Math.abs(armLocation - 15))) {
+//                if ((actionArray[actionIndex][0] > 0) && (Math.abs(getEncoderValue(arm)) >= Math.abs(armLocation - 15)) ||
+//                    (actionArray[actionIndex][0] < 0) && (Math.abs(getEncoderValue(arm)) >= Math.abs(armLocation - 15))) {
+
+                    armSpeed = 0.0;
+                    arm.setPower(armSpeed);
                 }
 
-                if (actionArray[actionIndex][0] < 0) {
-                    if (Math.abs(getEncoderValue(arm)) <= Math.abs(armLocation) + 15) {
-                        armSpeed = 0.0;
-                        arm.setPower(armSpeed);
-                        lockMachine = false;
-                        stateMachineIndex++;
-                        actionIndex++;
-                    }
+                if (Math.abs(armSpeed) <= 0.01) {
+                    lockMachine = false;
+                    stateMachineIndex++;
+                    actionIndex++;
+                    scream();
+                    puts("ADVANCED - " + actionIndex);
+
+                    resetEncodersAuto(arm);
                 }
+
                 break;
 
             case DRIVE_ARM_ACTION:
@@ -478,32 +476,26 @@ public class AutonomousMindContainer extends OpMode  {
                         lockMachine = false;
                         stateMachineIndex++;
                         actionIndex++;
-                        relieved();
+
+                        resetEncodersAuto(winch);
                     }
                 }
 
-                if (actionArray[actionIndex][0] < 0) {
-                    if (winchTarget < getEncoderValue(winch)) {
-                        if (getEncoderValue(winch) <= winchTarget + 15) {
-                            winchSpeed = 0.0;
-                            winch.setPower(winchSpeed);
-                            lockMachine = false;
-                            stateMachineIndex++;
-                            actionIndex++;
-                        }
-                    }
+                puts("WINCH Encoder: " + getEncoderValue(winch) + " Location: " + winchTarget);
+
+                if ((actionArray[actionIndex][0] > 0) && (Math.abs(getEncoderValue(winch)) >= Math.abs(winchTarget - 15)) ||
+                        (actionArray[actionIndex][0] < 0) && (getEncoderValue(winch) <= winchTarget + 15)) {
+
+                    winchSpeed = 0.0;
+                    winch.setPower(winchSpeed);
                 }
 
-                if (actionArray[actionIndex][0] > 0) {
-                    if (winchTarget > getEncoderValue(winch)) {
-                        if (getEncoderValue(winch) >= winchTarget - 15) {
-                            winchSpeed = 0.0;
-                            winch.setPower(winchSpeed);
-                            lockMachine = false;
-                            stateMachineIndex++;
-                            actionIndex++;
-                        }
-                    }
+                if (Math.abs(winchSpeed) <= 0.01) {
+                    lockMachine = false;
+                    stateMachineIndex++;
+                    actionIndex++;
+
+                    resetEncodersAuto(winch);
                 }
                 break;
 

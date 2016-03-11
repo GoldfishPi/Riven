@@ -39,6 +39,7 @@ import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.Minds.Autono
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.MotorTest.SingleMotorTest;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.TeleOp.DriverOp;
 
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.TeleOp.LukasOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeRegister;
 
@@ -68,6 +69,7 @@ public class FtcOpModeRegister implements OpModeRegister
      */
 
       manager.register("DriverOp", DriverOp.class);
+      manager.register("LukasDriverOp", LukasOp.class);
       /* Autonomous op modes first portion is meta data for seeing which
          placement of robot (against wall '|' or in a corner '>' or '<') and direction of mountain (left '<' or right '>',
          a '*' character means the robot will wait before starting on its journey.
