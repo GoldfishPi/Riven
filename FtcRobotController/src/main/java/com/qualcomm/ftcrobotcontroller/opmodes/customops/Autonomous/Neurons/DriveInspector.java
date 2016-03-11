@@ -53,6 +53,7 @@ public class DriveInspector extends Neuron {
     }
 
     public void resetSystem() {
+        ticks                 = 0;
         leftDriveLastEncoder  = 0;
         rightDriveLastEncoder = 0;
     }

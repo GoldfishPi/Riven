@@ -16,6 +16,7 @@ import android.media.ToneGenerator;
 import android.os.Vibrator;
 
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.Neurons.CollisionHandler;
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.Neurons.DriveInspector;
 
 /**
  * Created by goldfishpi on 12/12/15.
@@ -25,6 +26,7 @@ public class AutonomousMindContainer extends OpMode  {
     /* Begin variable definitions */
     public CollisionHandler collisionHandler;
     public AutonomousConstruction builder;
+    public DriveInspector driveInspector;
     public String currentMachineState;
 
     public DcMotor lDrive;
@@ -183,6 +185,8 @@ public class AutonomousMindContainer extends OpMode  {
 
             resetEncodersAuto(lDrive);
             resetEncodersAuto(rDrive);
+            driveInspector.resetSystem();
+
 
             lockMachine = false;
             stateMachineIndex++;
@@ -213,6 +217,7 @@ public class AutonomousMindContainer extends OpMode  {
             resetEncodersAuto(lDrive);
             resetEncodersAuto(rDrive);
             checkFinal = true;
+            driveInspector.resetSystem();
 
             lockMachine = false;
             stateMachineIndex++;
@@ -312,6 +317,8 @@ public class AutonomousMindContainer extends OpMode  {
         collisionHandler = new CollisionHandler(this);
         // Construct autonomous modes
         builder = new AutonomousConstruction(this);
+        // Drive fault detection
+        driveInspector = new DriveInspector(this);
 
         currentMachineState = "In-Active";
         lockMachine = false;
@@ -395,6 +402,9 @@ public class AutonomousMindContainer extends OpMode  {
         setTelemetry();
         /* Collision Detection is off due to lack of testing.*/
 //        if (!machineCompleted && needsDrive) { collisionHandler.checkCollision(); }
+        if (needsDrive) {
+            driveInspector.ensureDriveMoving();
+        }
 
         switch (stateMachineArray[stateMachineIndex]) {
             // BEGIN - CONCEPT 14
