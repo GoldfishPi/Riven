@@ -653,12 +653,28 @@ public class AutonomousMindContainer extends OpMode  {
 
                 currentMachineState = "STOP";
                 break;
-
             case STATE_PING:
 
-                //todo add drive forward action
+                if (!lockMachine) {
+                    lockMachine = true;
+                    currentMachineState = "STATE_PING";
+
+                    setEncoderTarget((int) actionArray[actionIndex][0], (int) actionArray[actionIndex][1]);
+                    setDrivePower(actionArray[actionIndex][2], actionArray[actionIndex][3]);
+
+                    if(getPings(3, usSensor) <= 3){
+
+                        setDrivePower(actionArray[actionIndex][0], actionArray[actionIndex][0]);
+
+                    }
+                }
+
+                if (positiveDriveCheck()) {
+                    actionIndex++;
+                }
 
                 break;
+
 
 
             default:
