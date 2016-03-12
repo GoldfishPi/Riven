@@ -4,6 +4,8 @@ import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousMi
 
 /**
  * Created by cyberarm on 1/20/16.
+ *
+ * OpMode for Blue alliance that starts in the < corner by the driver box.
  */
 public class AutonomousMountainLeftSide extends AutonomousMindContainer {
 

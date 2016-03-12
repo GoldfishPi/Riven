@@ -4,6 +4,8 @@ import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousMi
 
 /**
  * Created by cyberarm on 3/10/16.
+ *
+ * Use the phones accelerometer to detect sudden changes.
  */
 public class CollisionHandler extends Neuron {
 

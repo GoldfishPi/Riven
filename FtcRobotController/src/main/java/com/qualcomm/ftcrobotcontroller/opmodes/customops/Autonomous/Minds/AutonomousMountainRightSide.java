@@ -4,7 +4,10 @@ import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousMi
 
 /**
  * Created by cyberarm on 1/20/16.
+ *
+ * OpMode for Blue alliance that starts along the wall, next to the mountain.
  */
+
 public class AutonomousMountainRightSide extends AutonomousMindContainer {
 
     @Override
