@@ -26,6 +26,7 @@ public class AutonomousConstruction extends Neuron {
     public void addDriveAction(int state, int leftDrive, int rightDrive, double leftPower, double rightPower) {
         // Set needsDrive to true if the "Mind" uses the drive train
         instance.needsDrive = true;
+
         instance.debugArray[instance.debugArrayIndex] = state;
         instance.debugArrayIndex++;
 

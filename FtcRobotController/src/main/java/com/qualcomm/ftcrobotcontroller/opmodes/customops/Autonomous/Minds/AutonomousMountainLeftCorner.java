@@ -2,9 +2,11 @@ package com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.Minds;
 
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousMindContainer;
 
-/*
+/**
 * created by c5, GoldfishPi, and Cyberarm
 * Contact details: timecrafters8962@gmail.com
+ *
+ * cheese puffs
 * */
 
 public class AutonomousMountainLeftCorner extends AutonomousMindContainer {

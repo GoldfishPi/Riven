@@ -457,28 +457,45 @@ public class AutonomousMindContainer extends OpMode  {
                     }
 
                 } else {
-                    puts("ARM Encoder: " + Math.abs(getEncoderValue(arm)) + " Location: " + Math.abs(armLocation));
+//                    puts("ARM Encoder: " + Math.abs(getEncoderValue(arm)) + " Location: " + Math.abs(armLocation));
+//                    puts("[RAW] ARM Encoder: " + getEncoderValue(arm) + " [RAW] Location: " + armLocation);
+//
+//                    if (armSpeed >= 0.003) {
+//                        if (Math.abs(getEncoderValue(arm)) <= -(Math.abs(armLocation - 15))) {
+//                            armSpeed = 0.0;
+//                            arm.setPower(armSpeed);
+//                        }
+//
+//                    } else if (armSpeed <= 0.003) {
+//                        if (Math.abs(getEncoderValue(arm)) >= (Math.abs(armLocation - 15))) {
+//                            armSpeed = 0.0;
+//                            arm.setPower(armSpeed);
+//                        }
+//                    }
+//
+//                    if (Math.abs(armSpeed) <= 0.01) {
+//                        lockMachine = false;
+//                        stateMachineIndex++;
+//                        actionIndex++;
+//                        scream();
+//                        puts("ADVANCED - " + actionIndex);
+//
+//                        resetEncodersAuto(arm);
+//                    }
+                    puts("[ABS] ARM Encoder: " + Math.abs(getEncoderValue(arm)) + " [ABS] Location: " + Math.abs(armLocation));
                     puts("[RAW] ARM Encoder: " + getEncoderValue(arm) + " [RAW] Location: " + armLocation);
 
-                    if (armSpeed >= 0.003) {
-                        if (Math.abs(getEncoderValue(arm)) <= -(Math.abs(armLocation - 15))) {
-                            armSpeed = 0.0;
-                            arm.setPower(armSpeed);
-                        }
+                    if ((actionArray[actionIndex][0] > 0) && (Math.abs(getEncoderValue(arm)) >= Math.abs(armLocation - 15)) ||
+                            (actionArray[actionIndex][0] < 0) && (getEncoderValue(arm) <= armLocation + 15)) {
 
-                    } else if (armSpeed <= 0.003) {
-                        if (Math.abs(getEncoderValue(arm)) >= (Math.abs(armLocation - 15))) {
-                            armSpeed = 0.0;
-                            arm.setPower(armSpeed);
-                        }
+                        armSpeed = 0.0;
+                        arm.setPower(armSpeed);
                     }
 
                     if (Math.abs(armSpeed) <= 0.01) {
                         lockMachine = false;
                         stateMachineIndex++;
                         actionIndex++;
-                        scream();
-                        puts("ADVANCED - " + actionIndex);
 
                         resetEncodersAuto(arm);
                     }

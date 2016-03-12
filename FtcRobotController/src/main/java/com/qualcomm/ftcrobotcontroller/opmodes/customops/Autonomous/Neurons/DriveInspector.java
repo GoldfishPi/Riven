@@ -26,20 +26,23 @@ public class DriveInspector extends Neuron {
     public void ensureDriveMoving() {
         int left, right;
 
-        if (activateAfterTicks >= ticks && ticksSinceFault >= 15) {
-            if (Math.abs(instance.lDrivePower) > 0.005) {
+        // && ticksSinceFault >= 15
+        if (ticks >= activateAfterTicks && ticksSinceFault >= 15) {
+            if (Math.abs(instance.lDrivePower) >= 0.05) {
                 left = Math.abs(instance.getEncoderValue(instance.lDrive));
 
                 if (left >= leftDriveLastEncoder + differenceThreshold) {
+                    instance.puts("[OK] lDrive");
                 } else {
                     faultDetected = true;
                 }
             }
 
-            if (Math.abs(instance.rDrivePower) > 0.005) {
+            if (Math.abs(instance.rDrivePower) >= 0.05) {
                 right = Math.abs(instance.getEncoderValue(instance.rDrive));
 
                 if (right >= rightDriveLastEncoder + differenceThreshold) {
+                    instance.puts("[OK] rDrive");
                 } else {
                     faultDetected = true;
                 }
@@ -48,7 +51,14 @@ public class DriveInspector extends Neuron {
             if (faultDetected) {
                 ticksSinceFault = 0;
                 instance.scream();
+                instance.puts("[FAULT] lDrive Power: " + instance.lDrivePower);
+                instance.puts("[FAULT] rDrive Power: " + instance.rDrivePower);
+            } else {
+                instance.puts("lDrive Power: " + instance.lDrivePower);
+                instance.puts("rDrive Power: " + instance.rDrivePower);
             }
+        } else {
+            instance.puts("[OKAY] - TICKS: " + ticks);
         }
 
         leftDriveLastEncoder  = Math.abs(instance.getEncoderValue(instance.lDrive));
