@@ -18,30 +18,17 @@ public class AutonomousMountainRightCorner extends AutonomousMindContainer {
 
     @Override
     public void setupAutonomous() {
-//        builder.addBlockingWinchAction(2400, 0.9);
-//        builder.addBlockingWinchAction(2400, 0.9);
-//        builder.addBlockingWinchAction(-2400, -0.9);
-//        builder.addBlockingWinchAction(-2400, -0.9);
-//        builder.addArmAction(ARM_ACTION, 1300, 0.5);
-//        builder.addBlockingArmAction(ARM_ACTION, -1300, -0.5);
-//        builder.addBlockingArmAction(ARM_ACTION, 1300, 0.5);
-//        builder.addBlockingArmAction(ARM_ACTION, -1300, -0.5);
-//        builder.addBlockingArmAction(ARM_ACTION, 1300, 0.5);
-//        builder.addBlockingArmAction(ARM_ACTION, -1300, -0.5);
-//        builder.addBlockingWinchAction(-2300*2, -0.5);
-//        builder.addServoAction(LEFT_SHURIKEN, 0.8);
-//        builder.addServoAction(RIGHT_SHURIKEN, 0.5);
-
         // normal init
 
         builder.addDriveAction(DRIVE_FORWARD, 250, 250, 0.2, 0.2);
-//        builder.addBlockingWinchAction(2400, 0.9);
+        builder.addBlockingWinchAction(2400, 0.9);
         builder.addBlockingArmAction(ARM_ACTION, 2140 * 2, 0.5);
-//        builder.addBlockingWinchAction(-2400 * 2, -0.9);
+        builder.addServoAction(LEFT_SHURIKEN, 0.8);
+        builder.addServoAction(RIGHT_SHURIKEN, 0.5);
+        builder.addBlockingWinchAction(-2400 * 2, -0.9);
         builder.addDriveAction(DRIVE_FORWARD, 4354, 4354, 0.2, 0.2);
         builder.addArmAction(ARM_ACTION, 0, 0.0);
-        builder.addDriveAction(DRIVE_FORWARD, 585, 0, 0.3, 0.0);
-//        builder.addScreamAction();
+        builder.addDriveAction(DRIVE_FORWARD, 585, 0, 0.2, 0.0);
         builder.addDriveAction(DRIVE_FORWARD, 875, 875, 0.2, 0.2);
         builder.addDriveAction(DRIVE_FORWARD, 237, 237, 0.2, 0.2);
         builder.addServoAction(THE_DUMPER, 1.0);

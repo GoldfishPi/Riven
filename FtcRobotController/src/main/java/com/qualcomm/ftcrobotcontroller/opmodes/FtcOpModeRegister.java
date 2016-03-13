@@ -32,6 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
 
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.MindTests.AutonomousConcept56;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.Minds.AutonomousMountainLeftSide;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.Minds.AutonomousMountainRightSide;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.Minds.AutonomousMountainRightCorner;
@@ -81,6 +82,8 @@ public class FtcOpModeRegister implements OpModeRegister
       manager.register(">-> Autonomous Mountain Right Corner", AutonomousMountainRightCorner.class);
       manager.register("<-| Autonomous Mountain Left Side", AutonomousMountainLeftSide.class);
       manager.register("|-> Autonomous Mountain Right Side", AutonomousMountainRightSide.class);
+
+      manager.register("!!! >-> Autonomous Concept 56", AutonomousConcept56.class);
   }
 
 }
