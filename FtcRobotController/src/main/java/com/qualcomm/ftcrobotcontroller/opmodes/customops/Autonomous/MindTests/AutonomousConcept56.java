@@ -22,7 +22,7 @@ public class AutonomousConcept56 extends AutonomousMindContainer {
 
         builder.addDriveAction(DRIVE_FORWARD, 250, 250, 0.2, 0.2);
         builder.addBlockingWinchAction(2400, 0.9);
-        builder.addBlockingArmAction(ARM_ACTION, 2140 * 4, 0.5);
+        builder.addBlockingArmAction(ARM_ACTION, 2240 * 3, 0.5);
         builder.addServoAction(LEFT_SHURIKEN, 0.8);
         builder.addServoAction(RIGHT_SHURIKEN, 0.5);
         builder.addBlockingWinchAction(-2400, -0.9);
@@ -33,7 +33,7 @@ public class AutonomousConcept56 extends AutonomousMindContainer {
         builder.addDriveAction(DRIVE_FORWARD, 500, 500, 0.2, 0.2);
         builder.addDriveAction(DRIVE_BACKWARD, -350, -350, -0.2, -0.2);
 
-        builder.addDriveAction(DRIVE_BACKWARD, -12 * 70, 0, -0.2, 0.0);
+        builder.addDriveAction(DRIVE_BACKWARD, -12 * 65, 0, -0.2, 0.0);
         builder.addServoAction(LEFT_SHURIKEN, 0.0);
         builder.addServoAction(RIGHT_SHURIKEN, 0.0);
 

@@ -14,13 +14,19 @@ public class DriveInspector extends Neuron {
         instance = container;
     }
 
-    public int leftDriveLastEncoder  = 0,
-               rightDriveLastEncoder = 0,
-               activateAfterTicks  = 150,
-               ticks               = 0,
-               ticksSinceFault     = 0,
-               waitForCheck        = 15,
-               differenceThreshold = 3;
+    public int  leftDriveLastEncoder  = 0,
+                rightDriveLastEncoder = 0,
+                activateAfterTicks  = 250,
+                ticks               = 0,
+                ticksSinceFault     = 0,
+                waitForCheck        = 15,
+                differenceThreshold = 3,
+                faultID             = 0,
+                currentFaultID      = 1,
+                repeatFailures      = 0,
+                failureThreshold    = 4;
+
+    public double maxDrivePower    = 0.7;
 
     public boolean faultDetected = false;
 
@@ -28,10 +34,11 @@ public class DriveInspector extends Neuron {
     public void ensureDriveMoving() {
         if (ticks >= waitForCheck) {
             checker();
+
+            leftDriveLastEncoder  = instance.getEncoderValue(instance.lDrive);
+            rightDriveLastEncoder = instance.getEncoderValue(instance.rDrive);
         }
 
-        leftDriveLastEncoder  = Math.abs(instance.getEncoderValue(instance.lDrive));
-        rightDriveLastEncoder = Math.abs(instance.getEncoderValue(instance.rDrive));
         faultDetected = false;
         ticksSinceFault++;
         ticks++;
@@ -40,40 +47,65 @@ public class DriveInspector extends Neuron {
         int left, right;
 
         if (ticks >= activateAfterTicks && ticksSinceFault >= activateAfterTicks) {
-            if (Math.abs(instance.lDrivePower) >= 0.05) {
+            if (instance.lDrivePower >= 0.05 && !faultDetected) {
                 left = Math.abs(instance.getEncoderValue(instance.lDrive));
 
                 if (left >= leftDriveLastEncoder + differenceThreshold) {
-                    instance.puts("[OK] leftDrive");
                 } else {
+                    instance.puts("leftDrive fault: " + (leftDriveLastEncoder + differenceThreshold) + " encoder: "+left);
+                    faultDetected = true;
+                }
+            }
+            if (instance.lDrivePower <= -0.05 && !faultDetected) {
+                left = instance.getEncoderValue(instance.lDrive);
+
+                if (left <= leftDriveLastEncoder + differenceThreshold*-1) {
+                } else {
+                    instance.puts("leftDrive (reverse) fault: " + (leftDriveLastEncoder + differenceThreshold*-1) + " encoder: "+left);
                     faultDetected = true;
                 }
             }
 
-            if (Math.abs(instance.rDrivePower) >= 0.05) {
-                right = Math.abs(instance.getEncoderValue(instance.rDrive));
+            if (instance.rDrivePower >= 0.05 && !faultDetected) {
+                right = instance.getEncoderValue(instance.rDrive);
 
                 if (right >= rightDriveLastEncoder + differenceThreshold) {
-                    instance.puts("[OK] rightDrive");
                 } else {
+                    instance.puts("rightDrive fault: " + (rightDriveLastEncoder + differenceThreshold) + " encoder: "+right);
+                    faultDetected = true;
+                }
+            }
+            if (instance.rDrivePower <= -0.05 && !faultDetected) {
+                right = instance.getEncoderValue(instance.rDrive);
+
+                if (right <= rightDriveLastEncoder + differenceThreshold*-1) {
+                } else {
+                    instance.puts("rightDrive (reverse) fault: " + (rightDriveLastEncoder + differenceThreshold*-1) + " encoder: "+right);
                     faultDetected = true;
                 }
             }
 
             if (faultDetected) {
                 ticksSinceFault = 0;
-                instance.scream();
-                instance.puts("[FAULT] leftDrive Power: " + instance.lDrivePower);
-                instance.puts("[FAULT] rightDrive Power: " + instance.rDrivePower);
 
-                instance.lDrivePower = Range.clip(instance.lDrivePower*1.5, 0.0, 0.5);
-                instance.rDrivePower = Range.clip(instance.rDrivePower*1.5, 0.0, 0.5);
+                if (repeatFailures >= failureThreshold) {
+                    instance.puts("[REPEAT FAULT] FaultID: "+faultID+ " Failures on a row: "+repeatFailures);
+                    instance.relieved();
+                } else {
+                    repeatFailures++;
 
-                instance.lDrive.setPower(instance.lDrivePower);
-                instance.rDrive.setPower(instance.rDrivePower);
+                    instance.scream();
+                    instance.puts("[FAULT] leftDrive Power: " + instance.lDrivePower);
+                    instance.puts("[FAULT] rightDrive Power: " + instance.rDrivePower);
+
+                    instance.lDrivePower = Range.clip(instance.lDrivePower * 1.5, 0.0, maxDrivePower);
+                    instance.rDrivePower = Range.clip(instance.rDrivePower * 1.5, 0.0, maxDrivePower);
+
+                    instance.lDrive.setPower(instance.lDrivePower);
+                    instance.rDrive.setPower(instance.rDrivePower);
+                }
             } else {
-                instance.puts("[OKAY] leftDrive Power: " + instance.lDrivePower);
-                instance.puts("[OKAY] rightDrive Power: " + instance.rDrivePower);
+                repeatFailures = 0;
             }
         }
     }
