@@ -18,6 +18,8 @@ import android.os.Vibrator;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.Neurons.CollisionHandler;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.Neurons.DriveInspector;
 
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.Sensors.UltraSonic;
+
 /**
  * Created by goldfishpi on 12/12/15.
  */
@@ -50,6 +52,8 @@ public class AutonomousMindContainer extends OpMode  {
 
     public Vibrator vibrator;
     final ToneGenerator toneGenerator = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
+
+    private UltraSonic sonic = new UltraSonic();
 
     public double armSpeed;
     public int armLocation;
@@ -665,7 +669,6 @@ public class AutonomousMindContainer extends OpMode  {
             case SET_COLLISION_PROFILE:
                 if (!lockMachine) {
                     lockMachine = true;
-
                     int profile = (int)actionArray[actionIndex][0];
                     System.out.println("CollisionProfile: "+profile);
                     currentMachineState = "Updating Collision Profile";
@@ -782,13 +785,12 @@ public class AutonomousMindContainer extends OpMode  {
                     setEncoderTarget((int) actionArray[actionIndex][0], (int) actionArray[actionIndex][1]);
                     setDrivePower(actionArray[actionIndex][2], actionArray[actionIndex][3]);
 
-                    if(getPings(3, usSensor) <= 3){
+                    if(sonic.getPings(3, usSensor) <= 3){
 
                         setDrivePower(actionArray[actionIndex][0], actionArray[actionIndex][0]);
 
                     }
-                }
-
+                }//just real  dksalsjd kd;aldk a;sldk a;swldkeidkdsd nkdied nasdfpasdf basdpeoxm k
                 if (positiveDriveCheck()) {
                     actionIndex++;
                 }
@@ -803,20 +805,5 @@ public class AutonomousMindContainer extends OpMode  {
         }
     }
 
-    public double getPings(int pingAmount, UltrasonicSensor sensor)
-    {
 
-        double[] pings = new double[100];
-        double addedPings = 0;
-        double adveragePings = 0;
-
-        for(int i = 0; i < pingAmount;i++){
-            pings[i] = sensor.getUltrasonicLevel();
-            addedPings += pings[i];
-        }
-
-        adveragePings = addedPings/pingAmount;
-
-        return adveragePings;
-    }
 }
