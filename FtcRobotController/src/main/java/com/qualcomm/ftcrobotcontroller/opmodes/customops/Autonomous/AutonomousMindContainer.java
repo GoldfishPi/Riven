@@ -92,9 +92,11 @@ public class AutonomousMindContainer extends OpMode  {
             DRIVE_ARM_ACTION      = 11,
             DRIVE_WINCH_ACTION    = 12,
 
-            LEFT_SHURIKEN  = 13,
-            RIGHT_SHURIKEN = 14,
-            STATE_PING = 15,
+            LEFT_SHURIKEN   = 13,
+            RIGHT_SHURIKEN  = 14,
+            STATE_PING      = 15,
+            THE_DUMPER_SLOW = 16,
+
 
             COLLISION_IGNORE           = 0,
             COLLISION_CHANGE_DIRECTION = 1,
@@ -564,6 +566,27 @@ public class AutonomousMindContainer extends OpMode  {
                 lockMachine = false;
                 stateMachineIndex++;
                 actionIndex++;
+                break;
+
+            case THE_DUMPER_SLOW:
+                if (!lockMachine) {
+                    lockMachine = true;
+                    currentMachineState = "TheDumperSlow";
+                } else {
+                    theDumperPosition = Range.clip(theDumperPosition+0.02, 0.0, 1.0);
+                    System.out.println("DumperPosition: "+theDumperPosition);
+                    // theDumper.getPosition()+0.03
+                    theDumper.setPosition(theDumperPosition);
+
+                    if (collisionDetected) { scream(); } // TODO: Maybe do not allow use of dumper if collision detected to prevent putting the climbers out of field
+
+                    if (theDumper.getPosition() >= actionArray[actionIndex][0]-0.05) {
+                        lockMachine = false;
+                        stateMachineIndex++;
+                        actionIndex++;
+                    }
+                }
+
                 break;
 
             case LEFT_SHURIKEN:
