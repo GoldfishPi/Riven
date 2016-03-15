@@ -89,7 +89,7 @@ public class    DriveInspector extends Neuron {
                 ticksSinceFault = 0;
 
                 if (repeatFailures >= failureThreshold) {
-                    instance.puts("[REPEAT FAULT] FaultID: "+faultID+ " Failures on a row: "+repeatFailures);
+                    instance.puts("[REPEAT FAULT] FaultID: "+faultID+ " Failures in a row: "+repeatFailures);
                     instance.relieved();
                 } else {
                     repeatFailures++;
