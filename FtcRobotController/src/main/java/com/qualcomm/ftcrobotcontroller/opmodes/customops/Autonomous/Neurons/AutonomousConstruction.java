@@ -33,8 +33,28 @@ public class AutonomousConstruction extends Neuron {
         ensureMatchingGoal(leftDrive, leftPower);
         ensureMatchingGoal(rightDrive, rightPower);
 
-        double[] array = {leftDrive, rightDrive, leftPower, rightPower};
+        double[] array = {leftDrive, rightDrive, leftPower, rightPower, 0};
         instance.actionArray[instance.actionIndex] = array;
+        instance.actionIndex++;
+    }
+    // Have drive train move.
+    public void addDriveAction(int state, int leftDrive, int rightDrive, double leftPower, double rightPower, boolean stopMotors) {
+        // Set needsDrive to true if the "Mind" uses the drive train
+        instance.needsDrive = true;
+
+        instance.debugArray[instance.debugArrayIndex] = state;
+        instance.debugArrayIndex++;
+
+        ensureMatchingGoal(leftDrive, leftPower);
+        ensureMatchingGoal(rightDrive, rightPower);
+
+        if (stopMotors) {
+            double[] array = {leftDrive, rightDrive, leftPower, rightPower, 1};
+            instance.actionArray[instance.actionIndex] = array;
+        } else {
+            double[] array = {leftDrive, rightDrive, leftPower, rightPower, 0};
+            instance.actionArray[instance.actionIndex] = array;
+        }
         instance.actionIndex++;
     }
 
@@ -133,6 +153,14 @@ public class AutonomousConstruction extends Neuron {
 
         double[] array = {winchPosition, winchPower, 1};
         instance.actionArray[instance.actionIndex] = array;
+        instance.actionIndex++;
+    }
+
+    public void addCompleteEncoderResetAction() {
+        instance.debugArray[instance.debugArrayIndex] = ENCODER_RESET_ACTION;
+        instance.debugArrayIndex++;
+
+
         instance.actionIndex++;
     }
 

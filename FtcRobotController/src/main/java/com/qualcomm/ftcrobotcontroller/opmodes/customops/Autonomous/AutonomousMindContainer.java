@@ -60,6 +60,9 @@ public class AutonomousMindContainer extends OpMode  {
     public double theDumperPosition;
     public int theDumperTick;
 
+    boolean leftDriveDone  = false;
+    boolean rightDriveDone = false;
+
     public int stateMachineIndex = 0;
     public int debugArrayIndex   = 0;
     public int actionIndex       = 0;
@@ -96,6 +99,7 @@ public class AutonomousMindContainer extends OpMode  {
             RIGHT_SHURIKEN  = 14,
             STATE_PING      = 15,
             THE_DUMPER_SLOW = 16,
+            ENCODER_RESET_ACTION=17,
 
 
             COLLISION_IGNORE           = 0,
@@ -166,63 +170,129 @@ public class AutonomousMindContainer extends OpMode  {
     // Checks that the wheels are where they should be, tells the state machine to proceed
     public boolean positiveDriveCheck() {
         boolean checkFinal = false;
+        boolean stopMotors = true;
 
-        if (getEncoderValue(lDrive) >= leftEncoderTarget - 15) {
-            lDrivePower = 0.0;
-            lDrive.setPower(lDrivePower);
+        if (actionArray[actionIndex][4] == 0) {
+            stopMotors = true;
+        } else {
+            stopMotors = false;
         }
 
-        if (getEncoderValue(rDrive) >= rightEncoderTarget - 15) {
-            rDrivePower = 0.0;
-            rDrive.setPower(rDrivePower);
-        }
+        if (stopMotors) {
+            if (getEncoderValue(lDrive) >= leftEncoderTarget - 15) {
+                lDrivePower = 0.0;
+                lDrive.setPower(lDrivePower);
+            }
 
-        if ((lDrivePower <= 0.1) && (rDrivePower <= 0.1)) {
-            checkFinal = true;
+            if (getEncoderValue(rDrive) >= rightEncoderTarget - 15) {
+                rDrivePower = 0.0;
+                rDrive.setPower(rDrivePower);
+            }
 
-            lDrivePower = 0.0;
-            rDrivePower = 0.0;
-            lDrive.setPower(lDrivePower);
-            rDrive.setPower(rDrivePower);
+            if ((lDrivePower <= 0.1) && (rDrivePower <= 0.1)) {
+                checkFinal = true;
 
-            resetEncodersAuto(lDrive);
-            resetEncodersAuto(rDrive);
-            driveInspector.resetSystem();
+                lDrivePower = 0.0;
+                rDrivePower = 0.0;
+                lDrive.setPower(lDrivePower);
+                rDrive.setPower(rDrivePower);
+
+                resetEncodersAuto(lDrive);
+                resetEncodersAuto(rDrive);
+                driveInspector.resetSystem();
 
 
-            lockMachine = false;
-            stateMachineIndex++;
+                lockMachine = false;
+                stateMachineIndex++;
+            }
+        } else {
+
+            if (getEncoderValue(lDrive) >= leftEncoderTarget - 15) {
+                leftDriveDone = true;
+            }
+
+            if (getEncoderValue(rDrive) >= rightEncoderTarget - 15) {
+                rightDriveDone = true;
+            }
+
+            if (leftDriveDone && rightDriveDone) {
+                checkFinal = true;
+
+                leftDriveDone = false;
+                rightDriveDone = false;
+
+                resetEncodersAuto(lDrive);
+                resetEncodersAuto(rDrive);
+                driveInspector.resetSystem();
+
+
+                lockMachine = false;
+                stateMachineIndex++;
+            }
+
         }
 
         return checkFinal;
     }
 
+
     // Checks that the wheels are where they should be, tells the state machine to proceed
     public boolean negativeDriveCheck() {
         boolean checkFinal = false;
-        if (getEncoderValue(lDrive) <= leftEncoderTarget + 15) {
-            lDrivePower = 0.0;
-            lDrive.setPower(lDrivePower);
+        boolean stopMotors = true;
+
+        if (actionArray[actionIndex][4] == 0) {
+            stopMotors = true;
+        } else {
+            stopMotors = false;
         }
 
-        if (getEncoderValue(rDrive) <= rightEncoderTarget + 15) {
-            rDrivePower = 0.0;
-            rDrive.setPower(rDrivePower);
-        }
+        if (stopMotors) {
+            if (getEncoderValue(lDrive) <= leftEncoderTarget + 15) {
+                lDrivePower = 0.0;
+                lDrive.setPower(lDrivePower);
+            }
 
-        if ((lDrivePower >= -0.1) && (rDrivePower >= -0.1)) {
-            lDrivePower = 0.0;
-            rDrivePower = 0.0;
-            lDrive.setPower(lDrivePower);
-            rDrive.setPower(rDrivePower);
+            if (getEncoderValue(rDrive) <= rightEncoderTarget + 15) {
+                rDrivePower = 0.0;
+                rDrive.setPower(rDrivePower);
+            }
 
-            resetEncodersAuto(lDrive);
-            resetEncodersAuto(rDrive);
-            checkFinal = true;
-            driveInspector.resetSystem();
+            if ((lDrivePower >= -0.1) && (rDrivePower >= -0.1)) {
+                lDrivePower = 0.0;
+                rDrivePower = 0.0;
+                lDrive.setPower(lDrivePower);
+                rDrive.setPower(rDrivePower);
 
-            lockMachine = false;
-            stateMachineIndex++;
+                resetEncodersAuto(lDrive);
+                resetEncodersAuto(rDrive);
+                checkFinal = true;
+                driveInspector.resetSystem();
+
+                lockMachine = false;
+                stateMachineIndex++;
+            }
+        } else {
+            if (getEncoderValue(lDrive) <= leftEncoderTarget + 15) {
+                leftDriveDone = true;
+            }
+
+            if (getEncoderValue(rDrive) <= rightEncoderTarget + 15) {
+                rightDriveDone = true;
+            }
+
+            if (leftDriveDone && rightDriveDone) {
+                leftDriveDone = false;
+                rightDriveDone = false;
+
+                resetEncodersAuto(lDrive);
+                resetEncodersAuto(rDrive);
+                checkFinal = true;
+                driveInspector.resetSystem();
+
+                lockMachine = false;
+                stateMachineIndex++;
+            }
         }
 
         return checkFinal;
@@ -328,7 +398,7 @@ public class AutonomousMindContainer extends OpMode  {
         actionIndex       = 0;
         debugArrayIndex   = 0;
         debugArray = new int[100];
-        actionArray= new double[100][4];
+        actionArray= new double[100][5];
 
         setupAutonomous(); // Add states to debugArray before setting stateMachineArray
         actionIndex = 0; // Reset to 0 after setup
@@ -459,31 +529,6 @@ public class AutonomousMindContainer extends OpMode  {
                     }
 
                 } else {
-//                    puts("ARM Encoder: " + Math.abs(getEncoderValue(arm)) + " Location: " + Math.abs(armLocation));
-//                    puts("[RAW] ARM Encoder: " + getEncoderValue(arm) + " [RAW] Location: " + armLocation);
-//
-//                    if (armSpeed >= 0.003) {
-//                        if (Math.abs(getEncoderValue(arm)) <= -(Math.abs(armLocation - 15))) {
-//                            armSpeed = 0.0;
-//                            arm.setPower(armSpeed);
-//                        }
-//
-//                    } else if (armSpeed <= 0.003) {
-//                        if (Math.abs(getEncoderValue(arm)) >= (Math.abs(armLocation - 15))) {
-//                            armSpeed = 0.0;
-//                            arm.setPower(armSpeed);
-//                        }
-//                    }
-//
-//                    if (Math.abs(armSpeed) <= 0.01) {
-//                        lockMachine = false;
-//                        stateMachineIndex++;
-//                        actionIndex++;
-//                        scream();
-//                        puts("ADVANCED - " + actionIndex);
-//
-//                        resetEncodersAuto(arm);
-//                    }
                     puts("[ABS] ARM Encoder: " + Math.abs(getEncoderValue(arm)) + " [ABS] Location: " + Math.abs(armLocation));
                     puts("[RAW] ARM Encoder: " + getEncoderValue(arm) + " [RAW] Location: " + armLocation);
 
@@ -670,6 +715,31 @@ public class AutonomousMindContainer extends OpMode  {
                 lockMachine = false;
                 stateMachineIndex++;
                 actionIndex++;
+                break;
+
+            case ENCODER_RESET_ACTION:
+                if (!lockMachine) {
+                    lockMachine = true;
+                    currentMachineState = "Resetting ALL encoders, one moment...";
+
+                    if (needsDrive) {
+                        lDrive.setMode(DcMotorController.RunMode.RESET_ENCODERS);
+                        rDrive.setMode(DcMotorController.RunMode.RESET_ENCODERS);
+                    }
+                    if (needsWinch) { winch.setMode(DcMotorController.RunMode.RESET_ENCODERS); }
+                    if (needsArm)   { arm.setMode(DcMotorController.RunMode.RESET_ENCODERS);   }
+                } else {
+                    if (needsDrive) {
+                        lDrive.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
+                        rDrive.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
+                    }
+                    if (needsWinch) { winch.setMode(DcMotorController.RunMode.RUN_TO_POSITION); }
+                    if (needsArm)   { arm.setMode(DcMotorController.RunMode.RUN_TO_POSITION);   }
+
+                    lockMachine = false;
+                    stateMachineIndex++;
+                    actionIndex++;
+                }
                 break;
 
             case STATE_WAIT:
