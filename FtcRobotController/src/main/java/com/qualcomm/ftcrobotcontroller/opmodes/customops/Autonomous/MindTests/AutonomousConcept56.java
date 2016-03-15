@@ -52,7 +52,7 @@ public class AutonomousConcept56 extends AutonomousMindContainer {
         builder.addServoAction(THE_DUMPER, 0.0);
         builder.addDriveAction(DRIVE_BACKWARD, -237, -237, -0.2, -0.2);
 //        builder.addWinchAction(15000, 0.9);
-        builder.addDriveAction(DRIVE_BACKWARD, -12 * 90, -12 * 205, -0.2, -0.4);
+        builder.addDriveAction(DRIVE_BACKWARD, -12 * 90, -12 * 205, -0.15, -0.4);
 //        builder.addWaitAction((1800));
 //        builder.addWinchAction(-5000, -0.9);
 //        builder.addWaitAction((850));
