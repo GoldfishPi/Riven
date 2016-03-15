@@ -152,7 +152,7 @@ public class DriverOp extends OpMode {
             }
 
             if(gamepad1.y){
-                lovePonny.setPosition(Servo.MAX_POSITION);
+                lovePonny.setPosition(1.0);
             }
 
             //Drive controls[

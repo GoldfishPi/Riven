@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.util.Range;
  * This following is intended to be used for detecting if the wheels are moving when they're
  * supposed to, and decide the best way to recover, if needed.
  */
-public class DriveInspector extends Neuron {
+public class    DriveInspector extends Neuron {
     public DriveInspector(AutonomousMindContainer container) {
         instance = container;
     }
