@@ -1,7 +1,16 @@
 package com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous;
 
+import android.content.Context;
+import android.hardware.SensorEvent;
+import android.media.AudioManager;
+import android.media.ToneGenerator;
+import android.os.Vibrator;
+
 import com.qualcomm.ftcrobotcontroller.FtcRobotControllerActivity;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.Neurons.AutonomousConstruction;
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.Neurons.CollisionHandler;
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.Neurons.DriveInspector;
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.Sensors.UltraSonic;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
@@ -9,52 +18,56 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 import com.qualcomm.robotcore.util.Range;
 
-import android.content.Context;
-import android.hardware.SensorEvent;
-import android.media.AudioManager;
-import android.media.ToneGenerator;
-import android.os.Vibrator;
-
-import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.Neurons.CollisionHandler;
-import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.Neurons.DriveInspector;
-
-import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.Sensors.UltraSonic;
-
 /**
  * Created by goldfishpi on 12/12/15.
  */
-public class AutonomousMindContainer extends OpMode  {
+public class AutonomousMindContainer extends OpMode {
 
+    public static final int
+            STATE_STOP = 0,
+            DRIVE_FORWARD = 1,
+            DRIVE_BACKWARD = 2,
+            STATE_WAIT = 3,
+            THE_DUMPER = 4,
+            ARM_ACTION = 5,
+
+    SET_COLLISION_PROFILE = 6,
+            VIBRATOR_ACTION = 7,
+            SCREAM_ACTION = 8,
+            RELIEVED_ACTION = 9,
+            WINCH_ACTION = 10,
+            DRIVE_ARM_ACTION = 11,
+            DRIVE_WINCH_ACTION = 12,
+
+    LEFT_SHURIKEN = 13,
+            RIGHT_SHURIKEN = 14,
+            STATE_PING = 15,
+            THE_DUMPER_SLOW = 16,
+            ENCODER_RESET_ACTION = 17,
+
+
+    COLLISION_IGNORE = 0,
+            COLLISION_CHANGE_DIRECTION = 1,
+            COLLISION_WAIT = 2;
+    final ToneGenerator toneGenerator = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
     /* Begin variable definitions */
     public CollisionHandler collisionHandler;
     public AutonomousConstruction builder;
     public DriveInspector driveInspector;
     public String currentMachineState;
-
     public DcMotor lDrive;
     public DcMotor rDrive;
-
     public DcMotor lFinger;
     public DcMotor rFinger;
-
     public DcMotor lGill;
     public DcMotor rGill;
-
     public Servo theDumper;
     public Servo leftShuriken;
     public Servo rightShuriken;
-
     public DcMotor winch;
-
     public DcMotor arm;
-
     public UltrasonicSensor usSensor;
-
     public Vibrator vibrator;
-    final ToneGenerator toneGenerator = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
-
-    private UltraSonic sonic = new UltraSonic();
-
     public double armSpeed;
     public int armLocation;
     public int leftEncoderTarget;
@@ -63,94 +76,66 @@ public class AutonomousMindContainer extends OpMode  {
     public double rDrivePower;
     public double theDumperPosition;
     public int theDumperTick;
-
-    boolean leftDriveDone  = false;
-    boolean rightDriveDone = false;
-
     public int stateMachineIndex = 0;
-    public int debugArrayIndex   = 0;
-    public int actionIndex       = 0;
+    public int debugArrayIndex = 0;
+    public int actionIndex = 0;
     public double[][] actionArray;
     public int[] stateMachineArray = new int[100];
     public int[] debugArray;
-
     public boolean lockMachine = false;
     public boolean machineCompleted = false;
     public int currentWaitTicks = 0;
-    public int targetWaitTicks  = 10;
-
+    public int targetWaitTicks = 10;
     public FtcRobotControllerActivity instance;
-
-    String currentState = "Not set";
-
-    public static final int
-            STATE_STOP    = 0,
-            DRIVE_FORWARD = 1,
-            DRIVE_BACKWARD= 2,
-            STATE_WAIT    = 3,
-            THE_DUMPER    = 4,
-            ARM_ACTION    = 5,
-
-            SET_COLLISION_PROFILE = 6,
-            VIBRATOR_ACTION       = 7,
-            SCREAM_ACTION         = 8,
-            RELIEVED_ACTION       = 9,
-            WINCH_ACTION          = 10,
-            DRIVE_ARM_ACTION      = 11,
-            DRIVE_WINCH_ACTION    = 12,
-
-            LEFT_SHURIKEN   = 13,
-            RIGHT_SHURIKEN  = 14,
-            STATE_PING      = 15,
-            THE_DUMPER_SLOW = 16,
-            ENCODER_RESET_ACTION=17,
-
-
-            COLLISION_IGNORE           = 0,
-            COLLISION_CHANGE_DIRECTION = 1,
-            COLLISION_WAIT             = 2;
-
-    public int collisionProfile   = COLLISION_IGNORE,
-               COLLISION_THRESHOLD= 6,
-               tickSinceCollision = 0,
-               collisionID        = 0,
-               accelerometerTicks = 0,
-               winchTarget        = 0;
-
+    public int collisionProfile = COLLISION_IGNORE,
+            COLLISION_THRESHOLD = 6,
+            tickSinceCollision = 0,
+            collisionID = 0,
+            accelerometerTicks = 0,
+            winchTarget = 0;
     public double winchSpeed = 0.0;
-
-    public boolean collisionLock     = false,
-                   collisionDetected = false,
-                   needsDrive        = false,
-                   needsDumper       = false,
-                   needsArm          = false,
-                   needsWinch        = false,
-                   needsSensor       = false,
-                   needsShurikens    = true;
-
+    public boolean collisionLock = false,
+            collisionDetected = false,
+            needsDrive = false,
+            needsDumper = false,
+            needsArm = false,
+            needsWinch = false,
+            needsSensor = false,
+            needsShurikens = true;
     public float deadX,
-                 deadY,
-                 deadZ,
-                 oldX,
-                 oldY,
-                 oldZ,
-                 x,
-                 y,
-                 z;
+            deadY,
+            deadZ,
+            oldX,
+            oldY,
+            oldZ,
+            x,
+            y,
+            z;
+    boolean leftDriveDone = false;
+    boolean rightDriveDone = false;
+    String currentState = "Not set";
+    private UltraSonic sonic = new UltraSonic();
 
     /* End variable definitions */
 
+    public DcMotor getMotor(String string) {
+        return hardwareMap.dcMotor.get(string);
+    }
 
-    public DcMotor getMotor(String string) { return hardwareMap.dcMotor.get(string); }
+    public Servo getServo(String string) {
+        return hardwareMap.servo.get(string);
+    }
 
-    public Servo getServo(String string) { return hardwareMap.servo.get(string); }
+    public int getEncoderValue(DcMotor motor) {
+        return motor.getCurrentPosition();
+    }
 
-    public int getEncoderValue(DcMotor motor) { return motor.getCurrentPosition(); }
-
-    public double getEncoderValue(Servo servo) { return servo.getPosition(); }
+    public double getEncoderValue(Servo servo) {
+        return servo.getPosition();
+    }
 
     public void setEncoderTarget(int leftEncoder, int rightEncoder) {
-        leftEncoderTarget  = getEncoderValue(lDrive) + leftEncoder;
+        leftEncoderTarget = getEncoderValue(lDrive) + leftEncoder;
         rightEncoderTarget = getEncoderValue(rDrive) + rightEncoder;
 
         lDrive.setTargetPosition(leftEncoderTarget);
@@ -164,7 +149,7 @@ public class AutonomousMindContainer extends OpMode  {
         rDrive.setPower(rDrivePower);
     }
 
-    public void resetEncodersAuto(DcMotor motor){
+    public void resetEncodersAuto(DcMotor motor) {
         motor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
         motor.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
     }
@@ -304,7 +289,7 @@ public class AutonomousMindContainer extends OpMode  {
 
     public void setTelemetry() {
         telemetry.addData("State", currentMachineState + " (index: " + actionIndex + ")");
-        telemetry.addData("Accelerometer", "X: "+x+" Y: "+y+" Z: "+Math.round(z));
+        telemetry.addData("Accelerometer", "X: " + x + " Y: " + y + " Z: " + Math.round(z));
         if (needsDrive) {
             telemetry.addData("Left Drive Position", getEncoderValue(lDrive));
             telemetry.addData("right Drive Position", getEncoderValue(rDrive));
@@ -313,11 +298,19 @@ public class AutonomousMindContainer extends OpMode  {
             telemetry.addData("right Drive Target", rightEncoderTarget);
         }
 
-        if (needsDumper) { telemetry.addData("theDumper Position", theDumperPosition); }
-        if (needsArm) { telemetry.addData("Arm Position", getEncoderValue(arm)); }
-        if (needsArm) { telemetry.addData("[RAW] Arm Position", arm.getCurrentPosition()); }
+        if (needsDumper) {
+            telemetry.addData("theDumper Position", theDumperPosition);
+        }
+        if (needsArm) {
+            telemetry.addData("Arm Position", getEncoderValue(arm));
+        }
+        if (needsArm) {
+            telemetry.addData("[RAW] Arm Position", arm.getCurrentPosition());
+        }
 
-        if (needsWinch) { telemetry.addData("Winch Position", getEncoderValue(winch)); }
+        if (needsWinch) {
+            telemetry.addData("Winch Position", getEncoderValue(winch));
+        }
         if (needsShurikens) {
             telemetry.addData("leftShuriken Position", leftShuriken.getPosition());
             telemetry.addData("rightShuriken Position", rightShuriken.getPosition());
@@ -366,7 +359,7 @@ public class AutonomousMindContainer extends OpMode  {
 
     // Get everything ready for loop
     @Override
-    public void init_loop(){
+    public void init_loop() {
         autonomousInitLoop();
     }
 
@@ -399,10 +392,10 @@ public class AutonomousMindContainer extends OpMode  {
         currentMachineState = "In-Active";
         lockMachine = false;
         stateMachineIndex = 0;
-        actionIndex       = 0;
-        debugArrayIndex   = 0;
+        actionIndex = 0;
+        debugArrayIndex = 0;
         debugArray = new int[100];
-        actionArray= new double[100][5];
+        actionArray = new double[100][5];
 
         setupAutonomous(); // Add states to debugArray before setting stateMachineArray
         actionIndex = 0; // Reset to 0 after setup
@@ -441,13 +434,13 @@ public class AutonomousMindContainer extends OpMode  {
         }
 
         if (needsShurikens) {
-            leftShuriken  = getServo("leftShuriken");
+            leftShuriken = getServo("leftShuriken");
             rightShuriken = getServo("rightShuriken");
 
             rightShuriken.setDirection(Servo.Direction.REVERSE);
         }
 
-        if(needsSensor){
+        if (needsSensor) {
 
             usSensor = hardwareMap.ultrasonicSensor.get("usSensor");
         }
@@ -470,8 +463,12 @@ public class AutonomousMindContainer extends OpMode  {
             rightShuriken.setPosition(Servo.MIN_POSITION);
         }
 
-        if (needsArm) { resetEncodersAuto(arm); }
-        if (needsWinch) { resetEncodersAuto(winch); }
+        if (needsArm) {
+            resetEncodersAuto(arm);
+        }
+        if (needsWinch) {
+            resetEncodersAuto(winch);
+        }
     }
 
     public void autonomousloop() {
@@ -577,22 +574,22 @@ public class AutonomousMindContainer extends OpMode  {
                     }
 
                 } else {
-                        puts("WINCH Encoder: " + getEncoderValue(winch) + " Location: " + winchTarget);
+                    puts("WINCH Encoder: " + getEncoderValue(winch) + " Location: " + winchTarget);
 
-                        if ((actionArray[actionIndex][0] > 0) && (Math.abs(getEncoderValue(winch)) >= Math.abs(winchTarget - 15)) ||
-                                (actionArray[actionIndex][0] < 0) && (getEncoderValue(winch) <= winchTarget + 15)) {
+                    if ((actionArray[actionIndex][0] > 0) && (Math.abs(getEncoderValue(winch)) >= Math.abs(winchTarget - 15)) ||
+                            (actionArray[actionIndex][0] < 0) && (getEncoderValue(winch) <= winchTarget + 15)) {
 
-                            winchSpeed = 0.0;
-                            winch.setPower(winchSpeed);
-                        }
+                        winchSpeed = 0.0;
+                        winch.setPower(winchSpeed);
+                    }
 
-                        if (Math.abs(winchSpeed) <= 0.01) {
-                            lockMachine = false;
-                            stateMachineIndex++;
-                            actionIndex++;
+                    if (Math.abs(winchSpeed) <= 0.01) {
+                        lockMachine = false;
+                        stateMachineIndex++;
+                        actionIndex++;
 
-                            resetEncodersAuto(winch);
-                        }
+                        resetEncodersAuto(winch);
+                    }
                 }
 
                 break;
@@ -606,10 +603,12 @@ public class AutonomousMindContainer extends OpMode  {
                     currentMachineState = "TheDumper";
 
                     theDumperPosition = actionArray[actionIndex][0];
-                    System.out.println("DumperPosition: "+theDumperPosition);
+                    System.out.println("DumperPosition: " + theDumperPosition);
                     theDumper.setPosition(theDumperPosition);
 
-                    if (collisionDetected) { scream(); } // TODO: Maybe do not allow use of dumper if collision detected to prevent putting the climbers out of field
+                    if (collisionDetected) {
+                        scream();
+                    } // TODO: Maybe do not allow use of dumper if collision detected to prevent putting the climbers out of field
                 }
 
                 lockMachine = false;
@@ -622,14 +621,16 @@ public class AutonomousMindContainer extends OpMode  {
                     lockMachine = true;
                     currentMachineState = "TheDumperSlow";
                 } else {
-                    theDumperPosition = Range.clip(theDumperPosition+0.02, 0.0, 1.0);
-                    System.out.println("DumperPosition: "+theDumperPosition);
+                    theDumperPosition = Range.clip(theDumperPosition + 0.02, 0.0, 1.0);
+                    System.out.println("DumperPosition: " + theDumperPosition);
                     // theDumper.getPosition()+0.03
                     theDumper.setPosition(theDumperPosition);
 
-                    if (collisionDetected) { scream(); } // TODO: Maybe do not allow use of dumper if collision detected to prevent putting the climbers out of field
+                    if (collisionDetected) {
+                        scream();
+                    } // TODO: Maybe do not allow use of dumper if collision detected to prevent putting the climbers out of field
 
-                    if (theDumper.getPosition() >= actionArray[actionIndex][0]-0.05) {
+                    if (theDumper.getPosition() >= actionArray[actionIndex][0] - 0.05) {
                         lockMachine = false;
                         stateMachineIndex++;
                         actionIndex++;
@@ -669,8 +670,8 @@ public class AutonomousMindContainer extends OpMode  {
             case SET_COLLISION_PROFILE:
                 if (!lockMachine) {
                     lockMachine = true;
-                    int profile = (int)actionArray[actionIndex][0];
-                    System.out.println("CollisionProfile: "+profile);
+                    int profile = (int) actionArray[actionIndex][0];
+                    System.out.println("CollisionProfile: " + profile);
                     currentMachineState = "Updating Collision Profile";
                     collisionProfile = profile;
                 }
@@ -685,7 +686,7 @@ public class AutonomousMindContainer extends OpMode  {
                     lockMachine = true;
                     currentMachineState = "Vibrator";
 
-                    int duration = (int)actionArray[actionIndex][0];
+                    int duration = (int) actionArray[actionIndex][0];
                     vibrator.vibrate(duration);
                 }
 
@@ -729,15 +730,23 @@ public class AutonomousMindContainer extends OpMode  {
                         lDrive.setMode(DcMotorController.RunMode.RESET_ENCODERS);
                         rDrive.setMode(DcMotorController.RunMode.RESET_ENCODERS);
                     }
-                    if (needsWinch) { winch.setMode(DcMotorController.RunMode.RESET_ENCODERS); }
-                    if (needsArm)   { arm.setMode(DcMotorController.RunMode.RESET_ENCODERS);   }
+                    if (needsWinch) {
+                        winch.setMode(DcMotorController.RunMode.RESET_ENCODERS);
+                    }
+                    if (needsArm) {
+                        arm.setMode(DcMotorController.RunMode.RESET_ENCODERS);
+                    }
                 } else {
                     if (needsDrive) {
                         lDrive.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
                         rDrive.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
                     }
-                    if (needsWinch) { winch.setMode(DcMotorController.RunMode.RUN_TO_POSITION); }
-                    if (needsArm)   { arm.setMode(DcMotorController.RunMode.RUN_TO_POSITION);   }
+                    if (needsWinch) {
+                        winch.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
+                    }
+                    if (needsArm) {
+                        arm.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
+                    }
 
                     lockMachine = false;
                     stateMachineIndex++;
@@ -748,7 +757,7 @@ public class AutonomousMindContainer extends OpMode  {
             case STATE_WAIT:
                 if (!lockMachine) {
                     lockMachine = true;
-                    targetWaitTicks = (int)actionArray[actionIndex][0];
+                    targetWaitTicks = (int) actionArray[actionIndex][0];
                 }
 
                 if (currentWaitTicks >= targetWaitTicks) {
@@ -756,8 +765,9 @@ public class AutonomousMindContainer extends OpMode  {
                     lockMachine = false;
                     stateMachineIndex++;
                     actionIndex++;
+                } else {
+                    currentMachineState = "Waiting... " + currentWaitTicks + "/" + targetWaitTicks;
                 }
-                else { currentMachineState = "Waiting... " + currentWaitTicks + "/" + targetWaitTicks; }
 
                 currentWaitTicks++;
                 break;
@@ -767,10 +777,19 @@ public class AutonomousMindContainer extends OpMode  {
                 if (collisionID == 0) {
                     // Cheer, we didn't hit anything!
                 }
-                if (needsArm) { arm.setPower(0.0); }
-                if (needsWinch) { winch.setPower(0.0); }
-                if (needsDrive) { lDrive.setPower(0.0); rDrive.setPower(0.0); }
-                if (needsDumper) { theDumper.setPosition(Servo.MIN_POSITION); }
+                if (needsArm) {
+                    arm.setPower(0.0);
+                }
+                if (needsWinch) {
+                    winch.setPower(0.0);
+                }
+                if (needsDrive) {
+                    lDrive.setPower(0.0);
+                    rDrive.setPower(0.0);
+                }
+                if (needsDumper) {
+                    theDumper.setPosition(Servo.MIN_POSITION);
+                }
                 lockMachine = true;
                 machineCompleted = true;
 
@@ -785,7 +804,7 @@ public class AutonomousMindContainer extends OpMode  {
                     setEncoderTarget((int) actionArray[actionIndex][0], (int) actionArray[actionIndex][1]);
                     setDrivePower(actionArray[actionIndex][2], actionArray[actionIndex][3]);
 
-                    if(sonic.getPings(3, usSensor) <= 3){
+                    if (sonic.getPings(3, usSensor) <= 3) {
 
                         setDrivePower(actionArray[actionIndex][0], actionArray[actionIndex][0]);
 
@@ -796,7 +815,6 @@ public class AutonomousMindContainer extends OpMode  {
                 }
 
                 break;
-
 
 
             default:
