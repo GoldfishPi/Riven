@@ -16,7 +16,7 @@ public class DriveInspector extends Neuron {
 
     public int leftDriveLastEncoder = 0,
             rightDriveLastEncoder = 0,
-            activateAfterTicks = 250,
+            activateAfterTicks = 150,
             ticks = 0,
             ticksSinceFault = 0,
             waitForCheck = 15,
@@ -24,7 +24,7 @@ public class DriveInspector extends Neuron {
             faultID = 0,
             currentFaultID = 1,
             repeatFailures = 0,
-            failureThreshold = 4;
+            failureThreshold = 2;
 
     public double maxDrivePower = 0.7;
 
@@ -89,7 +89,7 @@ public class DriveInspector extends Neuron {
             if (faultDetected) {
                 ticksSinceFault = 0;
 
-                if (repeatFailures >= failureThreshold) {
+                if (repeatFailures >= failureThreshold*2) {
                     instance.puts("[REPEAT FAULT] FaultID: " + faultID + " Failures in a row: " + repeatFailures);
                     instance.relieved();
                     instance.lDrive.setPower(0.0);
@@ -98,7 +98,8 @@ public class DriveInspector extends Neuron {
                     instance.lockMachine = false;
                     instance.actionIndex++;
                     instance.stateMachineIndex++;
-                } else {
+
+                } else if (repeatFailures >= failureThreshold) {
                     repeatFailures++;
 
                     instance.scream();
@@ -110,6 +111,9 @@ public class DriveInspector extends Neuron {
 
                     instance.lDrive.setPower(instance.lDrivePower);
                     instance.rDrive.setPower(instance.rDrivePower);
+                } else {
+                    repeatFailures++;
+                    instance.puts("[MINOR_FAULT] Fault Detected, ignored.");
                 }
             } else {
                 repeatFailures = 0;
