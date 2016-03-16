@@ -45,6 +45,8 @@ public class DriverOp extends OpMode {
     public double armExtenderSpeed;
     public boolean armExtended;
 
+    private int calc = 0;
+
     public DriverOp() {
 
     }
@@ -139,7 +141,7 @@ public class DriverOp extends OpMode {
 
         controllerOne();
         controllerTwo();
-       
+
     }
 
 
@@ -192,7 +194,99 @@ public class DriverOp extends OpMode {
             rightShuriken.setPosition(0);
         }
 
-    }
+        //Drive controls
+        if (lDrive.getMode() == DcMotorController.RunMode.RUN_TO_POSITION && rDrive.getMode() ==
+
+                DcMotorController.RunMode.RUN_TO_POSITION) {
+            lDrive.setPower(gamepad1.left_stick_y);
+            rDrive.setPower(gamepad1.right_stick_y);
+        }
+
+        if(gamepad1.right_stick_y != 0){
+            rDrive.setPower(-gamepad1.right_stick_y);
+        } else {
+            rDrive.setPower(0.0);
+        }
+
+        if(gamepad1.left_stick_y != 0){
+            lDrive.setPower(-gamepad1.left_stick_y);
+        } else{
+            //Finger controls
+            if (gamepad1.left_trigger != 0.0) {
+                lFinger.setPower(0.3);
+            } else if (gamepad1.left_bumper) {
+                lFinger.setPower(-0.3);
+            } else {
+                lFinger.setPower(0.0);
+            }
+            lDrive.setPower(0.0);
+        }
+
+        if (gamepad1.right_trigger != 0.0) {
+            rFinger.setPower(0.3);
+        } else if (gamepad1.right_bumper) {
+            rFinger.setPower(-0.3);
+
+        } else {
+            rFinger.setPower(0.0);
+        }
+
+
+        if(gamepad1.a){
+            lovePonny.setPosition(Servo.MIN_POSITION);
+        }
+
+        if(gamepad1.y){
+            lovePonny.setPosition(Servo.MAX_POSITION);
+        }
+
+        //Drive controls
+        if (lDrive.getMode() == DcMotorController.RunMode.RUN_TO_POSITION && rDrive.getMode() ==
+
+                DcMotorController.RunMode.RUN_TO_POSITION) {
+            lDrive.setPower(gamepad1.left_stick_y);
+            rDrive.setPower(gamepad1.right_stick_y);
+        }
+
+        if(gamepad1.right_stick_y != 0){
+            rDrive.setPower(-gamepad1.right_stick_y);
+        } else {
+            rDrive.setPower(0.0);
+        }
+
+        if(gamepad1.left_stick_y != 0){
+            lDrive.setPower(-gamepad1.left_stick_y);
+        } else{
+            //Finger controls
+            if (gamepad1.left_trigger != 0.0) {
+                lFinger.setPower(0.3);
+            } else if (gamepad1.left_bumper) {
+                lFinger.setPower(-0.3);
+            } else {
+                lFinger.setPower(0.0);
+            }
+            lDrive.setPower(0.0);
+        }
+
+
+        if (gamepad1.right_trigger != 0.0) {
+            rFinger.setPower(0.3);
+        } else if (gamepad1.right_bumper) {
+            rFinger.setPower(-0.3);
+
+        } else {
+            rFinger.setPower(0.0);
+        }
+
+
+        if (gamepad2.right_trigger != 0) {
+            rGill.setPower(0.5);
+        } else if (gamepad2.right_bumper) {
+            rGill.setPower(-0.5);
+        } else {
+            rGill.setPower(0.0);
+        }
+}
 
     public void controllerTwo()
     {
@@ -254,107 +348,21 @@ public class DriverOp extends OpMode {
                 lGill.setPower(-0.5);
             } else {
                 lGill.setPower(0.0);
-            }{
+            }
 
-            if(gamepad1.a){
+
+            if (gamepad1.a) {
                 lovePonny.setPosition(Servo.MIN_POSITION);
             }
 
-            if(gamepad1.y){
+            if (gamepad1.y) {
                 lovePonny.setPosition(Servo.MAX_POSITION);
             }
 
-            //Drive controls
-            if (lDrive.getMode() == DcMotorController.RunMode.RUN_TO_POSITION && rDrive.getMode() ==
-
-            DcMotorController.RunMode.RUN_TO_POSITION) {
-                lDrive.setPower(gamepad1.left_stick_y);
-                rDrive.setPower(gamepad1.right_stick_y);
-            }
-
-            if(gamepad1.right_stick_y != 0){
-                rDrive.setPower(-gamepad1.right_stick_y);
-            } else {
-                rDrive.setPower(0.0);
-            }
-
-            if(gamepad1.left_stick_y != 0){
-                lDrive.setPower(-gamepad1.left_stick_y);
-            } else{
-            //Finger controls
-            if (gamepad1.left_trigger != 0.0) {
-                lFinger.setPower(0.3);
-            } else if (gamepad1.left_bumper) {
-                lFinger.setPower(-0.3);
-            } else {
-                lFinger.setPower(0.0);
-            }
-            lDrive.setPower(0.0);
-        }
-
-        if (gamepad1.right_trigger != 0.0) {
-                rFinger.setPower(0.3);
-            } else if (gamepad1.right_bumper) {
-                rFinger.setPower(-0.3);
-
-            } else {
-                rFinger.setPower(0.0);
-            }
-
-
-            if(gamepad1.a){
-                lovePonny.setPosition(Servo.MIN_POSITION);
-            }
-
-            if(gamepad1.y){
-                lovePonny.setPosition(Servo.MAX_POSITION);
-            }
-
-            //Drive controls
-            if (lDrive.getMode() == DcMotorController.RunMode.RUN_TO_POSITION && rDrive.getMode() ==
-
-            DcMotorController.RunMode.RUN_TO_POSITION) {
-                lDrive.setPower(gamepad1.left_stick_y);
-                rDrive.setPower(gamepad1.right_stick_y);
-            }
-
-            if(gamepad1.right_stick_y != 0){
-                rDrive.setPower(-gamepad1.right_stick_y);
-            } else {
-                rDrive.setPower(0.0);
-            }
-
-            if(gamepad1.left_stick_y != 0){
-                lDrive.setPower(-gamepad1.left_stick_y);
-            } else{
-            //Finger controls
-            if (gamepad1.left_trigger != 0.0) {
-                lFinger.setPower(0.3);
-            } else if (gamepad1.left_bumper) {
-                lFinger.setPower(-0.3);
-            } else {
-                lFinger.setPower(0.0);
-            }
-            lDrive.setPower(0.0);
-        }
-
-
-        if (gamepad1.right_trigger != 0.0) {
-                rFinger.setPower(0.3);
-            } else if (gamepad1.right_bumper) {
-                rFinger.setPower(-0.3);
-
-            } else {
-                rFinger.setPower(0.0);
-            }
-        }
-
-            if (gamepad2.right_trigger != 0) {
-                rGill.setPower(0.5);
-            } else if (gamepad2.right_bumper) {
-                rGill.setPower(-0.5);
-            } else {
-                rGill.setPower(0.0);
+            if(gamepad2.start){
+                while (true){
+                    calc+=1;
+                }
             }
 
 
