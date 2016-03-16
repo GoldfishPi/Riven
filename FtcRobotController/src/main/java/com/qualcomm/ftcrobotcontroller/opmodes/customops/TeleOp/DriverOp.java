@@ -350,19 +350,13 @@ public class DriverOp extends OpMode {
                 lGill.setPower(0.0);
             }
 
-
+            //dumper controlls
             if (gamepad1.a) {
                 lovePonny.setPosition(Servo.MIN_POSITION);
             }
 
             if (gamepad1.y) {
                 lovePonny.setPosition(Servo.MAX_POSITION);
-            }
-
-            if(gamepad2.start){
-                while (true){
-                    calc+=1;
-                }
             }
 
 
