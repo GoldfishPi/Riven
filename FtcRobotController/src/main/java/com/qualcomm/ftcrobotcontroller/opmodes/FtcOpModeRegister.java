@@ -79,13 +79,10 @@ public class FtcOpModeRegister implements OpModeRegister
          e.g. '>->' means that the robot expects to be in the corner and the mountain should be on its right side.
          e.g. '<-|' means that the robot expects the mountain on its left side and is flat against the wall.
       */
-      manager.register("<-< Autonomous Mountain Left Corner", AutonomousMountainLeftCorner.class);
+      manager.register("!!! <-< Autonomous Mountain Left Corner", AutonomousMountainLeftCorner.class);
       manager.register(">-> Autonomous Mountain Right Corner", AutonomousMountainRightCorner.class);
-      manager.register("<-| Autonomous Mountain Left Side", AutonomousMountainLeftSide.class);
-      manager.register("|-> Autonomous Mountain Right Side", AutonomousMountainRightSide.class);
-
-      manager.register("!!! <-> Autonomous Concept 56", AutonomousConcept56.class);
-      manager.register("!!! >-> Autonomous Concept 57", AutonomousConcept57.class);
+      manager.register("!!! <-| Autonomous Mountain Left Side", AutonomousMountainLeftSide.class);
+      manager.register("!!! |-> Autonomous Mountain Right Side", AutonomousMountainRightSide.class);
   }
 
 }
