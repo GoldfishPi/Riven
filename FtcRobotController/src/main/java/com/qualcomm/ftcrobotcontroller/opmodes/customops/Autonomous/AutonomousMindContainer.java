@@ -809,7 +809,7 @@ public class AutonomousMindContainer extends OpMode {
                         setDrivePower(actionArray[actionIndex][0], actionArray[actionIndex][0]);
 
                     }
-                }//just real  dksalsjd kd;aldk a;sldk a;swldkeidkdsd nkdied nasdfpasdf basdpeoxm k
+                }
                 if (positiveDriveCheck()) {
                     actionIndex++;
                 }
