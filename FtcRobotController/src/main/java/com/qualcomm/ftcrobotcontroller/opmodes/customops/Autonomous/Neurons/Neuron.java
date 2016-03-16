@@ -25,8 +25,11 @@ public class Neuron {
         DRIVE_ARM_ACTION      = 11,
         DRIVE_WINCH_ACTION    = 12,
 
-        LEFT_SHURIKEN  = 13,
-        RIGHT_SHURIKEN = 14,
+        LEFT_SHURIKEN        = 13,
+        RIGHT_SHURIKEN       = 14,
+        STATE_PING           = 15,
+        THE_DUMPER_SLOW      = 16,
+        ENCODER_RESET_ACTION = 17,
 
         COLLISION_IGNORE           = 0,
         COLLISION_CHANGE_DIRECTION = 1,

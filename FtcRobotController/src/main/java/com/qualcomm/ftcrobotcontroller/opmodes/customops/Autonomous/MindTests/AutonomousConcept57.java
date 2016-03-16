@@ -1,14 +1,20 @@
-package com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.Minds;
+package com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.MindTests;
+
+/*
+* created by C5, Cyberarm and GoldfishPi
+* Contact details: timecrafters8962@gmail.com
+* */
 
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.AutonomousMindContainer;
 
-/**
- * Created by cyberarm on 1/20/16.
- *
- * OpMode for Blue alliance that starts along the wall, next to the mountain.
+/*
+    OpMode for Blue alliance that starts in the < corner by the driver box. TESTING.
  */
 
-public class AutonomousMountainRightSide extends AutonomousMindContainer {
+public class AutonomousConcept57 extends AutonomousMindContainer {
+    //-------------------------------
+    // motor declarations come from autonomous variables class
+    //------------------------------//
 
     @Override
     public void setupAutonomous() {
@@ -24,11 +30,8 @@ public class AutonomousMountainRightSide extends AutonomousMindContainer {
         builder.addArmAction(ARM_ACTION, 2240 * 4, 0.5);
         builder.addWinchAction(-2300, -0.9);
 
-        builder.addDriveAction(DRIVE_FORWARD, 1754, 1754, 0.2, 0.2);
+        builder.addDriveAction(DRIVE_FORWARD, 4254, 4254, 0.2, 0.2, true);
         builder.addServoAction(LEFT_SHURIKEN, 0.6);
-        builder.addDriveAction(DRIVE_FORWARD, (12 * 45), 0, 0.2, 0.0);
-
-        builder.addDriveAction(DRIVE_FORWARD, 1000, 1000, 0.2, 0.2);
         builder.addDriveAction(DRIVE_FORWARD, (12 * 120), 0, 0.2, 0.0);
 
         builder.addDriveAction(DRIVE_FORWARD, 700, 700, 0.2, 0.2);

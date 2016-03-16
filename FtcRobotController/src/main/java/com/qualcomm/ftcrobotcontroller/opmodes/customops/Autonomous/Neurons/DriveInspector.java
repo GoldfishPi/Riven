@@ -5,28 +5,28 @@ import com.qualcomm.robotcore.util.Range;
 
 /**
  * Created by cyberarm on 3/11/16.
- *
+ * <p/>
  * This following is intended to be used for detecting if the wheels are moving when they're
  * supposed to, and decide the best way to recover, if needed.
  */
-public class    DriveInspector extends Neuron {
+public class DriveInspector extends Neuron {
     public DriveInspector(AutonomousMindContainer container) {
         instance = container;
     }
 
-    public int  leftDriveLastEncoder  = 0,
-                rightDriveLastEncoder = 0,
-                activateAfterTicks  = 250,
-                ticks               = 0,
-                ticksSinceFault     = 0,
-                waitForCheck        = 15,
-                differenceThreshold = 3,
-                faultID             = 0,
-                currentFaultID      = 1,
-                repeatFailures      = 0,
-                failureThreshold    = 4;
+    public int leftDriveLastEncoder = 0,
+            rightDriveLastEncoder = 0,
+            activateAfterTicks = 250,
+            ticks = 0,
+            ticksSinceFault = 0,
+            waitForCheck = 15,
+            differenceThreshold = 3,
+            faultID = 0,
+            currentFaultID = 1,
+            repeatFailures = 0,
+            failureThreshold = 4;
 
-    public double maxDrivePower    = 0.7;
+    public double maxDrivePower = 0.7;
 
     public boolean faultDetected = false;
 
@@ -35,7 +35,7 @@ public class    DriveInspector extends Neuron {
         if (ticks >= waitForCheck) {
             checker();
 
-            leftDriveLastEncoder  = instance.getEncoderValue(instance.lDrive);
+            leftDriveLastEncoder = instance.getEncoderValue(instance.lDrive);
             rightDriveLastEncoder = instance.getEncoderValue(instance.rDrive);
         }
 
@@ -43,6 +43,7 @@ public class    DriveInspector extends Neuron {
         ticksSinceFault++;
         ticks++;
     }
+
     public void checker() {
         int left, right;
 
@@ -52,16 +53,16 @@ public class    DriveInspector extends Neuron {
 
                 if (left >= leftDriveLastEncoder + differenceThreshold) {
                 } else {
-                    instance.puts("leftDrive fault: " + (leftDriveLastEncoder + differenceThreshold) + " encoder: "+left);
+                    instance.puts("leftDrive fault: " + (leftDriveLastEncoder + differenceThreshold) + " encoder: " + left);
                     faultDetected = true;
                 }
             }
             if (instance.lDrivePower <= -0.05 && !faultDetected) {
                 left = instance.getEncoderValue(instance.lDrive);
 
-                if (left <= leftDriveLastEncoder + differenceThreshold*-1) {
+                if (left <= leftDriveLastEncoder + differenceThreshold * -1) {
                 } else {
-                    instance.puts("leftDrive (reverse) fault: " + (leftDriveLastEncoder + differenceThreshold*-1) + " encoder: "+left);
+                    instance.puts("leftDrive (reverse) fault: " + (leftDriveLastEncoder + differenceThreshold * -1) + " encoder: " + left);
                     faultDetected = true;
                 }
             }
@@ -71,16 +72,16 @@ public class    DriveInspector extends Neuron {
 
                 if (right >= rightDriveLastEncoder + differenceThreshold) {
                 } else {
-                    instance.puts("rightDrive fault: " + (rightDriveLastEncoder + differenceThreshold) + " encoder: "+right);
+                    instance.puts("rightDrive fault: " + (rightDriveLastEncoder + differenceThreshold) + " encoder: " + right);
                     faultDetected = true;
                 }
             }
             if (instance.rDrivePower <= -0.05 && !faultDetected) {
                 right = instance.getEncoderValue(instance.rDrive);
 
-                if (right <= rightDriveLastEncoder + differenceThreshold*-1) {
+                if (right <= rightDriveLastEncoder + differenceThreshold * -1) {
                 } else {
-                    instance.puts("rightDrive (reverse) fault: " + (rightDriveLastEncoder + differenceThreshold*-1) + " encoder: "+right);
+                    instance.puts("rightDrive (reverse) fault: " + (rightDriveLastEncoder + differenceThreshold * -1) + " encoder: " + right);
                     faultDetected = true;
                 }
             }
@@ -89,8 +90,14 @@ public class    DriveInspector extends Neuron {
                 ticksSinceFault = 0;
 
                 if (repeatFailures >= failureThreshold) {
-                    instance.puts("[REPEAT FAULT] FaultID: "+faultID+ " Failures on a row: "+repeatFailures);
+                    instance.puts("[REPEAT FAULT] FaultID: " + faultID + " Failures in a row: " + repeatFailures);
                     instance.relieved();
+                    instance.lDrive.setPower(0.0);
+                    instance.rDrive.setPower(0.0);
+
+                    instance.lockMachine = false;
+                    instance.actionIndex++;
+                    instance.stateMachineIndex++;
                 } else {
                     repeatFailures++;
 
@@ -111,9 +118,9 @@ public class    DriveInspector extends Neuron {
     }
 
     public void resetSystem() {
-        ticks                 = 0;
-        ticksSinceFault       = 0;
-        leftDriveLastEncoder  = 0;
+        ticks = 0;
+        ticksSinceFault = 0;
+        leftDriveLastEncoder = 0;
         rightDriveLastEncoder = 0;
     }
 }

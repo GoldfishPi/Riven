@@ -18,6 +18,8 @@ import android.os.Vibrator;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.Neurons.CollisionHandler;
 import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.Neurons.DriveInspector;
 
+import com.qualcomm.ftcrobotcontroller.opmodes.customops.Autonomous.Sensors.UltraSonic;
+
 /**
  * Created by goldfishpi on 12/12/15.
  */
@@ -51,6 +53,8 @@ public class AutonomousMindContainer extends OpMode  {
     public Vibrator vibrator;
     final ToneGenerator toneGenerator = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
 
+    private UltraSonic sonic = new UltraSonic();
+
     public double armSpeed;
     public int armLocation;
     public int leftEncoderTarget;
@@ -59,6 +63,9 @@ public class AutonomousMindContainer extends OpMode  {
     public double rDrivePower;
     public double theDumperPosition;
     public int theDumperTick;
+
+    boolean leftDriveDone  = false;
+    boolean rightDriveDone = false;
 
     public int stateMachineIndex = 0;
     public int debugArrayIndex   = 0;
@@ -92,9 +99,12 @@ public class AutonomousMindContainer extends OpMode  {
             DRIVE_ARM_ACTION      = 11,
             DRIVE_WINCH_ACTION    = 12,
 
-            LEFT_SHURIKEN  = 13,
-            RIGHT_SHURIKEN = 14,
-            STATE_PING = 15,
+            LEFT_SHURIKEN   = 13,
+            RIGHT_SHURIKEN  = 14,
+            STATE_PING      = 15,
+            THE_DUMPER_SLOW = 16,
+            ENCODER_RESET_ACTION=17,
+
 
             COLLISION_IGNORE           = 0,
             COLLISION_CHANGE_DIRECTION = 1,
@@ -164,63 +174,129 @@ public class AutonomousMindContainer extends OpMode  {
     // Checks that the wheels are where they should be, tells the state machine to proceed
     public boolean positiveDriveCheck() {
         boolean checkFinal = false;
+        boolean stopMotors = true;
 
-        if (getEncoderValue(lDrive) >= leftEncoderTarget - 15) {
-            lDrivePower = 0.0;
-            lDrive.setPower(lDrivePower);
+        if (actionArray[actionIndex][4] == 0) {
+            stopMotors = true;
+        } else {
+            stopMotors = false;
         }
 
-        if (getEncoderValue(rDrive) >= rightEncoderTarget - 15) {
-            rDrivePower = 0.0;
-            rDrive.setPower(rDrivePower);
-        }
+        if (stopMotors) {
+            if (getEncoderValue(lDrive) >= leftEncoderTarget - 15) {
+                lDrivePower = 0.0;
+                lDrive.setPower(lDrivePower);
+            }
 
-        if ((lDrivePower <= 0.1) && (rDrivePower <= 0.1)) {
-            checkFinal = true;
+            if (getEncoderValue(rDrive) >= rightEncoderTarget - 15) {
+                rDrivePower = 0.0;
+                rDrive.setPower(rDrivePower);
+            }
 
-            lDrivePower = 0.0;
-            rDrivePower = 0.0;
-            lDrive.setPower(lDrivePower);
-            rDrive.setPower(rDrivePower);
+            if ((lDrivePower <= 0.1) && (rDrivePower <= 0.1)) {
+                checkFinal = true;
 
-            resetEncodersAuto(lDrive);
-            resetEncodersAuto(rDrive);
-            driveInspector.resetSystem();
+                lDrivePower = 0.0;
+                rDrivePower = 0.0;
+                lDrive.setPower(lDrivePower);
+                rDrive.setPower(rDrivePower);
+
+                resetEncodersAuto(lDrive);
+                resetEncodersAuto(rDrive);
+                driveInspector.resetSystem();
 
 
-            lockMachine = false;
-            stateMachineIndex++;
+                lockMachine = false;
+                stateMachineIndex++;
+            }
+        } else {
+
+            if (getEncoderValue(lDrive) >= leftEncoderTarget - 15) {
+                leftDriveDone = true;
+            }
+
+            if (getEncoderValue(rDrive) >= rightEncoderTarget - 15) {
+                rightDriveDone = true;
+            }
+
+            if (leftDriveDone && rightDriveDone) {
+                checkFinal = true;
+
+                leftDriveDone = false;
+                rightDriveDone = false;
+
+                resetEncodersAuto(lDrive);
+                resetEncodersAuto(rDrive);
+                driveInspector.resetSystem();
+
+
+                lockMachine = false;
+                stateMachineIndex++;
+            }
+
         }
 
         return checkFinal;
     }
 
+
     // Checks that the wheels are where they should be, tells the state machine to proceed
     public boolean negativeDriveCheck() {
         boolean checkFinal = false;
-        if (getEncoderValue(lDrive) <= leftEncoderTarget + 15) {
-            lDrivePower = 0.0;
-            lDrive.setPower(lDrivePower);
+        boolean stopMotors = true;
+
+        if (actionArray[actionIndex][4] == 0) {
+            stopMotors = true;
+        } else {
+            stopMotors = false;
         }
 
-        if (getEncoderValue(rDrive) <= rightEncoderTarget + 15) {
-            rDrivePower = 0.0;
-            rDrive.setPower(rDrivePower);
-        }
+        if (stopMotors) {
+            if (getEncoderValue(lDrive) <= leftEncoderTarget + 15) {
+                lDrivePower = 0.0;
+                lDrive.setPower(lDrivePower);
+            }
 
-        if ((lDrivePower >= -0.1) && (rDrivePower >= -0.1)) {
-            lDrivePower = 0.0;
-            rDrivePower = 0.0;
-            lDrive.setPower(lDrivePower);
-            rDrive.setPower(rDrivePower);
+            if (getEncoderValue(rDrive) <= rightEncoderTarget + 15) {
+                rDrivePower = 0.0;
+                rDrive.setPower(rDrivePower);
+            }
 
-            resetEncodersAuto(lDrive);
-            resetEncodersAuto(rDrive);
-            checkFinal = true;
-            driveInspector.resetSystem();
+            if ((lDrivePower >= -0.1) && (rDrivePower >= -0.1)) {
+                lDrivePower = 0.0;
+                rDrivePower = 0.0;
+                lDrive.setPower(lDrivePower);
+                rDrive.setPower(rDrivePower);
 
-            lockMachine = false;
-            stateMachineIndex++;
+                resetEncodersAuto(lDrive);
+                resetEncodersAuto(rDrive);
+                checkFinal = true;
+                driveInspector.resetSystem();
+
+                lockMachine = false;
+                stateMachineIndex++;
+            }
+        } else {
+            if (getEncoderValue(lDrive) <= leftEncoderTarget + 15) {
+                leftDriveDone = true;
+            }
+
+            if (getEncoderValue(rDrive) <= rightEncoderTarget + 15) {
+                rightDriveDone = true;
+            }
+
+            if (leftDriveDone && rightDriveDone) {
+                leftDriveDone = false;
+                rightDriveDone = false;
+
+                resetEncodersAuto(lDrive);
+                resetEncodersAuto(rDrive);
+                checkFinal = true;
+                driveInspector.resetSystem();
+
+                lockMachine = false;
+                stateMachineIndex++;
+            }
         }
 
         return checkFinal;
@@ -326,7 +402,7 @@ public class AutonomousMindContainer extends OpMode  {
         actionIndex       = 0;
         debugArrayIndex   = 0;
         debugArray = new int[100];
-        actionArray= new double[100][4];
+        actionArray= new double[100][5];
 
         setupAutonomous(); // Add states to debugArray before setting stateMachineArray
         actionIndex = 0; // Reset to 0 after setup
@@ -457,31 +533,6 @@ public class AutonomousMindContainer extends OpMode  {
                     }
 
                 } else {
-//                    puts("ARM Encoder: " + Math.abs(getEncoderValue(arm)) + " Location: " + Math.abs(armLocation));
-//                    puts("[RAW] ARM Encoder: " + getEncoderValue(arm) + " [RAW] Location: " + armLocation);
-//
-//                    if (armSpeed >= 0.003) {
-//                        if (Math.abs(getEncoderValue(arm)) <= -(Math.abs(armLocation - 15))) {
-//                            armSpeed = 0.0;
-//                            arm.setPower(armSpeed);
-//                        }
-//
-//                    } else if (armSpeed <= 0.003) {
-//                        if (Math.abs(getEncoderValue(arm)) >= (Math.abs(armLocation - 15))) {
-//                            armSpeed = 0.0;
-//                            arm.setPower(armSpeed);
-//                        }
-//                    }
-//
-//                    if (Math.abs(armSpeed) <= 0.01) {
-//                        lockMachine = false;
-//                        stateMachineIndex++;
-//                        actionIndex++;
-//                        scream();
-//                        puts("ADVANCED - " + actionIndex);
-//
-//                        resetEncodersAuto(arm);
-//                    }
                     puts("[ABS] ARM Encoder: " + Math.abs(getEncoderValue(arm)) + " [ABS] Location: " + Math.abs(armLocation));
                     puts("[RAW] ARM Encoder: " + getEncoderValue(arm) + " [RAW] Location: " + armLocation);
 
@@ -566,6 +617,27 @@ public class AutonomousMindContainer extends OpMode  {
                 actionIndex++;
                 break;
 
+            case THE_DUMPER_SLOW:
+                if (!lockMachine) {
+                    lockMachine = true;
+                    currentMachineState = "TheDumperSlow";
+                } else {
+                    theDumperPosition = Range.clip(theDumperPosition+0.02, 0.0, 1.0);
+                    System.out.println("DumperPosition: "+theDumperPosition);
+                    // theDumper.getPosition()+0.03
+                    theDumper.setPosition(theDumperPosition);
+
+                    if (collisionDetected) { scream(); } // TODO: Maybe do not allow use of dumper if collision detected to prevent putting the climbers out of field
+
+                    if (theDumper.getPosition() >= actionArray[actionIndex][0]-0.05) {
+                        lockMachine = false;
+                        stateMachineIndex++;
+                        actionIndex++;
+                    }
+                }
+
+                break;
+
             case LEFT_SHURIKEN:
                 if (!lockMachine) {
                     lockMachine = true;
@@ -597,7 +669,6 @@ public class AutonomousMindContainer extends OpMode  {
             case SET_COLLISION_PROFILE:
                 if (!lockMachine) {
                     lockMachine = true;
-
                     int profile = (int)actionArray[actionIndex][0];
                     System.out.println("CollisionProfile: "+profile);
                     currentMachineState = "Updating Collision Profile";
@@ -649,6 +720,31 @@ public class AutonomousMindContainer extends OpMode  {
                 actionIndex++;
                 break;
 
+            case ENCODER_RESET_ACTION:
+                if (!lockMachine) {
+                    lockMachine = true;
+                    currentMachineState = "Resetting ALL encoders, one moment...";
+
+                    if (needsDrive) {
+                        lDrive.setMode(DcMotorController.RunMode.RESET_ENCODERS);
+                        rDrive.setMode(DcMotorController.RunMode.RESET_ENCODERS);
+                    }
+                    if (needsWinch) { winch.setMode(DcMotorController.RunMode.RESET_ENCODERS); }
+                    if (needsArm)   { arm.setMode(DcMotorController.RunMode.RESET_ENCODERS);   }
+                } else {
+                    if (needsDrive) {
+                        lDrive.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
+                        rDrive.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
+                    }
+                    if (needsWinch) { winch.setMode(DcMotorController.RunMode.RUN_TO_POSITION); }
+                    if (needsArm)   { arm.setMode(DcMotorController.RunMode.RUN_TO_POSITION);   }
+
+                    lockMachine = false;
+                    stateMachineIndex++;
+                    actionIndex++;
+                }
+                break;
+
             case STATE_WAIT:
                 if (!lockMachine) {
                     lockMachine = true;
@@ -689,13 +785,12 @@ public class AutonomousMindContainer extends OpMode  {
                     setEncoderTarget((int) actionArray[actionIndex][0], (int) actionArray[actionIndex][1]);
                     setDrivePower(actionArray[actionIndex][2], actionArray[actionIndex][3]);
 
-                    if(getPings(3, usSensor) <= 3){
+                    if(sonic.getPings(3, usSensor) <= 3){
 
                         setDrivePower(actionArray[actionIndex][0], actionArray[actionIndex][0]);
 
                     }
-                }
-
+                }//just real  dksalsjd kd;aldk a;sldk a;swldkeidkdsd nkdied nasdfpasdf basdpeoxm k
                 if (positiveDriveCheck()) {
                     actionIndex++;
                 }
@@ -710,20 +805,5 @@ public class AutonomousMindContainer extends OpMode  {
         }
     }
 
-    public double getPings(int pingAmount, UltrasonicSensor sensor)
-    {
 
-        double[] pings = new double[100];
-        double addedPings = 0;
-        double adveragePings = 0;
-
-        for(int i = 0; i < pingAmount;i++){
-            pings[i] = sensor.getUltrasonicLevel();
-            addedPings += pings[i];
-        }
-
-        adveragePings = addedPings/pingAmount;
-
-        return adveragePings;
-    }
 }
