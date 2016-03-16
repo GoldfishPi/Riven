@@ -802,7 +802,7 @@ public class AutonomousMindContainer extends OpMode {
                     currentMachineState = "STATE_PING";
 
                     setEncoderTarget((int) actionArray[actionIndex][0], (int) actionArray[actionIndex][1]);
-                    setDrivePower(actionArray[actionIndex][2], actionArray[actionIndex][3]);
+                        setDrivePower(actionArray[actionIndex][2], actionArray[actionIndex][3]);
 
                     if (sonic.getPings(3, usSensor) <= 3) {
 
