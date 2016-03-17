@@ -27,7 +27,7 @@ public class AutonomousMountainRightCorner extends AutonomousMindContainer {
         builder.addServoAction(LEFT_SHURIKEN, 0.8);
         builder.addServoAction(RIGHT_SHURIKEN, 0.5);
 
-        builder.addArmAction(ARM_ACTION, 2240 * 4, 0.5);
+        builder.addArmAction(ARM_ACTION, 2240 * 5, 0.7);
         builder.addWinchAction(-2300, -0.9);
 
         builder.addDriveAction(DRIVE_FORWARD, 4254, 4254, 0.2, 0.2, true);
@@ -52,13 +52,13 @@ public class AutonomousMountainRightCorner extends AutonomousMindContainer {
         builder.addServoAction(RIGHT_SHURIKEN, 0.0);
         builder.addWaitAction(60);
 
-        builder.addDriveAction(DRIVE_FORWARD, 340, 340, 0.2, 0.2);
-        builder.addServoAction(THE_DUMPER_SLOW, 1.0);
+        builder.addDriveAction(DRIVE_FORWARD, 440, 440, 0.2, 0.2);
+        builder.addServoAction(THE_DUMPER, 1.0);
         builder.addWaitAction(120); // time_in_ticks
         builder.addServoAction(THE_DUMPER, 0.0);
         builder.addDriveAction(DRIVE_BACKWARD, -200, -200, -0.2, -0.2);
         builder.addCompleteEncoderResetAction();
-        builder.addDriveAction(DRIVE_BACKWARD, (-12 * 90), (-12 * 150), -0.13, -0.4);
+        builder.addDriveAction(DRIVE_BACKWARD, (-12 * 60), (-12 * 150), -0.13, -0.4);
         builder.addBlockingWinchAction(25000, 1.0);
         builder.addState(STATE_STOP);
     }

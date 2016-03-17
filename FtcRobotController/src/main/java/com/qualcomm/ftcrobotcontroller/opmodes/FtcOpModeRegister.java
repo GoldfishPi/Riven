@@ -76,13 +76,15 @@ public class FtcOpModeRegister implements OpModeRegister
          placement of robot (against wall '|' or in a corner '>' or '<') and direction of mountain (left '<' or right '>',
          a '*' character means the robot will wait before starting on its journey.
 
+         a single '!' mark indicates that that op mode is not fully refined, 3 '!!!' indicates that the op mode has not been updated!
+
          e.g. '>->' means that the robot expects to be in the corner and the mountain should be on its right side.
          e.g. '<-|' means that the robot expects the mountain on its left side and is flat against the wall.
       */
-      manager.register("!!! <-< Autonomous Mountain Left Corner", AutonomousMountainLeftCorner.class);
+      manager.register("! <-< Autonomous Mountain Left Corner", AutonomousMountainLeftCorner.class);
       manager.register(">-> Autonomous Mountain Right Corner", AutonomousMountainRightCorner.class);
-      manager.register("!!! <-| Autonomous Mountain Left Side", AutonomousMountainLeftSide.class);
-      manager.register("!!! |-> Autonomous Mountain Right Side", AutonomousMountainRightSide.class);
+      manager.register("!!! <-| Autonomous RED side", AutonomousMountainLeftSide.class);
+      manager.register("! |-> Autonomous BLUE Side", AutonomousMountainRightSide.class);
   }
 
 }
