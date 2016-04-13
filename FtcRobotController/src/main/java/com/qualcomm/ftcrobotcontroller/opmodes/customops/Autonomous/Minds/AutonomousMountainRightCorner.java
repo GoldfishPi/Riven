@@ -24,35 +24,45 @@ public class AutonomousMountainRightCorner extends AutonomousMindContainer {
         builder.addDriveAction(DRIVE_FORWARD, 250, 250, 0.2, 0.2);
         builder.addBlockingWinchAction(2400 * 2, 1.0);
         builder.addBlockingArmAction(ARM_ACTION, 2240 * 4, 0.5);
-        builder.addServoAction(LEFT_SHURIKEN, 0.8);
-        builder.addServoAction(RIGHT_SHURIKEN, 0.5);
+        builder.addServoAction(LEFT_SHURIKEN, 0.0);
+        builder.addServoAction(RIGHT_SHURIKEN, 0.0);
 
         builder.addArmAction(ARM_ACTION, 2240 * 5, 0.7);
         builder.addWinchAction(-2300, -0.9);
 
         builder.addDriveAction(DRIVE_FORWARD, 4254, 4254, 0.2, 0.2, true);
-        builder.addServoAction(LEFT_SHURIKEN, 0.6);
-        builder.addDriveAction(DRIVE_FORWARD, (12 * 120), 0, 0.2, 0.0);
 
-        builder.addDriveAction(DRIVE_FORWARD, 700, 700, 0.2, 0.2);
         builder.addDriveAction(DRIVE_BACKWARD, -250, -250, -0.2, -0.2);
-        builder.addArmAction(ARM_ACTION, 0, 0.0);
-
-        builder.addCompleteEncoderResetAction();
+        builder.addServoAction(LEFT_SHURIKEN, 0.8);
+        builder.addServoAction(RIGHT_SHURIKEN, 0.5);
+        builder.addWaitAction(100);
         builder.addServoAction(LEFT_SHURIKEN, 0.0);
         builder.addServoAction(RIGHT_SHURIKEN, 0.0);
-        builder.addDriveAction(DRIVE_BACKWARD, (-12 * 55), 0, -0.2, 0.0);
+        builder.addWaitAction(80);
 
-        builder.addDriveAction(DRIVE_FORWARD, 340, 340, 0.2, 0.2);
+        builder.addDriveAction(DRIVE_FORWARD, 250, 250, 0.2, 0.2, true);
+        builder.addServoAction(LEFT_SHURIKEN, 0.8);
+        builder.addServoAction(RIGHT_SHURIKEN, 0.5);
+        builder.addWaitAction(100);
+        builder.addServoAction(LEFT_SHURIKEN, 0.0);
+        builder.addServoAction(RIGHT_SHURIKEN, 0.0);
+        builder.addWaitAction(40);
+
+        builder.addDriveAction(DRIVE_FORWARD, (12 * 45), 0, 0.2, 0.0);
+
+
+        builder.addDriveAction(DRIVE_FORWARD, 350, 350, 0.2, 0.2);
         builder.addServoAction(LEFT_SHURIKEN, 0.8);
         builder.addServoAction(RIGHT_SHURIKEN, 0.5);
         builder.addWaitAction(120);
-
         builder.addServoAction(LEFT_SHURIKEN, 0.0);
         builder.addServoAction(RIGHT_SHURIKEN, 0.0);
         builder.addWaitAction(60);
+        builder.addDriveAction(DRIVE_FORWARD, 500, 500, 0.2, 0.2);
 
-        builder.addDriveAction(DRIVE_FORWARD, 440, 440, 0.2, 0.2);
+        builder.addCompleteEncoderResetAction();
+
+
         builder.addServoAction(THE_DUMPER, 1.0);
         builder.addWaitAction(120); // time_in_ticks
         builder.addServoAction(THE_DUMPER, 0.0);

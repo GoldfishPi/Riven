@@ -28,7 +28,7 @@ public class AutonomousMountainLeftSide extends AutonomousMindContainer {
         builder.addDriveAction(DRIVE_FORWARD, 0, (12 * 45), 0.0, 0.2);
 
         builder.addDriveAction(DRIVE_FORWARD, 1000, 1000, 0.2, 0.2);
-        builder.addDriveAction(DRIVE_FORWARD, 0, (12 * 90), 0.0, 0.2);
+        builder.addDriveAction(DRIVE_FORWARD, 0, (-12 * 90), 0.0, -0.2);
 
         builder.addDriveAction(DRIVE_FORWARD, 600, 600, 0.2, 0.2);
         builder.addDriveAction(DRIVE_BACKWARD, -350, -350, -0.2, -0.2);
@@ -37,7 +37,7 @@ public class AutonomousMountainLeftSide extends AutonomousMindContainer {
         builder.addCompleteEncoderResetAction();
         builder.addServoAction(LEFT_SHURIKEN, 0.0);
         builder.addServoAction(RIGHT_SHURIKEN, 0.0);
-        builder.addDriveAction(DRIVE_BACKWARD, 0, (-12 * 65), 0.0, -0.2);
+        builder.addDriveAction(DRIVE_BACKWARD, 0, (12 * 65), 0.0, 0.2);
 
         builder.addDriveAction(DRIVE_FORWARD, 240, 240, 0.2, 0.2);
         builder.addServoAction(LEFT_SHURIKEN, 0.8);

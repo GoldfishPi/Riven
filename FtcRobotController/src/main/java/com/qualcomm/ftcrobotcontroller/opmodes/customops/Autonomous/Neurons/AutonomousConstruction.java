@@ -85,9 +85,9 @@ public class AutonomousConstruction extends Neuron {
         instance.debugArray[instance.debugArrayIndex] = state;
         instance.debugArrayIndex++;
 
-        ensureMatchingGoal(armPosition, armPower);
+        ensureMatchingGoal(armPosition/3, armPower);
 
-        double[] array = {armPosition, armPower, 0}; // Arm encoder is reporting negative when power is positive...
+        double[] array = {armPosition/3, armPower, 0}; // Arm encoder is reporting negative when power is positive...
         instance.actionArray[instance.actionIndex] = array;
         instance.actionIndex++;
     }
@@ -98,9 +98,9 @@ public class AutonomousConstruction extends Neuron {
         instance.debugArray[instance.debugArrayIndex] = state;
         instance.debugArrayIndex++;
 
-        ensureMatchingGoal(armPosition, armPower);
+        ensureMatchingGoal(armPosition/3, armPower);
 
-        double[] array = {armPosition, armPower, 1}; // Arm encoder is reporting negative when power is positive...
+        double[] array = {armPosition/3, armPower, 1}; // Arm encoder is reporting negative when power is positive...
 
         instance.actionArray[instance.actionIndex] = array;
         instance.actionIndex++;
